@@ -1,4 +1,4 @@
-package com.hust.bmzsweb.managesystem.business.controller.web;
+package com.hust.bmzsweb.managesystem.controller.web;
 
 public class AdminActivitySignupController {
     /*
