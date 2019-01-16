@@ -11,4 +11,4 @@ CREATE SCHEMA `bmzs` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
     3，如果不是必要，尽量增加sql文件而不是修改之前的sql文件。项目正式发布后禁止修改之前的sql文件。
     
 ### 使用swagger2
-运行项目后打开：http://localhost:8080/swagger-ui.html查看api
+运行项目后打开：http://localhost:8080/swagger-ui.html 查看api
