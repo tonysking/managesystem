@@ -1,16 +1,21 @@
 spring:
   datasource:
-      driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://localhost:3307/bmzs?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
-      username: root
-      password: Cg666666
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/bmzs?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
+    username: root
+    password: kuangnan1996
 
   jpa:
-      database: mysql
-      show-sql: true
-      generate-ddl: false
-#      hibernate:
-#        ddl-auto: update
+    database: mysql
+    show-sql: true
+    generate-ddl: false
+  #      hibernate:
+  #        ddl-auto: update
   flyway:
     enabled: true
     locations: classpath:db/migration,classpath:db/migration-testdata
+  devtools:
+    restart:
+      enabled: true
+      additional-paths: src/main/java
+      exclude: static/**,public/**,WEB-INF/**

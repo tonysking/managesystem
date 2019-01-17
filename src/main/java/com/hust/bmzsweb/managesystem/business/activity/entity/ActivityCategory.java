@@ -1,4 +1,4 @@
 package com.hust.bmzsweb.managesystem.business.activity.entity;
-//活动信息
-public class ActivityEntity {
+//活动类型
+public class ActivityCategory {
 }

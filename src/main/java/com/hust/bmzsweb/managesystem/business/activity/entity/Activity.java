@@ -1,4 +1,4 @@
 package com.hust.bmzsweb.managesystem.business.activity.entity;
-//必填信息
-public class ActivityRequiredItemEntity {
+//活动信息
+public class Activity {
 }
