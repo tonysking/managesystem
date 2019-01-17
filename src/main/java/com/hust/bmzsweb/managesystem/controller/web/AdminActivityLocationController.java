@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 活动位置信息管理
+ */
 @Api(value = "活动位置信息接口",tags = "活动位置信息接口")
 @RestController
 @RequestMapping("/admin")

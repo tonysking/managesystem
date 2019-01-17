@@ -12,16 +12,17 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *   查看/搜索活动列表
+ *    查看活动详情
+ *    管理员禁止活动
+ *    管理员允许活动
+ * */
 @Api(value = "活动接口",tags = "活动接口")
 @RestController
 @RequestMapping("/admin")
 public class AdminActivityController {
-    /*
-    查看/搜索活动列表
-    查看活动详情
-    管理员禁止活动
-    管理员允许活动
-    */
+
     @ApiOperation(value = "模糊查询所有活动")
     @GetMapping("/activity/list")
     public JSONResult queryActivities(String Content,Integer type){

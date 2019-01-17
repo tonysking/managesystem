@@ -12,16 +12,17 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *    后台登录
+ *     查看/搜索用户列表
+ *     管理员锁定用户
+ *     管理员解锁用户
+ */
 @Api(value = "用户接口",tags = "用户接口")
 @RestController
 @RequestMapping("/admin")
 public class AdminUsersController {
-    /*
-    后台登录
-    查看/搜索用户列表
-    管理员锁定用户
-    管理员解锁用户
-    */
+
     @ApiOperation(value = "模糊查询所有用户")
     @GetMapping("/user/list")
     public JSONResult queryUserList(String Content,Integer type){
@@ -62,8 +63,6 @@ public class AdminUsersController {
     public JSONResult lookOverUserCreation(@PathVariable("userId")Integer userId){
         return JSONResult.success();
     }
-
-
 
 
 }
