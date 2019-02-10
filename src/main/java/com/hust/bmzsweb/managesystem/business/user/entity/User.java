@@ -1,5 +1,4 @@
 package com.hust.bmzsweb.managesystem.business.user.entity;
-
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -14,10 +13,7 @@ public class User {
 
     @Id
     @GeneratedValue
-    private Integer id;
-
-    @Column(length = 64)
-    private String userOpenId;
+    private Integer userId;
 
     @Column(length = 64)
     private String userNickName;

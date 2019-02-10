@@ -1,6 +1,4 @@
 
-
-
 CREATE TABLE `wxapp_user`(
 	`id` BIGINT NOT NULL,
 	`nick_name` VARCHAR(64) NOT NULL COMMENT '微信名',

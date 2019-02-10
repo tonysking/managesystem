@@ -1,16 +1,18 @@
 package com.hust.bmzsweb.managesystem.controller.web;
 
+import com.hust.bmzsweb.managesystem.business.activity.ActivityService;
+import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityListModel;
+import com.hust.bmzsweb.managesystem.business.user.UsersService;
 import com.hust.bmzsweb.managesystem.business.user.entity.User;
 import com.hust.bmzsweb.managesystem.common.JSONResult;
+import com.hust.bmzsweb.managesystem.controller.BaseController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  *    后台登录
@@ -21,28 +23,51 @@ import java.util.List;
 @Api(value = "用户接口",tags = "用户接口")
 @RestController
 @RequestMapping("/admin")
-public class AdminUsersController {
+public class AdminUsersController extends BaseController {
+
+    @Autowired
+    UsersService usersService;
+
+    @Autowired
+    ActivityService activityService;
 
     @ApiOperation(value = "模糊查询所有用户")
     @GetMapping("/user/list")
-    public JSONResult queryUserList(String Content,Integer type){
-        List<User> users = new ArrayList<>();
-        User user1 = new User("xn123");
-        User user2 = new User("cg123");
-        users.add(user1);
-        users.add(user2);
-        return JSONResult.success().add("users", users);
+    public JSONResult queryUserList(@RequestParam(value="searchText",required=false) String searchText,Integer type){
+        Page<User> page = usersService.findAllByLike(searchText, getPageRequest());
+        return JSONResult.success().add("page", page);
     }
 
     @ApiOperation(value = "后台登录")
-    @GetMapping("/login")
-    public JSONResult login(){
-        return JSONResult.success();
+    @GetMapping({"/login","/"})
+    public ModelAndView login(){
+        return new ModelAndView("admin/login");
+    }
+
+    @ApiOperation(value = "后台登录校验")
+    @PostMapping("/login")
+    public ModelAndView login(@RequestParam("username") String username,
+                        @RequestParam("password") String password, ModelMap model
+    ) {
+        return new ModelAndView("admin/index");
+    }
+
+    @ApiOperation(value = "显示用户主页")
+    @GetMapping({ "/user/index", "/user/" })
+    public ModelAndView index() {
+        return new ModelAndView("admin/user/index");
+    }
+
+    @ApiOperation(value = "显示用户欢迎页面")
+    @GetMapping({ "/user/welcome" })
+    public ModelAndView welcome() {
+        return new ModelAndView("admin/welcome");
     }
 
     @ApiOperation(value="锁定用户")
     @GetMapping("/user/{userId}/lock")
     public JSONResult lock(@PathVariable("userId")Integer userId){
+        usersService.lockUserById(userId);
         return JSONResult.success();
     }
 
@@ -58,11 +83,22 @@ public class AdminUsersController {
         return JSONResult.success();
     }
 
-    @ApiOperation(value="查看用户发起的活动")
-    @GetMapping("/user/{userId}/creation ")
-    public JSONResult lookOverUserCreation(@PathVariable("userId")Integer userId){
-        return JSONResult.success();
+    @ApiOperation(value="跳转到查看用户创建的活动的页面")
+    @GetMapping("/user/creation")
+    public ModelAndView jumpToUserCreation(Integer userId){
+        ModelAndView modelAndView = new ModelAndView("admin/user/creation");
+        System.out.println("userId:"+userId);
+        modelAndView.addObject("userId", userId);
+        return  modelAndView;
     }
+
+    @ApiOperation(value="查询用户创建过的活动")
+    @GetMapping("/user/{userId}/creation")
+    public JSONResult lookOverUserCreation(@PathVariable("userId")Integer userId){
+        Page<QueryActivityListModel> page = activityService.findAllActsByUserId(userId, getPageRequest());
+        return JSONResult.success().add("page", page);
+    }
+
 
 
 }

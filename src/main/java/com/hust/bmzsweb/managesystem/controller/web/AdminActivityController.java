@@ -4,10 +4,8 @@ import com.hust.bmzsweb.managesystem.business.user.entity.User;
 import com.hust.bmzsweb.managesystem.common.JSONResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +21,16 @@ import java.util.List;
 @RequestMapping("/admin")
 public class AdminActivityController {
 
+    @ApiOperation(value = "显示活动信息主页")
+    @RequestMapping(value = { "/activity/", "/activity/index" })
+    public ModelAndView index() {
+        return new ModelAndView("admin/activity/index");
+    }
+
+
     @ApiOperation(value = "模糊查询所有活动")
     @GetMapping("/activity/list")
-    public JSONResult queryActivities(String Content,Integer type){
+    public JSONResult queryActivities(@RequestParam(value="searchText",required=false) String searchText, Integer type){
         return JSONResult.success();
     }
 
