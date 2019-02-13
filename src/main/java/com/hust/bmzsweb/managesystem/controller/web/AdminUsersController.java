@@ -14,6 +14,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  *    后台登录
  *     查看/搜索用户列表
@@ -53,13 +55,13 @@ public class AdminUsersController extends BaseController {
     }
 
     @ApiOperation(value = "显示用户主页")
-    @GetMapping({ "/user/index", "/user/" })
+    @GetMapping({"/user/index","/user/"})
     public ModelAndView index() {
         return new ModelAndView("admin/user/index");
     }
 
     @ApiOperation(value = "显示用户欢迎页面")
-    @GetMapping({ "/user/welcome" })
+    @GetMapping("/user/welcome")
     public ModelAndView welcome() {
         return new ModelAndView("admin/welcome");
     }
@@ -74,21 +76,32 @@ public class AdminUsersController extends BaseController {
     @ApiOperation(value="解锁用户")
     @GetMapping("/user/{userId}/unLock")
     public JSONResult unLock(@PathVariable("userId")Integer userId){
+        usersService.unLockUserById(userId);
         return JSONResult.success();
     }
 
+    @ApiOperation(value="跳转到用户参与活动页面")
+    @GetMapping("/user/signup")
+    public ModelAndView jumpToUserSignup(Integer userId, String userNickName, HttpServletRequest request){
+        ModelAndView modelAndView = new ModelAndView("admin/user/signup");
+        modelAndView.addObject("userId", userId);
+        modelAndView.addObject("userNickName", userNickName);
+        return  modelAndView;
+    }
+
     @ApiOperation(value="查看用户参与的活动")
-    @GetMapping("/user/{userId}/signup ")
+    @GetMapping("/user/{userId}/signup")
     public JSONResult lookOverUserSignup(@PathVariable("userId")Integer userId){
-        return JSONResult.success();
+        Page<QueryActivityListModel> page = activityService.findUserSignupAct(userId, getPageRequest());
+        return JSONResult.success().add("page", page);
     }
 
     @ApiOperation(value="跳转到查看用户创建的活动的页面")
     @GetMapping("/user/creation")
-    public ModelAndView jumpToUserCreation(Integer userId){
+    public ModelAndView jumpToUserCreation(Integer userId,String userNickName){
         ModelAndView modelAndView = new ModelAndView("admin/user/creation");
-        System.out.println("userId:"+userId);
         modelAndView.addObject("userId", userId);
+        modelAndView.addObject("userNickName", userNickName);
         return  modelAndView;
     }
 

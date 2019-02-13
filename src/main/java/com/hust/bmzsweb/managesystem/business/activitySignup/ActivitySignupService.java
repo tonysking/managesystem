@@ -1,4 +1,7 @@
 package com.hust.bmzsweb.managesystem.business.activitySignup;
 
-public class ActivitySignupService {
+import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivityRequiredItemDetail;
+
+public interface ActivitySignupService {
+    ActivityRequiredItemDetail getDetail(Integer userId,Integer actId);
 }

@@ -15,6 +15,8 @@ public class User {
     @GeneratedValue
     private Integer userId;
 
+    private Integer userOpenid;
+
     @Column(length = 64)
     private String userNickName;
 

@@ -32,7 +32,29 @@
                     </div>
                     <div class="ibox-content">
 
-                        <div class="row row-lg">
+                        <div class="panel-body" style="padding-bottom:0px;">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">查询条件</div>
+                                <div class="panel-body">
+                                        <div class="form-group" style="margin-top:15px">
+                                            <div class="col-sm-2">
+                                            <select class="form-control">
+                                                <option value="0">条件</option>
+                                                <option value="1">城市</option>
+                                                <option value="2">名称</option>
+                                            </select>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control" id="txt_search_departmentname">
+                                            </div>
+                                            <div class="col-sm-4" style="text-align:left;">
+                                                <button  onclick="doQuery();" style="margin-left:50px" class="btn btn-primary">查询</button>&nbsp;&nbsp;
+                                            </div>
+                                        </div>
+                                </div>
+                            </div>
+
+                            <div class="row row-lg">
 		                    <div class="col-sm-12">
 		                        <!-- Example Card View -->
 		                        <div class="example-wrap">
@@ -69,125 +91,137 @@
 
     <!-- Page-Level Scripts -->
     <script>
-        $(document).ready(function () {
-			//初始化表格,动态从服务器加载数据  
-			$("#table_list").bootstrapTable({
-			    //使用get请求到服务器获取数据  
-			    method: "POST",
-			    //必须设置，不然request.getParameter获取不到请求参数
-			    contentType: "application/x-www-form-urlencoded",
-			    //获取数据的Servlet地址  
-			    url: "${ctx!}/admin/location/list",
-			    //表格显示条纹  
-			    striped: true,
-			    //启动分页  
-			    pagination: true,
-			    //每页显示的记录数  
-			    pageSize: 10,
-			    //当前第几页  
-			    pageNumber: 1,
-			    //记录数可选列表  
-			    pageList: [5, 10, 15, 20, 25],
-			    //是否启用查询  
-			    search: true,
-			    //是否启用详细信息视图
-			    detailView:true,
-			    detailFormatter:detailFormatter,
-			    //表示服务端请求  
-			    sidePagination: "server",
-			    //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
-			    //设置为limit可以获取limit, offset, search, sort, order  
-			    queryParamsType: "undefined",
-			    //json数据解析
-			    responseHandler: function(res) {
-			        return {
-			            "rows": res.content,
-			            "total": res.totalElements
-			        };
-			    },
-			    //数据列
-			    columns: [{
-			        title: "排名",
-			        field: "id",
-			        sortable: true
-			    },{
-			        title: "活动名称",
-			        field: "actTitle"
-			    },{
-			        title: "活动类型",
-			        field: "catetoryType"
-			    },{
-                    title: "地址",
-                    field: "actAddress"
-                },{
-                    title: "经度",
-                    field: "longitude"
-                },{
-			        title: "纬度",
-			        field: "latitude",
-			        sortable: true
-			    },{
-			        title: "参与人数",
-			        field: "participantsNumber",
-			        sortable: true
-			    },{
-			        title: "热度",
-			        field: "actHeat",
-			    }]
-			});        	
+
+        $(function () {
+            //初始化Table
+            var oTable = new TableInit();
+            oTable.Init();
         });
-        
-        function edit(id){
-        	layer.open({
-        	      type: 2,
-        	      title: '角色修改',
-        	      shadeClose: true,
-        	      shade: false,
-        	      area: ['893px', '600px'],
-        	      content: '${ctx!}/admin/location/edit/' + id,
-        	      end: function(index){
-        	    	  $('#table_list').bootstrapTable("refresh");
-       	    	  }
-        	    });
+
+     /*   function queryParams() {
+            var param = {};
+            param['searchText'] = $("input").val();
+            param['type'] = $("select").val();
+            param['pageSize'] = this.pageSize;   //页面大小
+            param['pageNumber'] = this.pageNumber;   //页码
+            return param;
+        }*/
+
+
+        var TableInit = function () {
+            var oTableInit = new Object();
+            //初始化Table
+            oTableInit.Init = function () {
+                //初始化表格,动态从服务器加载数据
+                $("#table_list").bootstrapTable({
+                    //使用get请求到服务器获取数据
+                    method: "GET",
+                    //必须设置，不然request.getParameter获取不到请求参数
+                    contentType: "application/x-www-form-urlencoded",
+                    //获取数据的Servlet地址
+                    url: "${ctx!}/admin/location/list",
+                    //表格显示条纹
+                    striped: true,
+                    //启动分页
+                    pagination: true,
+                    //每页显示的记录数
+                    pageSize: 10,
+                    //使用缓存
+                    cache: false,
+                    //当前第几页
+                    pageNumber: 1,
+                    //刷新事件必须设置
+                    silent: true,
+                    //是否启用排序
+                    sortable: true,
+                    //排序方式
+                    sortOrder: "desc",
+                    //排序主键
+                    sortName: "actHeat",
+                    //记录数可选列表
+                    pageList: [5, 10, 15, 20, 25],
+                    //是否启用详细信息视图
+                    detailView:true,
+                    detailFormatter:detailFormatter,
+                    //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder
+                    //设置为limit可以获取limit, offset, search, sort, order
+                    queryParams: oTableInit.queryParams,//传递参数（*）
+                    sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                    clickToSelect: true,                //是否启用点击选中行
+                    queryParamsType: 'undefined',
+                    //json数据解析
+                    responseHandler: oTableInit.responseHandler,
+                    //数据列
+                    columns: [{
+                        title: "排名",
+                        field: "actId",
+                        sortable: true
+                    },{
+                        title: "活动名称",
+                        field: "actTitle"
+                    },{
+                        title: "活动类型",
+                        field: "category"
+                    },{
+                        title: "地址",
+                        field: "actAddress"
+                    },{
+                        title: "经度",
+                        field: "longitude"
+                    },{
+                        title: "纬度",
+                        field: "latitude"
+                    },{
+                        title: "参与人数",
+                        field: "participantsNumber",
+                        sortable: true
+                    },{
+                        title: "热度",
+                        sortable: true,//启用排序
+                        field: "actHeat",
+                    }]
+                });
+
+            };
+            oTableInit.responseHandler = function(res) { //数据筛选
+                if (res) {
+                    return {
+                        "rows": res.extend.page.content,
+                        "total": res.extend.page.totalElements
+                    };
+                } else {
+                    return {
+                        "rows" : [],
+                        "total" : 0
+                    };
+                }
+            }
+
+            oTableInit.queryParams = function (params) {
+                var param = {};
+                param['searchText'] = $("input").val();
+                param['type'] = $("select").val();
+                param['pageSize'] = params.pageSize;   //页面大小
+                param['pageNumber'] = params.pageNumber;   //页码
+                param['sortOrder']= "desc";
+                param['sortName']= "actHeat";
+                return param;
+            };
+            return oTableInit;
+        };
+
+        function doQuery(){
+            $('#table_list').bootstrapTable('refresh');    //刷新表格
         }
-        function grant(id){
-        	layer.open({
-        	      type: 2,
-        	      title: '分配资源',
-        	      shadeClose: true,
-        	      shade: false,
-        	      area: ['893px', '600px'],
-        	      content: '${ctx!}/admin/location/grant/'  + id,
-        	      end: function(index){
-        	    	  $('#table_list').bootstrapTable("refresh");
-       	    	  }
-        	    });
-        }
-        function del(id){
-        	layer.confirm('确定删除吗?', {icon: 3, title:'提示'}, function(index){
-        		$.ajax({
-    	    		   type: "POST",
-    	    		   dataType: "json",
-    	    		   url: "${ctx!}/admin/location/delete/" + id,
-    	    		   success: function(msg){
-	 	   	    			layer.msg(msg.message, {time: 2000},function(){
-	 	   	    				$('#table_list').bootstrapTable("refresh");
-	 	   	    				layer.close(index);
-	 	   					});
-    	    		   }
-    	    	});
-       		});
-        }
+
         
         function detailFormatter(index, row) {
 	        var html = [];
-	        html.push('<p><b>描述:</b> ' + row.description + '</p>');
+	        html.push('<p><b>描述:</b>暂无</p>');
 	        return html.join('');
 	    }
     </script>
 
-    
-    
 
 </body>
 

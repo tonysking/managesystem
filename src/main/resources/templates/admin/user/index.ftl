@@ -141,37 +141,26 @@
 			    },{
 			        title: "参与的活动",
                     formatter: function (value, row, index) {
-                        var operateHtml = '<button class="btn btn-primary btn-xs" type="button" onclick="findUserActivitySignUp(\''+row.userId+'\')"><i class="fa fa-edit"></i>&nbsp;查看</button> &nbsp;';
+                        var operateHtml = '<button class="btn btn-primary btn-xs" type="button" ><i class="fa fa-edit"></i>&nbsp;' +
+                                '<a href="${ctx!}/admin/user/signup?userId='+row.userId+'&userNickName='+row.userNickName+'">查看</a></button> &nbsp;';
                         return operateHtml;
                     }
 			    },{
 			        title: "发起的活动",
                     formatter: function (value, row, index) {
                         var operateHtml = '<button class="btn btn-primary btn-xs" type="button" ><i class="fa fa-edit"></i>&nbsp;' +
-								'<a href="${ctx!}/admin/user/creation?userId='+row.userId+'">查看</a></button> &nbsp;';
+								'<a href="${ctx!}/admin/user/creation?userId='+row.userId+'&userNickName='+row.userNickName+'">查看</a></button> &nbsp;';
                         return operateHtml;
                     }
 			    },{
 			        title: "状态",
 			        field: "userStatus",
 			        formatter: function (value, row, index) {
-                        if (value == '0') 
+                        if (value === 0)
                         	return '<button onclick="lock('+row.userId+')" class="btn btn-primary btn-xs">未锁定</button>';
-                        return '<span class="label label-danger">已锁定</span>';
+                        return '<button onclick="unlock('+row.userId+')" class="btn btn-danger btn-xs">已锁定</button>';
                     }
-			    }/*,{
-			        title: "创建时间",
-			        field: "createTime",
-			        sortable: true
-			    },{
-			        title: "更新时间",
-			        field: "updateTime",
-			        sortable: true
-			    },{
-			        title: "操作",
-			        field: "empty",
-
-			    }*/]
+			    }]
 			});
         });
         function lock(userId){
@@ -185,7 +174,17 @@
 			})
 		}
 
-        
+        function unlock(userId){
+            $.ajax({
+                type: "GET",
+                url: "/admin/user/"+userId+"/unLock",
+                dataType: "json",
+                success: function(data){
+                    location.reload();
+                }
+            })
+        }
+
         function detailFormatter(index, row) {
 	        var html = [];
 	        var content = (row.userRole === 1)?'管理员':'普通用户';

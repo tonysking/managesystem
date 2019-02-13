@@ -33,4 +33,9 @@ public class UsersServiceImpl implements UsersService {
         usersRepository.lockUserById(userId);
     }
 
+    @Override
+    public void unLockUserById(Integer userId) {
+        usersRepository.unLockUserById(userId);
+    }
+
 }

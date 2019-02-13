@@ -23,6 +23,67 @@
 </head>
 
 <body class="gray-bg">
+
+<button style="display: none" id="actIdBtn"></button>
+<div class="modal fade" id="detailModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">查看活动详情</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <label for="inputPassword3" class="col-sm-2 control-label">活动名称</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" disabled="disabled" id="actTitle" placeholder="Password">
+                    </div>
+                    <label for="inputPassword3" class="col-sm-2 control-label">活动简介</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" disabled="disabled" id="actDetailInfo"></textarea>
+                    </div>
+                    <label for="inputPassword3" class="col-sm-2 control-label">活动地址</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" disabled="disabled" id="actAddress" placeholder="Password">
+                    </div>
+                    <label for="inputPassword3" class="col-sm-2 control-label">活动人数</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" disabled="disabled" id="participantsNumber" placeholder="Password">
+                    </div>
+                    <label for="inputPassword3" class="col-sm-2 control-label">活动类型</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" disabled="disabled" id="category" placeholder="Password">
+                    </div>
+                    <label for="inputPassword3" class="col-sm-2 control-label">活动状态</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" disabled="disabled" id="actStatus" placeholder="Password">
+                    </div>
+                    <label for="inputPassword3" class="col-sm-2 control-label">报名截止时间</label>
+                    <div class="col-sm-4">
+                        <input type="datetime" class="form-control" disabled="disabled" id="actSignupDeadline" placeholder="Password">
+                    </div>
+                    <label for="inputPassword3" class="col-sm-2 control-label">活动开始时间</label>
+                    <div class="col-sm-4">
+                        <input type="datetime" class="form-control" disabled="disabled" id="actStartTime" placeholder="Password">
+                    </div>
+                    <label for="inputPassword3" class="col-sm-2 control-label">活动运行状态</label>
+                    <div class="col-sm-10">
+                        <label class="radio-inline">
+                            <input type="radio" name="actRunStatus" id="inlineRadio1" value="0"> 允许
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="actRunStatus" id="inlineRadio2" value="1"> 禁止
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" id="setBtn" class="btn btn-primary">确定</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
     <div class="wrapper wrapper-content  animated fadeInRight">
         <div class="row">
             <div class="col-sm-12">
@@ -69,88 +130,154 @@
     <!-- Page-Level Scripts -->
     <script>
         $(document).ready(function () {
-			//初始化表格,动态从服务器加载数据  
+			//初始化表格,动态从服务器加载数据
 			$("#table_list").bootstrapTable({
-			    //使用get请求到服务器获取数据  
-			    method: "POST",
+			    //使用get请求到服务器获取数据
+			    method: "GET",
 			    //必须设置，不然request.getParameter获取不到请求参数
 			    contentType: "application/x-www-form-urlencoded",
-			    //获取数据的Servlet地址  
+			    //获取数据的Servlet地址
 			    url: "${ctx!}/admin/activity/list",
-			    //表格显示条纹  
+			    //表格显示条纹
 			    striped: true,
-			    //启动分页  
+			    //启动分页
 			    pagination: true,
-			    //每页显示的记录数  
+			    //每页显示的记录数
 			    pageSize: 10,
-			    //当前第几页  
+			    //当前第几页
 			    pageNumber: 1,
-			    //记录数可选列表  
+			    //记录数可选列表
 			    pageList: [5, 10, 15, 20, 25],
-			    //是否启用查询  
+			    //是否启用查询
 			    search: true,
 			    //是否启用详细信息视图
 			    detailView:true,
+                //排序方式
+                sortOrder: "asc",
+                //排序主键
+                sortName: "actId",
+
 			    detailFormatter:detailFormatter,
-			    //表示服务端请求  
+			    //表示服务端请求
 			    sidePagination: "server",
-			    //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
-			    //设置为limit可以获取limit, offset, search, sort, order  
+			    //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder
+			    //设置为limit可以获取limit, offset, search, sort, order
 			    queryParamsType: "undefined",
 			    //json数据解析
-			    responseHandler: function(res) {
-			        return {
-			            "rows": res.content,
-			            "total": res.totalElements
-			        };
-			    },
+                responseHandler: function(res) {
+                    console.log(res)
+                    return {
+                        "rows": res.extend.page.content,
+                        "total": res.extend.page.totalElements
+                    };
+                },
 			    //数据列
 			    columns: [{
-			        title: "ID",
-			        field: "actId",
-			        sortable: true
-			    },{
-			        title: "活动名称",
-			        field: "actTitle"
-			    },{
-			        title: "活动类型",
-			        field: "type",
-			        formatter: function(value,row,index){
-			        	if(value == 0)
-                    		return '<span class="label label-info">目录</span>';
-                    	else if(value == 1)
-                    		return '<span class="label label-primary">菜单</span>';
-                    	else if(value == 2)
-                    		return '<span class="label label-warning">按钮</span>';
-			        }
-			    },{
-			        title: "活动状态",
-			        sortable: true,
-			        field: "isHide",
-                    formatter: function (value, row, index) {
-                    	if(value == 0)
-                    		return '<span class="label label-info">显示</span>';
-                    	else if(value == 1)
-                    		return '<span class="label label-danger">隐藏</span>';
-                    }
-			    },{
-                    title: "活动详情",
-                    field: "actDetailInfo"
+                    title: "ID",
+                    field: "actId",
+                    sortable: true
                 },{
-			        title: "创建时间",
-			        field: "createTime",
-			        sortable: true
-			    },{
-			        title: "更新时间",
-			        field: "updateTime",
-			        sortable: true
-			    },{
-			        title: "操作",
-			        field: "empty",
-
-			    }]
-			});
+                    title: "活动名称",
+                    field: "actTitle"
+                },{
+                    title: "活动类型",
+                    field: "category",
+                },{
+                    title: "活动状态",
+                    field: "actStatus"
+                },{
+                    title: "活动详情",
+                    formatter: function (value, row, index) {
+                        var operateHtml = '<button id="btn_lookover" onclick="lookover('+row.actId+')" type="button" class="btn btn-default">\n' +
+                                '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>查看\n' +
+                                '</button>';
+                        return operateHtml;
+                    }
+                },{
+                    title: "创建时间",
+                    field: "createTime",
+                    sortable: true
+                },{
+                    title: "更新时间",
+                    field: "updateTime",
+                    sortable: true
+                },{
+                    title: "操作",
+                    field: "actRunStatus",
+                    formatter: function (value, row, index) {
+                        if (value === 0)
+                            return '<button onclick="ban('+row.actId+')" class="btn btn-primary btn-xs">禁止</button>';
+                        return '<button onclick="allow('+row.actId+')" class="btn btn-danger btn-xs">允许</button>';
+                    }
+                }]
+            });
+            $("#setBtn").on("click",function(){
+                var actRunStatus = $("input[name='actRunStatus']:checked").val();
+                var actId = $("#actIdBtn").val();
+                $.ajax({
+                    type: "POST",
+                    url: "/admin/activity/"+actId+"/actRunStatus",
+                    dataType: "json",
+                    data:{actRunStatus:actRunStatus},
+                    success: function(data){
+                        location.reload();
+                    }
+                })
+            });
         });
+
+        function lookover(actId){
+            $.ajax({
+                type: "GET",
+                url: "/admin/activity/"+actId,
+                dataType: "json",
+                success: function(data){
+                    console.log(data);
+                    var act = data.extend.act;
+                    $("#actTitle").val(act.actTitle);
+                    $("#category").val(act.category);
+                    $("#actSignupDeadline").val(act.actSignupDeadline);
+                    $("#actStartTime").val(act.actStartTime);
+                    $("#actStatus").val(act.actStatus);
+                    $("#participantsNumber").val(act.participantsNumber);
+                    $("#actAddress").val(act.actAddress);
+                    $("#actDetailInfo").val(act.actDetailInfo);
+                    $("#actIdBtn").val(act.actId);
+                    if(act.actRunStatus===0)
+                    {
+
+                        $("input[type=radio][name=actRunStatus][value=0]").attr("checked",'checked');
+                    }else{
+                        $("input[type=radio][name=actRunStatus][value=1]").attr("checked",'checked');
+                    }
+
+                    $("#detailModal").modal({backdrop:false});
+                }
+            })
+
+        }
+
+        function ban(actId){
+            $.ajax({
+                type: "GET",
+                url: "/admin/activity/"+actId+"/forbiddance",
+                dataType: "json",
+                success: function(data){
+                    location.reload();
+                }
+            })
+        }
+
+        function allow(actId){
+            $.ajax({
+                type: "GET",
+                url: "/admin/activity/"+actId+"/allowance",
+                dataType: "json",
+                success: function(data){
+                    location.reload();
+                }
+            })
+        }
         
         function edit(id){
         	layer.open({
@@ -165,44 +292,15 @@
        	    	  }
         	    });
         }
-        function add(){
-        	layer.open({
-        	      type: 2,
-        	      title: '资源添加',
-        	      shadeClose: true,
-        	      shade: false,
-        	      area: ['893px', '600px'],
-        	      content: '${ctx!}/admin/activity/add',
-        	      end: function(index){
-        	    	  $('#table_list').bootstrapTable("refresh");
-       	    	  }
-        	    });
-        }
-        function del(id){
-        	layer.confirm('确定删除吗?', {icon: 3, title:'提示'}, function(index){
-        		$.ajax({
-    	    		   type: "POST",
-    	    		   dataType: "json",
-    	    		   url: "${ctx!}/admin/activity/delete/" + id,
-    	    		   success: function(msg){
-	 	   	    			layer.msg(msg.message, {time: 2000},function(){
-	 	   	    				$('#table_list').bootstrapTable("refresh");
-	 	   	    				layer.close(index);
-	 	   					});
-    	    		   }
-    	    	});
-       		});
-        }
-        
+
         function detailFormatter(index, row) {
 	        var html = [];
-	        html.push('<p><b>描述:</b> ' + row.description + '</p>');
+            var content = (row.actRunStatus === 1)?'活动失效':'活动正常状态';
+            html.push('<p><b>描述:</b> ' +  content+ '</p>');
 	        return html.join('');
 	    }
     </script>
 
-    
-    
 
 </body>
 

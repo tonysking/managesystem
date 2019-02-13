@@ -11,4 +11,6 @@ public interface UsersService {
      Page<User> findAllByLike(String searchText, PageRequest pageRequest);
 
      void lockUserById(Integer userId);
+
+     void unLockUserById(Integer userId);
 }
