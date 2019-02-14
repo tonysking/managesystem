@@ -1,0 +1,1 @@
+alter table user_signup_info modify column `user_signup_status` tinyint(3) NOT NULL DEFAULT 0 COMMENT '用户报名状态，0表示正常报名 1表示取消报名';
