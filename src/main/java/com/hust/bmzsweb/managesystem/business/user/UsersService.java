@@ -1,10 +1,13 @@
 package com.hust.bmzsweb.managesystem.business.user;
 
+import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityListModel;
 import com.hust.bmzsweb.managesystem.business.user.entity.User;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+
+import java.util.List;
 
 public interface UsersService {
 
@@ -13,4 +16,10 @@ public interface UsersService {
      void lockUserById(Integer userId);
 
      void unLockUserById(Integer userId);
+
+     //小程序
+     User findUserById(Integer userID);
+     void updateUserInfo(User user);
+     List<QueryActivityListModel> findUserCreateAct(Integer userID);
+     List<QueryActivityListModel> findUserSignupAct(Integer userID);
 }

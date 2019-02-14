@@ -9,4 +9,7 @@ import java.util.List;
 
 public interface ActivityCategoryRepository extends JpaRepository<ActivityCategory,Integer>, JpaSpecificationExecutor<User> {
     List<ActivityCategory> findAllByCategoryNameNotNull();
+
+    //小程序
+    ActivityCategory findActivityCategoryByCategoryType(Integer categoryType);
 }
