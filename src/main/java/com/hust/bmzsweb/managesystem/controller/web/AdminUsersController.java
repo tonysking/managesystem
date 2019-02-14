@@ -55,7 +55,7 @@ public class AdminUsersController extends BaseController {
     }
 
     @ApiOperation(value = "显示用户主页")
-    @GetMapping({"/user/index","/user/"})
+        @GetMapping({"/user/index","/user/"})
     public ModelAndView index() {
         return new ModelAndView("admin/user/index");
     }
