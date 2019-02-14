@@ -20,6 +20,10 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
      @Override
     public ActivityRequiredItemDetail getDetail(Integer userId, Integer actId) {
          ActivitySignup actSignup = activitySignupRepository.findByUserIdAndActIdEquals(userId, actId);
+         if(actSignup==null)
+         {
+             return null;
+         }
          ActivityRequiredItemDetail detail = activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(actSignup.getRequiredItemDetailId());
          return detail;
     }

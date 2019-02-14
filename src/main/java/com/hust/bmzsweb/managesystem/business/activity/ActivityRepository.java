@@ -37,4 +37,6 @@ public interface ActivityRepository extends JpaRepository<ActivityInfo,Integer>,
         ActivityInfo findByActId(Integer actId);
 
         Page<ActivityInfo> findAllByActIdIn(List<Integer>actId,  Pageable pageable);
+
+
 }

@@ -1,39 +1,41 @@
 package com.hust.bmzsweb.managesystem.business.activity.entity;
 
+import io.swagger.models.auth.In;
 import lombok.Data;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 //必填信息
 @Data
-@Entity
+@Entity(name="required_item")
 public class ActivityRequiredItem {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer requiredItemId;
-    private Integer name;
-    private Integer sex;
-    private Integer age;
-    private Integer address;
-    private Integer phone;
-    private Integer wechatNumber;
-    private Integer qqNumber;
-    private Integer email;
-    private Integer school;
-    private Integer grade;
-    private Integer classNumber;
-    private Integer studentId;
-    private Integer workPlace;
-    private Integer department;
-    private Integer position;
-    private Integer jobNumber;
-    private Integer province;
-    private Integer city;
-    private Integer fieldOne;
-    private Integer fieldTwo;
-    private Integer  fieldThree;
+    private Boolean name;
+    private Boolean sex;
+    private Boolean age;
+    private Boolean address;
+    private Boolean phone;
+    private Boolean wechatNumber;
+    private Boolean qqNumber;
+    private Boolean email;
+    private Boolean school;
+    private Boolean grade;
+    private Boolean classNumber;
+    private Boolean studentId;
+    private Boolean workPlace;
+    private Boolean department;
+    private Boolean position;
+    private Boolean jobNumber;
+    private Boolean province;
+    private Boolean city;
+    private Boolean fieldOne;
+    private Boolean fieldTwo;
+    private Boolean  fieldThree;
 
 }

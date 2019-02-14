@@ -2,9 +2,12 @@ package com.hust.bmzsweb.managesystem.business.activity.impl;
 
 import com.hust.bmzsweb.managesystem.business.activity.ActivityCategoryRepository;
 import com.hust.bmzsweb.managesystem.business.activity.ActivityRepository;
+import com.hust.bmzsweb.managesystem.business.activity.ActivityRequiredItemRepository;
 import com.hust.bmzsweb.managesystem.business.activity.ActivityService;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityCategory;
+import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityRequiredItem;
+import com.hust.bmzsweb.managesystem.business.activity.model.ActivityWithRequiredItemModel;
 import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityDetailModel;
 import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityListModel;
 import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityLocationListModel;
@@ -18,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -39,6 +43,9 @@ public class ActivityServiceImpl implements ActivityService {
     
     @Autowired
     ActivitySignupRepository activitySignupRepository;
+
+    @Autowired
+    ActivityRequiredItemRepository activityRequiredItemRepository;
 
     public Page<QueryActivityListModel> findAllActsByUserId(Integer userId, PageRequest pageRequest){
         Page<ActivityInfo> page = activityRepository.findAllByUserId(userId, pageRequest);
@@ -203,5 +210,23 @@ public class ActivityServiceImpl implements ActivityService {
 
         Page<QueryActivityLocationListModel> newPage = new PageImpl<QueryActivityLocationListModel>(activityModels,page.getPageable(),page.getTotalElements());
         return newPage;
+    }
+
+    @Override
+    @Transactional
+    public Integer saveActivityInfo(ActivityWithRequiredItemModel activityInfo) {
+        activityInfo.setCategoryType(1);
+        activityInfo.setParticipantsNumber(1);
+        activityInfo.setUserId(1);
+        activityInfo.setActHeat(0);
+        activityInfo.setActLike(0);
+        activityInfo.setActReminder(false);
+        activityInfo.setActStatus(1);
+        activityInfo.setActRunStatus(0);
+        ActivityRequiredItem req = activityRequiredItemRepository.save(activityInfo.getActivityRequiredItem());
+        activityInfo.setRequiredItemId(req.getRequiredItemId());
+        System.out.println("requiredItemId:"+req.getRequiredItemId());
+        ActivityInfo act = activityRepository.save(activityInfo.createAct());
+        return act.getActId();
     }
 }
