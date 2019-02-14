@@ -43,4 +43,6 @@ public interface ActivityRepository extends JpaRepository<ActivityInfo,Integer>,
         List<ActivityInfo> findAllByUserId(Integer userID);
 
 
+
+
 }

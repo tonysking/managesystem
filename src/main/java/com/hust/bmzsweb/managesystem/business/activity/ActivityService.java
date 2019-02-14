@@ -1,6 +1,7 @@
 package com.hust.bmzsweb.managesystem.business.activity;
 
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
+import com.hust.bmzsweb.managesystem.business.activity.model.ActivityWithRequiredItemModel;
 import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityDetailModel;
 import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityListModel;
 import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityLocationListModel;
@@ -26,4 +27,6 @@ public interface ActivityService {
      Page<QueryActivityListModel> findUserSignupAct(Integer userId, PageRequest pageRequest);
 
      Page<QueryActivityLocationListModel> queryLocation(Integer type,String searchText,PageRequest pageRequest);
+
+     Integer saveActivityInfo(ActivityWithRequiredItemModel activityInfo);
 }
