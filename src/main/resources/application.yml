@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/bmzs?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3307/bmzs?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
     username: root
-    password: kuangnan1996
+    password: Cg666666
 
   jpa:
     database: mysql
@@ -42,3 +42,22 @@ spring:
       date_format: yyyy-MM-dd
       time_format: HH:mm:ss
       datetime_format: yyyy-MM-dd HH:mm:ss
+
+#   redis
+  redis:
+    database: 1
+    host: 192.168.186.128
+    port: 6379
+    password: 6666
+    jedis:
+      pool:
+        # 最大连接数
+        max-active: 8
+        # 连接池最大阻塞等待时间
+        max-wait: -1ms
+        # 连接池中的最大空闲连接
+        max-idle: 8
+        # 连接池中的最小空闲连接
+        min-idle: 0
+    # 连接超时时间
+    timeout: 2000ms

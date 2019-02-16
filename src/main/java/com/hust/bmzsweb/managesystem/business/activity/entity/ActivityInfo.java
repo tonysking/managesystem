@@ -38,6 +38,11 @@ public class ActivityInfo {
     private Date createTime;
     private Date updateTime;
 
+    private Boolean isLimitnum;
+    private Integer maxNum;
+    private Boolean isPrivate;
+    private String actPassword;
+
     public ActivityInfo() {
     }
 

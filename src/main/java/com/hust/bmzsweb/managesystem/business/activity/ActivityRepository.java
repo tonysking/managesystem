@@ -1,5 +1,6 @@
 package com.hust.bmzsweb.managesystem.business.activity;
 
+import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityCategory;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 import com.hust.bmzsweb.managesystem.business.user.entity.User;
 import org.springframework.data.domain.Page;
@@ -37,6 +38,11 @@ public interface ActivityRepository extends JpaRepository<ActivityInfo,Integer>,
         ActivityInfo findByActId(Integer actId);
 
         Page<ActivityInfo> findAllByActIdIn(List<Integer>actId,  Pageable pageable);
+
+        //小程序
+        List<ActivityInfo> findAllByUserId(Integer userID);
+
+
 
 
 }
