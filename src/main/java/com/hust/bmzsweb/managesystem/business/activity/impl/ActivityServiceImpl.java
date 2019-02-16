@@ -49,6 +49,7 @@ public class ActivityServiceImpl implements ActivityService {
     @Autowired
     ActivityBrowserHistoryRepository activityBrowserHistoryRepository;
 
+    //查询用户创建的所有活动 分页结果
     public Page<QueryActivityListModel> findAllActsByUserId(Integer userId, PageRequest pageRequest){
         Page<ActivityInfo> page = activityRepository.findAllByUserId(userId, pageRequest);
         List<ActivityInfo> content = page.getContent();
@@ -71,6 +72,7 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
 
+    //模糊查询活动通过活动标题 分页结果
     @Override
     public Page<QueryActivityListModel> findAllActsByActTitleContaining(String searchText, PageRequest pageRequest) {
         if(StringUtils.isBlank(searchText)){
@@ -95,21 +97,25 @@ public class ActivityServiceImpl implements ActivityService {
         return newPage;
     }
 
+    //禁止活动
     @Override
     public void banActivity(Integer actId) {
         activityRepository.banAcitivity(actId);
     }
 
+    //允许活动
     @Override
     public void allowActivity(Integer actId) {
         activityRepository.allowAcitivity(actId);
     }
 
+    //更改活动运行状态
     @Override
     public void updateActRunstatus(Integer actId, Integer actRunStatus) {
         activityRepository.updateActRunStatus(actId,actRunStatus );
     }
 
+    //通过id查询活动信息
     @Override
     public QueryActivityDetailModel queryAct(Integer actId) {
 
@@ -124,6 +130,7 @@ public class ActivityServiceImpl implements ActivityService {
         return act;
     }
 
+    //查询用户报名的所有活动
     @Override
     public Page<QueryActivityListModel> findUserSignupAct(Integer userId, PageRequest pageRequest) {
         System.out.println("userId:"+userId);
@@ -154,6 +161,7 @@ public class ActivityServiceImpl implements ActivityService {
         return newPage;
     }
 
+    //通过城市或者名称 模糊查询活动位置信息
     @Override
     public Page<QueryActivityLocationListModel> queryLocation(Integer type,String searchText, PageRequest pageRequest) {
 
@@ -214,6 +222,8 @@ public class ActivityServiceImpl implements ActivityService {
         return newPage;
     }
 
+
+    //小程序 发起活动
     @Override
     @Transactional
     public Integer saveActivityInfo(ActivityWithRequiredItemModel activityInfo) {
@@ -232,6 +242,7 @@ public class ActivityServiceImpl implements ActivityService {
         return act.getActId();
     }
 
+    //小程序 通过活动标题搜索活动
     @Override
     public List<QueryActivityDetailModel> queryActivityByTitleorderByHeat(String searchText) {
         if(StringUtils.isBlank(searchText)){
@@ -257,6 +268,7 @@ public class ActivityServiceImpl implements ActivityService {
         for (int i = 0; i < categories.size(); i++) {
             categoryMap.put(categories.get(i).getCategoryType(), categories.get(i).getCategoryName());
         }
+
         for (int i = 0; i < activities.size(); i++) {
             ActivityInfo actInfo = activities.get(i);
             String actStatus = actInfo.getActStatus()==0?"审核中":(actInfo.getActStatus()==1?"审核通过":"审核未通过");
@@ -266,6 +278,7 @@ public class ActivityServiceImpl implements ActivityService {
          return activityModels;
     }
 
+    //小程序 更改活动状态
     @Override
     public Integer updateActivityInfo(ActivityWithRequiredItemModel activityInfo) {
         ActivityInfo act = activityInfo.createAct();
@@ -274,6 +287,7 @@ public class ActivityServiceImpl implements ActivityService {
         return act.getActId();
     }
 
+    //小程序 保存活动浏览历史
     @Override
     public void saveBrowserHistory(Integer userId, Integer actId) {
         activityBrowserHistoryRepository.save(new UserBrowserHistoryEntity( actId,userId ));

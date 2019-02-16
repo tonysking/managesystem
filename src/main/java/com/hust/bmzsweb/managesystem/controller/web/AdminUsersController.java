@@ -112,6 +112,4 @@ public class AdminUsersController extends BaseController {
         return JSONResult.success().add("page", page);
     }
 
-
-
 }
