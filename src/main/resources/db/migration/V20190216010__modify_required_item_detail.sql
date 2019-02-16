@@ -1,0 +1,1 @@
+alter table required_item_detail change `studentId` `student_id` varchar(16) NULL DEFAULT NULL COMMENT '用户学号';

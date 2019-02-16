@@ -4,21 +4,20 @@ import com.hust.bmzsweb.managesystem.business.activity.ActivityCategoryRepositor
 import com.hust.bmzsweb.managesystem.business.activity.ActivityRepository;
 import com.hust.bmzsweb.managesystem.business.activity.ActivityRequiredItemRepository;
 import com.hust.bmzsweb.managesystem.business.activity.ActivityService;
-import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityCategory;
+import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityRequiredItem;
 import com.hust.bmzsweb.managesystem.business.activity.model.ActivityWithRequiredItemModel;
 import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityDetailModel;
 import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityListModel;
 import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityLocationListModel;
+import com.hust.bmzsweb.managesystem.business.activitySignup.ActivityBrowserHistoryRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivitySignup;
+import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowserHistoryEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +45,9 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Autowired
     ActivityRequiredItemRepository activityRequiredItemRepository;
+
+    @Autowired
+    ActivityBrowserHistoryRepository activityBrowserHistoryRepository;
 
     public Page<QueryActivityListModel> findAllActsByUserId(Integer userId, PageRequest pageRequest){
         Page<ActivityInfo> page = activityRepository.findAllByUserId(userId, pageRequest);
@@ -228,5 +230,52 @@ public class ActivityServiceImpl implements ActivityService {
         System.out.println("requiredItemId:"+req.getRequiredItemId());
         ActivityInfo act = activityRepository.save(activityInfo.createAct());
         return act.getActId();
+    }
+
+    @Override
+    public List<QueryActivityDetailModel> queryActivityByTitleorderByHeat(String searchText) {
+        if(StringUtils.isBlank(searchText)){
+            searchText = "";
+        }
+        Sort sort = new Sort(Sort.Direction.DESC,"actHeat");
+        Specification<ActivityInfo> specification;
+        final String  text = searchText;
+        specification = new Specification<ActivityInfo>() {
+            @Override
+            public Predicate toPredicate(Root<ActivityInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
+
+                List<Predicate> predicates = new ArrayList<Predicate>();
+                // root(employee(age))
+                Predicate predicate1 =  cb.like(root.get("actTitle"), "%"+text+"%");
+                return cb.and(predicate1);
+            }
+        };
+        List<ActivityInfo> activities = activityRepository.findAll(specification, sort);
+        List<QueryActivityDetailModel> activityModels = new ArrayList<>();
+        List<ActivityCategory> categories = activityCategoryRepository.findAllByCategoryNameNotNull();
+        Map<Integer,String> categoryMap = new HashMap<>();
+        for (int i = 0; i < categories.size(); i++) {
+            categoryMap.put(categories.get(i).getCategoryType(), categories.get(i).getCategoryName());
+        }
+        for (int i = 0; i < activities.size(); i++) {
+            ActivityInfo actInfo = activities.get(i);
+            String actStatus = actInfo.getActStatus()==0?"审核中":(actInfo.getActStatus()==1?"审核通过":"审核未通过");
+            QueryActivityDetailModel act = new QueryActivityDetailModel(actInfo.getActId(), actInfo.getActTitle(), categoryMap.get(actInfo.getCategoryType()), actStatus,actInfo.getActDetailInfo(), actInfo.getActAddress(),actInfo.getActSignupDeadline(),actInfo.getActStartTime(), actInfo.getParticipantsNumber(), actInfo.getActRunStatus());
+            activityModels.add(act);
+        }
+         return activityModels;
+    }
+
+    @Override
+    public Integer updateActivityInfo(ActivityWithRequiredItemModel activityInfo) {
+        ActivityInfo act = activityInfo.createAct();
+        activityRequiredItemRepository.save(activityInfo.getActivityRequiredItem());
+        activityRepository.save(act);
+        return act.getActId();
+    }
+
+    @Override
+    public void saveBrowserHistory(Integer userId, Integer actId) {
+        activityBrowserHistoryRepository.save(new UserBrowserHistoryEntity( actId,userId ));
     }
 }

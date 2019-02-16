@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface ActivityService {
 
      Page<QueryActivityListModel> findAllActsByUserId(Integer userId, PageRequest pageRequest);
@@ -29,4 +31,12 @@ public interface ActivityService {
      Page<QueryActivityLocationListModel> queryLocation(Integer type,String searchText,PageRequest pageRequest);
 
      Integer saveActivityInfo(ActivityWithRequiredItemModel activityInfo);
+
+     List<QueryActivityDetailModel> queryActivityByTitleorderByHeat(String searchText);
+
+     Integer updateActivityInfo(ActivityWithRequiredItemModel activityInfo);
+
+     void saveBrowserHistory(Integer userId,Integer actId);
+
+
 }

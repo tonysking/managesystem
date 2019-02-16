@@ -8,9 +8,12 @@ import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityDetail
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupService;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivityRequiredItemDetail;
 import com.hust.bmzsweb.managesystem.common.JSONResult;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  *  查看活动详情（加入浏览历史）
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
  *  删除活动
  *  收藏活动
  */
+@Api(value = "小程序活动接口",tags = "小程序活动接口")
 @RestController
 public class ActivityController {
 
@@ -42,6 +46,7 @@ public class ActivityController {
     public JSONResult getActDetailAndSignUpInfo(@PathVariable("actId")Integer actId, @PathVariable("userId")Integer userId){
         System.out.println("requset actId:"+actId);
         QueryActivityDetailModel act = activityService.queryAct(actId);
+        activityService.saveBrowserHistory(userId,actId );
         ActivityRequiredItemDetail detail = activitySignupService.getDetail(userId, actId);
         if(detail!=null)
         {
@@ -49,10 +54,32 @@ public class ActivityController {
         }else{
             return JSONResult.success().add("act",act).add("detail","0" );
         }
-
     }
 
 
+    @ApiOperation(value = "搜索活动按热度排行")
+    @GetMapping("/activity/search")
+    public JSONResult searchActivity(@RequestParam(value="searchText",required=false) String searchText){
+
+        List<QueryActivityDetailModel> act = activityService.queryActivityByTitleorderByHeat(searchText);
+        return JSONResult.success().add("act",act);
+    }
+
+    @ApiOperation(value = "查询发起者要修改活动信息")
+    @GetMapping("/activity/edit/{actId}")
+    public JSONResult editInfo(@PathVariable("actId")Integer actId){
+        QueryActivityDetailModel act = activityService.queryAct(actId);
+        return JSONResult.success().add("act",act);
+    }
+
+
+
+    @ApiOperation(value = "发起者修改活动信息")
+    @PutMapping("/activity/edit/{actId}")
+    public JSONResult editInfo( @RequestBody ActivityWithRequiredItemModel activityInfo){
+        Integer actId = activityService.updateActivityInfo(activityInfo);
+        return JSONResult.success().add("actId",actId);
+    }
 
 
 }
