@@ -47,7 +47,9 @@ public class ActivityController {
     public JSONResult getActDetailAndSignUpInfo(@PathVariable("actId")Integer actId, @PathVariable("userId")Integer userId){
         System.out.println("requset actId:"+actId);
         QueryActivityWithRequiredItemIdDetailModel act = activityService.queryActWithRequiredItemId(actId);
+        System.out.println("act.getRequiredItemId():"+act.getRequiredItemId());
         ActivityRequiredItem requiredItem = activityService.findRequiredItem(act.getRequiredItemId());
+        System.out.println("requiredItem:"+requiredItem);
         activityService.saveBrowserHistory(userId,actId );
         boolean isIniator = activityService.isIniator(actId, userId);
         Integer init = isIniator==true?1:0;

@@ -26,6 +26,7 @@ public class QueryActivityWithRequiredItemIdDetailModel {
 
     public QueryActivityWithRequiredItemIdDetailModel(Integer actId, Integer requiredItemId,String actTitle, String category, String actStatus, String actDetailInfo, String actAddress, Date actSignupDeadline, Date actStartTime, Integer participantsNumber, Integer actRunStatus) {
         this.actId = actId;
+        this.requiredItemId =requiredItemId;
         this.actTitle = actTitle;
         this.category = category;
         this.actStatus = actStatus;
