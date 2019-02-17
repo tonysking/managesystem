@@ -5,6 +5,7 @@ import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityRequiredItem;
 import com.hust.bmzsweb.managesystem.business.activity.model.ActivityWithRequiredItemModel;
 import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityDetailModel;
+import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityWithRequiredItemIdDetailModel;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupService;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivityRequiredItemDetail;
 import com.hust.bmzsweb.managesystem.common.JSONResult;
@@ -24,7 +25,7 @@ import java.util.List;
  *  收藏活动
  */
 @Api(value = "小程序活动接口",tags = "小程序活动接口")
-@RestController
+@RestController("/applet/activity")
 public class ActivityController {
 
     @Autowired
@@ -45,14 +46,23 @@ public class ActivityController {
     @GetMapping("/activity/{actId}/usersignup/{userId}")
     public JSONResult getActDetailAndSignUpInfo(@PathVariable("actId")Integer actId, @PathVariable("userId")Integer userId){
         System.out.println("requset actId:"+actId);
-        QueryActivityDetailModel act = activityService.queryAct(actId);
+        QueryActivityWithRequiredItemIdDetailModel act = activityService.queryActWithRequiredItemId(actId);
+        ActivityRequiredItem requiredItem = activityService.findRequiredItem(act.getRequiredItemId());
         activityService.saveBrowserHistory(userId,actId );
-        ActivityRequiredItemDetail detail = activitySignupService.getDetail(userId, actId);
+        boolean isIniator = activityService.isIniator(actId, userId);
+        Integer init = isIniator==true?1:0;
+        ActivityRequiredItemDetail detail = null;
+        //参与者查看自己填写的详情
+         if(init==0)
+         {
+             detail  = activitySignupService.getDetail(userId, actId);
+         }
+
         if(detail!=null)
         {
-            return JSONResult.success().add("act",act).add("detail",detail );
+            return JSONResult.success().add("act",act).add("detail",detail ).add("init",init).add("requiredItem",requiredItem);
         }else{
-            return JSONResult.success().add("act",act).add("detail","0" );
+            return JSONResult.success().add("act",act).add("detail","0" ).add("init",init).add("requiredItem",requiredItem);
         }
     }
 

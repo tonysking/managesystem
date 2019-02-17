@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3307/bmzs?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/bmzs?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
     username: root
-    password: Cg666666
+    password: kuangnan1996
 
   jpa:
     database: mysql
@@ -46,9 +46,8 @@ spring:
 #   redis
   redis:
     database: 1
-    host: 192.168.186.128
+    host: 127.0.0.1
     port: 6379
-    password: 6666
     jedis:
       pool:
         # 最大连接数

@@ -42,6 +42,8 @@ public interface ActivityRepository extends JpaRepository<ActivityInfo,Integer>,
         //小程序
         List<ActivityInfo> findAllByUserId(Integer userID);
 
+        ActivityInfo findByActIdAndUserIdEquals(Integer actId,Integer userId);
+
 
 
 

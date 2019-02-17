@@ -9,7 +9,10 @@ import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupRepos
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivitySignup;
 import com.hust.bmzsweb.managesystem.business.user.UsersRepository;
 import com.hust.bmzsweb.managesystem.business.user.UsersService;
+import com.hust.bmzsweb.managesystem.business.user.WXUserRepository;
 import com.hust.bmzsweb.managesystem.business.user.entity.User;
+import com.hust.bmzsweb.managesystem.business.user.entity.WXUser;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +35,8 @@ public class UsersServiceImpl implements UsersService {
     ActivitySignupRepository activitySignupRepository;
     @Autowired
     ActivityRepository activityRepository;
+
+
 
 
 
@@ -136,5 +141,23 @@ public class UsersServiceImpl implements UsersService {
         return activityListModels;
     }
 
+    //如果nickName不存在就存入user表
+    @Override
+    public Integer saveUser(String nickName,String openId) {
+
+        User user = usersRepository.findByUserNickNameEquals(nickName);
+        if(user!=null)
+        {
+            return user.getUserId();
+        }
+        User newUser = new User(nickName,openId);
+        User save = usersRepository.save(newUser);
+        return  save.getUserId();
+    }
+
+    @Override
+    public User findUserByOpenId(Integer openId) {
+        return usersRepository.findByUserOpenidEquals(openId);
+    }
 
 }

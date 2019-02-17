@@ -7,10 +7,7 @@ import com.hust.bmzsweb.managesystem.business.activity.ActivityService;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityCategory;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityRequiredItem;
-import com.hust.bmzsweb.managesystem.business.activity.model.ActivityWithRequiredItemModel;
-import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityDetailModel;
-import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityListModel;
-import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityLocationListModel;
+import com.hust.bmzsweb.managesystem.business.activity.model.*;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivityBrowserHistoryRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivitySignup;
@@ -291,5 +288,34 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public void saveBrowserHistory(Integer userId, Integer actId) {
         activityBrowserHistoryRepository.save(new UserBrowserHistoryEntity( actId,userId ));
+    }
+
+    @Override
+    public boolean isIniator(Integer actId, Integer userId) {
+        ActivityInfo result = activityRepository.findByActIdAndUserIdEquals(actId, userId);
+        if(result!=null)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    //通过id查询活动信息 带有reuquiredItemId
+    @Override
+    public QueryActivityWithRequiredItemIdDetailModel queryActWithRequiredItemId(Integer actId) {
+        ActivityInfo actInfo = activityRepository.findByActId(actId);
+        List<ActivityCategory> categories = activityCategoryRepository.findAllByCategoryNameNotNull();
+        Map<Integer,String> categoryMap = new HashMap<>();
+        for (int i = 0; i < categories.size(); i++) {
+            categoryMap.put(categories.get(i).getCategoryType(), categories.get(i).getCategoryName());
+        }
+        String actStatus = actInfo.getActStatus()==0?"审核中":(actInfo.getActStatus()==1?"审核通过":"审核未通过");
+        QueryActivityWithRequiredItemIdDetailModel act = new QueryActivityWithRequiredItemIdDetailModel(actInfo.getActId(), actInfo.getRequiredItemId(),actInfo.getActTitle(), categoryMap.get(actInfo.getCategoryType()), actStatus,actInfo.getActDetailInfo(), actInfo.getActAddress(),actInfo.getActSignupDeadline(),actInfo.getActStartTime(), actInfo.getParticipantsNumber(), actInfo.getActRunStatus());
+        return act;
+    }
+
+    @Override
+    public ActivityRequiredItem findRequiredItem(Integer requiredItemId) {
+        return activityRequiredItemRepository.findByRequiredItemIdEquals(requiredItemId);
     }
 }

@@ -1,10 +1,7 @@
 package com.hust.bmzsweb.managesystem.business.user.entity;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 //用户
 @Entity
@@ -12,18 +9,18 @@ import javax.persistence.Id;
 public class User {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
 
-    private Integer userOpenid;
+    private String userOpenid;
 
-    @Column(length = 64)
+
     private String userNickName;
 
-    @Column(length = 64)
+
     private String userPhone;
 
-    @Column(length = 64)
+
     private String userAddress;
 
     @Column(nullable = false)
@@ -35,6 +32,11 @@ public class User {
 
     public User(){
 
+    }
+
+    public User(String userOpenid, String userNickName) {
+        this.userOpenid = userOpenid;
+        this.userNickName = userNickName;
     }
 
     public User(String userNickName)

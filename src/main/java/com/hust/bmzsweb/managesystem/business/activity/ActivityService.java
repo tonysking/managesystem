@@ -1,10 +1,8 @@
 package com.hust.bmzsweb.managesystem.business.activity;
 
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
-import com.hust.bmzsweb.managesystem.business.activity.model.ActivityWithRequiredItemModel;
-import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityDetailModel;
-import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityListModel;
-import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityLocationListModel;
+import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityRequiredItem;
+import com.hust.bmzsweb.managesystem.business.activity.model.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +35,12 @@ public interface ActivityService {
      Integer updateActivityInfo(ActivityWithRequiredItemModel activityInfo);
 
      void saveBrowserHistory(Integer userId,Integer actId);
+
+     boolean isIniator(Integer actId,Integer userId);
+
+     QueryActivityWithRequiredItemIdDetailModel queryActWithRequiredItemId(Integer actId);
+
+     ActivityRequiredItem findRequiredItem(Integer actRequiredItemId);
 
 
 }
