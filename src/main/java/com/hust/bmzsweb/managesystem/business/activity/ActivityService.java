@@ -38,7 +38,7 @@ public interface ActivityService {
 
      boolean isIniator(Integer actId,Integer userId);
 
-     QueryActivityWithRequiredItemIdDetailModel queryActWithRequiredItemId(Integer actId);
+     QueryActivityDetailModel queryActWithRequiredItemId(Integer actId);
 
      ActivityRequiredItem findRequiredItem(Integer actRequiredItemId);
 

@@ -269,7 +269,7 @@ public class ActivityServiceImpl implements ActivityService {
         for (int i = 0; i < activities.size(); i++) {
             ActivityInfo actInfo = activities.get(i);
             String actStatus = actInfo.getActStatus()==0?"审核中":(actInfo.getActStatus()==1?"审核通过":"审核未通过");
-            QueryActivityDetailModel act = new QueryActivityDetailModel(actInfo.getActId(), actInfo.getActTitle(), categoryMap.get(actInfo.getCategoryType()), actStatus,actInfo.getActDetailInfo(), actInfo.getActAddress(),actInfo.getActSignupDeadline(),actInfo.getActStartTime(), actInfo.getParticipantsNumber(), actInfo.getActRunStatus());
+            QueryActivityDetailModel act = new QueryActivityDetailModel(actInfo.getActId(),actInfo.getRequiredItemId(), actInfo.getActTitle(), categoryMap.get(actInfo.getCategoryType()), actStatus,actInfo.getActDetailInfo(), actInfo.getActAddress(),actInfo.getActSignupDeadline(),actInfo.getActStartTime(),actInfo.getActHeat(), actInfo.getParticipantsNumber(), actInfo.getActRunStatus());
             activityModels.add(act);
         }
          return activityModels;
@@ -290,6 +290,7 @@ public class ActivityServiceImpl implements ActivityService {
         activityBrowserHistoryRepository.save(new UserBrowserHistoryEntity( actId,userId ));
     }
 
+    //小程序 判断是否是发起者
     @Override
     public boolean isIniator(Integer actId, Integer userId) {
         ActivityInfo result = activityRepository.findByActIdAndUserIdEquals(actId, userId);
@@ -302,7 +303,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     //通过id查询活动信息 带有reuquiredItemId
     @Override
-    public QueryActivityWithRequiredItemIdDetailModel queryActWithRequiredItemId(Integer actId) {
+    public QueryActivityDetailModel queryActWithRequiredItemId(Integer actId) {
         ActivityInfo actInfo = activityRepository.findByActId(actId);
         List<ActivityCategory> categories = activityCategoryRepository.findAllByCategoryNameNotNull();
         Map<Integer,String> categoryMap = new HashMap<>();
@@ -310,7 +311,7 @@ public class ActivityServiceImpl implements ActivityService {
             categoryMap.put(categories.get(i).getCategoryType(), categories.get(i).getCategoryName());
         }
         String actStatus = actInfo.getActStatus()==0?"审核中":(actInfo.getActStatus()==1?"审核通过":"审核未通过");
-        QueryActivityWithRequiredItemIdDetailModel act = new QueryActivityWithRequiredItemIdDetailModel(actInfo.getActId(), actInfo.getRequiredItemId(),actInfo.getActTitle(), categoryMap.get(actInfo.getCategoryType()), actStatus,actInfo.getActDetailInfo(), actInfo.getActAddress(),actInfo.getActSignupDeadline(),actInfo.getActStartTime(), actInfo.getParticipantsNumber(), actInfo.getActRunStatus());
+        QueryActivityDetailModel act = new QueryActivityDetailModel(actInfo.getActId(), actInfo.getRequiredItemId(),actInfo.getActTitle(), categoryMap.get(actInfo.getCategoryType()), actStatus,actInfo.getActDetailInfo(), actInfo.getActAddress(),actInfo.getActSignupDeadline(),actInfo.getActStartTime(), actInfo.getParticipantsNumber(), actInfo.getActRunStatus());
         return act;
     }
 
