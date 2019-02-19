@@ -5,11 +5,14 @@ import com.hust.bmzsweb.managesystem.business.user.UsersRepository;
 import com.hust.bmzsweb.managesystem.business.user.UsersService;
 import com.hust.bmzsweb.managesystem.business.user.entity.User;
 import com.hust.bmzsweb.managesystem.business.user.model.UserInfoModel;
+import com.hust.bmzsweb.managesystem.business.user.entity.WXUser;
 import com.hust.bmzsweb.managesystem.business.user.model.WXSessionModel;
 import com.hust.bmzsweb.managesystem.common.JSONResult;
 import com.hust.bmzsweb.managesystem.common.utils.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.Data;
+import org.bouncycastle.jce.provider.symmetric.AES;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,12 +43,13 @@ public class UserController {
     //用户微信授权登录
     @ApiOperation(value = "用户微信授权登录")
     @PostMapping("/wxLogin")
-    public JSONResult wxLogin(String code) {System.out.println("wxLogin-code: "+code);
+    public JSONResult wxLogin(String code) {
+        System.out.println("wxLogin-code: "+code);
 
         String url = "https://api.weixin.qq.com/sns/jscode2session";
         Map<String,String> param = new HashMap<>();
-        param.put("appid","wx68a522d3964051da");
-        param.put("secret","fd964f98cc605ad910b800cf828390fc");
+        param.put("appid","wxc6467a1616a9bf95");
+        param.put("secret","c2c3b087848e9c806bc72e8564ae08af");
         param.put("js_code",code);
         param.put("grant_type","authorization_code");
         //获取{"session_key":"","openid":""}
@@ -113,6 +117,17 @@ public class UserController {
         return JSONResult.success().add("dec_userInfo",userInfoModel).add("userId",userByNickName.getUserId());
 
     }
+
+
+    @ApiOperation("添加一个用户到数据库")
+    @PostMapping("/add")
+    public JSONResult addUser(String nickName,String openId){
+        System.out.println(nickName);
+        System.out.println(openId);
+        Integer userId = usersService.saveUser(nickName,openId);
+        return JSONResult.success().add("userId",userId);
+    }
+
 
     //查看个人信息
     @ApiOperation(value = "查看个人信息")

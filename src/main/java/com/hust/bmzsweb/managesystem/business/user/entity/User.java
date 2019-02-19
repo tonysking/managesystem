@@ -14,13 +14,13 @@ public class User {
 
     private String userOpenid;
 
-    @Column(length = 64)
+
     private String userNickName;
 
-    @Column(length = 64)
+
     private String userPhone;
 
-    @Column(length = 64)
+
     private String userAddress;
 
     @Column(nullable = false)
@@ -32,6 +32,11 @@ public class User {
 
     public User(){
 
+    }
+
+    public User(String userOpenid, String userNickName) {
+        this.userOpenid = userOpenid;
+        this.userNickName = userNickName;
     }
 
     public User(String userNickName)

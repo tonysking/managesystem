@@ -3,6 +3,7 @@ package com.hust.bmzsweb.managesystem.business.user;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivitySignup;
 import com.hust.bmzsweb.managesystem.business.user.entity.User;
+import com.hust.bmzsweb.managesystem.business.user.entity.WXUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +35,8 @@ public interface UsersRepository extends JpaRepository<User,Integer>, JpaSpecifi
 
 
 
+    User findByUserOpenidEquals(Integer openId);
 
+    User findByUserNickNameEquals(String nickName);
 
 }

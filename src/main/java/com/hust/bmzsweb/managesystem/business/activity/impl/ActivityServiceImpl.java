@@ -4,21 +4,22 @@ import com.hust.bmzsweb.managesystem.business.activity.ActivityCategoryRepositor
 import com.hust.bmzsweb.managesystem.business.activity.ActivityRepository;
 import com.hust.bmzsweb.managesystem.business.activity.ActivityRequiredItemRepository;
 import com.hust.bmzsweb.managesystem.business.activity.ActivityService;
-import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityCategory;
+import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityRequiredItem;
-import com.hust.bmzsweb.managesystem.business.activity.model.ActivityWithRequiredItemModel;
-import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityDetailModel;
-import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityListModel;
-import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityLocationListModel;
+import com.hust.bmzsweb.managesystem.business.activity.model.*;
+import com.hust.bmzsweb.managesystem.business.activitySignup.ActivityBrowserHistoryRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivitySignup;
+import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowsingHistoryEntity;
+//import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowserHistoryRepository;
+import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionEntity;
+import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionRepository;
+import com.hust.bmzsweb.managesystem.common.exception.Response;
+import com.hust.bmzsweb.managesystem.common.JSONResult;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +48,16 @@ public class ActivityServiceImpl implements ActivityService {
     @Autowired
     ActivityRequiredItemRepository activityRequiredItemRepository;
 
+    @Autowired
+    ActivityBrowserHistoryRepository activityBrowserHistoryRepository;
+
+//    @Autowired
+//    UserBrowserHistoryRepository userBrowserHistoryRepository;
+
+    @Autowired
+    UserCollectionRepository userCollectionRepository;
+
+    //查询用户创建的所有活动 分页结果
     public Page<QueryActivityListModel> findAllActsByUserId(Integer userId, PageRequest pageRequest){
         Page<ActivityInfo> page = activityRepository.findAllByUserId(userId, pageRequest);
         List<ActivityInfo> content = page.getContent();
@@ -69,6 +80,7 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
 
+    //模糊查询活动通过活动标题 分页结果
     @Override
     public Page<QueryActivityListModel> findAllActsByActTitleContaining(String searchText, PageRequest pageRequest) {
         if(StringUtils.isBlank(searchText)){
@@ -93,21 +105,39 @@ public class ActivityServiceImpl implements ActivityService {
         return newPage;
     }
 
+    //禁止活动
     @Override
     public void banActivity(Integer actId) {
         activityRepository.banAcitivity(actId);
     }
 
+    //允许活动
     @Override
     public void allowActivity(Integer actId) {
         activityRepository.allowAcitivity(actId);
     }
 
+    //更改活动运行状态
     @Override
     public void updateActRunstatus(Integer actId, Integer actRunStatus) {
         activityRepository.updateActRunStatus(actId,actRunStatus );
     }
 
+    //删除对应ID的活动
+    @Transactional
+    @Override
+    public void deleteAct(Integer actId){
+        try{
+            userCollectionRepository.deleteUserCollectionEntitiesByActId(actId);
+            activityBrowserHistoryRepository.deleteUserBrowsingHistoryEntityByActId(actId);
+            activitySignupRepository.deleteActivitySignupsByActId(actId);
+            activityRepository.deleteById(actId);}
+        catch(Exception e){
+            System.out.println("testEx, catch exception");
+        }
+    }
+
+    //通过id查询活动信息
     @Override
     public QueryActivityDetailModel queryAct(Integer actId) {
 
@@ -122,6 +152,7 @@ public class ActivityServiceImpl implements ActivityService {
         return act;
     }
 
+    //查询用户报名的所有活动
     @Override
     public Page<QueryActivityListModel> findUserSignupAct(Integer userId, PageRequest pageRequest) {
         System.out.println("userId:"+userId);
@@ -152,6 +183,7 @@ public class ActivityServiceImpl implements ActivityService {
         return newPage;
     }
 
+    //通过城市或者名称 模糊查询活动位置信息
     @Override
     public Page<QueryActivityLocationListModel> queryLocation(Integer type,String searchText, PageRequest pageRequest) {
 
@@ -212,6 +244,8 @@ public class ActivityServiceImpl implements ActivityService {
         return newPage;
     }
 
+
+    //小程序 发起活动
     @Override
     @Transactional
     public Integer saveActivityInfo(ActivityWithRequiredItemModel activityInfo) {
@@ -228,5 +262,86 @@ public class ActivityServiceImpl implements ActivityService {
         System.out.println("requiredItemId:"+req.getRequiredItemId());
         ActivityInfo act = activityRepository.save(activityInfo.createAct());
         return act.getActId();
+    }
+
+    //小程序 通过活动标题搜索活动
+    @Override
+    public List<QueryActivityDetailModel> queryActivityByTitleorderByHeat(String searchText) {
+        if(StringUtils.isBlank(searchText)){
+            searchText = "";
+        }
+        Sort sort = new Sort(Sort.Direction.DESC,"actHeat");
+        Specification<ActivityInfo> specification;
+        final String  text = searchText;
+        specification = new Specification<ActivityInfo>() {
+            @Override
+            public Predicate toPredicate(Root<ActivityInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
+
+                List<Predicate> predicates = new ArrayList<Predicate>();
+                // root(employee(age))
+                Predicate predicate1 =  cb.like(root.get("actTitle"), "%"+text+"%");
+                return cb.and(predicate1);
+            }
+        };
+        List<ActivityInfo> activities = activityRepository.findAll(specification, sort);
+        List<QueryActivityDetailModel> activityModels = new ArrayList<>();
+        List<ActivityCategory> categories = activityCategoryRepository.findAllByCategoryNameNotNull();
+        Map<Integer,String> categoryMap = new HashMap<>();
+        for (int i = 0; i < categories.size(); i++) {
+            categoryMap.put(categories.get(i).getCategoryType(), categories.get(i).getCategoryName());
+        }
+
+        for (int i = 0; i < activities.size(); i++) {
+            ActivityInfo actInfo = activities.get(i);
+            String actStatus = actInfo.getActStatus()==0?"审核中":(actInfo.getActStatus()==1?"审核通过":"审核未通过");
+            QueryActivityDetailModel act = new QueryActivityDetailModel(actInfo.getActId(),actInfo.getRequiredItemId(), actInfo.getActTitle(), categoryMap.get(actInfo.getCategoryType()), actStatus,actInfo.getActDetailInfo(), actInfo.getActAddress(),actInfo.getActSignupDeadline(),actInfo.getActStartTime(),actInfo.getActHeat(), actInfo.getParticipantsNumber(), actInfo.getActRunStatus());
+            activityModels.add(act);
+        }
+         return activityModels;
+    }
+
+    //小程序 更改活动状态
+    @Override
+    public Integer updateActivityInfo(ActivityWithRequiredItemModel activityInfo) {
+        ActivityInfo act = activityInfo.createAct();
+        activityRequiredItemRepository.save(activityInfo.getActivityRequiredItem());
+        activityRepository.save(act);
+        return act.getActId();
+    }
+
+    //小程序 保存活动浏览历史
+    @Override
+    public void saveBrowserHistory(Integer userId, Integer actId) {
+        activityBrowserHistoryRepository.save(new UserBrowsingHistoryEntity( actId,userId ));
+    }
+
+    //小程序 判断是否是发起者
+    @Override
+    public boolean isIniator(Integer actId, Integer userId) {
+        ActivityInfo result = activityRepository.findByActIdAndUserIdEquals(actId, userId);
+        if(result!=null)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    //通过id查询活动信息 带有reuquiredItemId
+    @Override
+    public QueryActivityDetailModel queryActWithRequiredItemId(Integer actId) {
+        ActivityInfo actInfo = activityRepository.findByActId(actId);
+        List<ActivityCategory> categories = activityCategoryRepository.findAllByCategoryNameNotNull();
+        Map<Integer,String> categoryMap = new HashMap<>();
+        for (int i = 0; i < categories.size(); i++) {
+            categoryMap.put(categories.get(i).getCategoryType(), categories.get(i).getCategoryName());
+        }
+        String actStatus = actInfo.getActStatus()==0?"审核中":(actInfo.getActStatus()==1?"审核通过":"审核未通过");
+        QueryActivityDetailModel act = new QueryActivityDetailModel(actInfo.getActId(), actInfo.getRequiredItemId(),actInfo.getActTitle(), categoryMap.get(actInfo.getCategoryType()), actStatus,actInfo.getActDetailInfo(), actInfo.getActAddress(),actInfo.getActSignupDeadline(),actInfo.getActStartTime(), actInfo.getParticipantsNumber(), actInfo.getActRunStatus());
+        return act;
+    }
+
+    @Override
+    public ActivityRequiredItem findRequiredItem(Integer requiredItemId) {
+        return activityRequiredItemRepository.findByRequiredItemIdEquals(requiredItemId);
     }
 }

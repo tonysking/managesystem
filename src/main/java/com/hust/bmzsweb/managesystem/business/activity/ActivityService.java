@@ -1,13 +1,14 @@
 package com.hust.bmzsweb.managesystem.business.activity;
 
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
-import com.hust.bmzsweb.managesystem.business.activity.model.ActivityWithRequiredItemModel;
-import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityDetailModel;
-import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityListModel;
-import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityLocationListModel;
+import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityRequiredItem;
+import com.hust.bmzsweb.managesystem.business.activity.model.*;
+import com.hust.bmzsweb.managesystem.common.exception.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 public interface ActivityService {
 
@@ -22,6 +23,8 @@ public interface ActivityService {
 
      void updateActRunstatus(Integer actId,Integer actRunStatus);
 
+     void deleteAct(Integer actId);
+
      QueryActivityDetailModel queryAct(Integer actId);
 
      Page<QueryActivityListModel> findUserSignupAct(Integer userId, PageRequest pageRequest);
@@ -29,4 +32,18 @@ public interface ActivityService {
      Page<QueryActivityLocationListModel> queryLocation(Integer type,String searchText,PageRequest pageRequest);
 
      Integer saveActivityInfo(ActivityWithRequiredItemModel activityInfo);
+
+     List<QueryActivityDetailModel> queryActivityByTitleorderByHeat(String searchText);
+
+     Integer updateActivityInfo(ActivityWithRequiredItemModel activityInfo);
+
+     void saveBrowserHistory(Integer userId,Integer actId);
+
+     boolean isIniator(Integer actId,Integer userId);
+
+     QueryActivityDetailModel queryActWithRequiredItemId(Integer actId);
+
+     ActivityRequiredItem findRequiredItem(Integer actRequiredItemId);
+
+
 }

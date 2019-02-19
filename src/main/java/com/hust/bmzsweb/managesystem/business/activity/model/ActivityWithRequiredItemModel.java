@@ -34,10 +34,17 @@ public class ActivityWithRequiredItemModel {
     private Integer actRunStatus;
     private Date createTime;
     private Date updateTime;
+
+    private Boolean isLimitNum;
+    private Integer maxNum;
+    private Boolean isPrivate;
+    private String actPassword;
+
     private ActivityRequiredItem activityRequiredItem;
 
     public  ActivityInfo createAct(){
         return new ActivityInfo(userId,requiredItemId,actTitle,actDetailInfo,actSignupDeadline,
-                actStartTime,actReminder,categoryType,actAddress,longitude,latitude,participantsNumber,actHeat,actLike,actStatus,actRunStatus,createTime,updateTime);
+                actStartTime,actReminder,categoryType,actAddress,longitude,latitude,
+                participantsNumber,actHeat,actLike,actStatus,actRunStatus,createTime,updateTime,isLimitNum,maxNum,isPrivate,actPassword);
     }
 }
