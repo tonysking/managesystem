@@ -94,4 +94,11 @@ public class ActivityController {
         return JSONResult.success().add("actId",actId);
     }
 
+    @ApiOperation(value = "删除对应活动")
+    @GetMapping("/delete/{actId}")
+    public JSONResult deleteInfo( @PathVariable("actId")Integer actId){
+        activityService.deleteAct(actId);
+        return JSONResult.success();
+    }
+
 }

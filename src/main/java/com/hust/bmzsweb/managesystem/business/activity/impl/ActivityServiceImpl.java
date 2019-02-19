@@ -11,7 +11,12 @@ import com.hust.bmzsweb.managesystem.business.activity.model.*;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivityBrowserHistoryRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivitySignup;
-import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowserHistoryEntity;
+import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowsingHistoryEntity;
+//import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowserHistoryRepository;
+import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionEntity;
+import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionRepository;
+import com.hust.bmzsweb.managesystem.common.exception.Response;
+import com.hust.bmzsweb.managesystem.common.JSONResult;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -45,6 +50,12 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Autowired
     ActivityBrowserHistoryRepository activityBrowserHistoryRepository;
+
+//    @Autowired
+//    UserBrowserHistoryRepository userBrowserHistoryRepository;
+
+    @Autowired
+    UserCollectionRepository userCollectionRepository;
 
     //查询用户创建的所有活动 分页结果
     public Page<QueryActivityListModel> findAllActsByUserId(Integer userId, PageRequest pageRequest){
@@ -110,6 +121,20 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public void updateActRunstatus(Integer actId, Integer actRunStatus) {
         activityRepository.updateActRunStatus(actId,actRunStatus );
+    }
+
+    //删除对应ID的活动
+    @Transactional
+    @Override
+    public void deleteAct(Integer actId){
+        try{
+            userCollectionRepository.deleteUserCollectionEntitiesByActId(actId);
+            activityBrowserHistoryRepository.deleteUserBrowsingHistoryEntityByActId(actId);
+            activitySignupRepository.deleteActivitySignupsByActId(actId);
+            activityRepository.deleteById(actId);}
+        catch(Exception e){
+            System.out.println("testEx, catch exception");
+        }
     }
 
     //通过id查询活动信息
@@ -287,7 +312,7 @@ public class ActivityServiceImpl implements ActivityService {
     //小程序 保存活动浏览历史
     @Override
     public void saveBrowserHistory(Integer userId, Integer actId) {
-        activityBrowserHistoryRepository.save(new UserBrowserHistoryEntity( actId,userId ));
+        activityBrowserHistoryRepository.save(new UserBrowsingHistoryEntity( actId,userId ));
     }
 
     //小程序 判断是否是发起者

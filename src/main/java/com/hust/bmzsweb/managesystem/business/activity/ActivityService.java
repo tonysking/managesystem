@@ -3,6 +3,7 @@ package com.hust.bmzsweb.managesystem.business.activity;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityRequiredItem;
 import com.hust.bmzsweb.managesystem.business.activity.model.*;
+import com.hust.bmzsweb.managesystem.common.exception.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +22,8 @@ public interface ActivityService {
      void allowActivity(Integer actId);
 
      void updateActRunstatus(Integer actId,Integer actRunStatus);
+
+     void deleteAct(Integer actId);
 
      QueryActivityDetailModel queryAct(Integer actId);
 
