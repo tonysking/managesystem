@@ -106,12 +106,13 @@
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
 
-        <!--解密session_id -->
+        <!--AES解密-->
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15</artifactId>
             <version>1.46</version>
         </dependency>
+
     </dependencies>
 
 

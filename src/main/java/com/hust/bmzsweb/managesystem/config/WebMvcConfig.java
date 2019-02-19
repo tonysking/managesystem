@@ -3,6 +3,7 @@ package com.hust.bmzsweb.managesystem.config;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter4;
+import com.hust.bmzsweb.managesystem.config.intercepter.AppletInterceptor;
 import com.hust.bmzsweb.managesystem.config.intercepter.CommonIntercepter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -21,6 +22,8 @@ import java.util.List;
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	@Autowired
 	private CommonIntercepter commonIntercepter;
+	@Autowired
+	private AppletInterceptor appletInterceptor;
 
 	/**
 	 * fastJson相关设置
@@ -72,6 +75,10 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(commonIntercepter).addPathPatterns("/**");
+		//微信授权拦截器
+//		registry.addInterceptor(appletInterceptor).addPathPatterns("/**/applet/user/**")
+//				/*放过*/
+//				.excludePathPatterns("/applet/user/wxLogin2");
 		super.addInterceptors(registry);
 	}
 	
