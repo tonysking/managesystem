@@ -22,4 +22,9 @@ public interface UsersService {
      void updateUserInfo(User user);
      List<QueryActivityListModel> findUserCreateAct(Integer userID);
      List<QueryActivityListModel> findUserSignupAct(Integer userID);
+
+     boolean queryUserNickNameIsExist(String userNickName);
+     void saveUserInfo(User user);
+
+     User findUserByNickName(String userNickName);
 }

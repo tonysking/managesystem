@@ -136,5 +136,24 @@ public class UsersServiceImpl implements UsersService {
         return activityListModels;
     }
 
+    @Override
+    public boolean queryUserNickNameIsExist(String userNickName) {
+        User userByUserNickName = usersRepository.findUserByUserNickName(userNickName);
+        if (userByUserNickName!=null) return true;
+        else return false;
+    }
+
+    @Override
+    public void saveUserInfo(User user) {
+        usersRepository.save(user);
+    }
+
+    @Override
+    public User findUserByNickName(String userNickName) {
+        User userByUserNickName = usersRepository.findUserByUserNickName(userNickName);
+        return userByUserNickName;
+
+    }
+
 
 }

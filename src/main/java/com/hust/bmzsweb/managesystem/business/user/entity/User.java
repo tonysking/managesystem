@@ -1,10 +1,7 @@
 package com.hust.bmzsweb.managesystem.business.user.entity;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 //用户
 @Entity
@@ -12,10 +9,10 @@ import javax.persistence.Id;
 public class User {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
 
-    private Integer userOpenid;
+    private String userOpenid;
 
     @Column(length = 64)
     private String userNickName;
