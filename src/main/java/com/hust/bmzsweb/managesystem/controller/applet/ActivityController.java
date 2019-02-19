@@ -7,6 +7,7 @@ import com.hust.bmzsweb.managesystem.business.activity.model.ActivityWithRequire
 import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityDetailModel;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupService;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivityRequiredItemDetail;
+import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel;
 import com.hust.bmzsweb.managesystem.common.JSONResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -42,6 +43,13 @@ public class ActivityController {
         return JSONResult.success().add("actId",actId);
     }
 
+
+    @ApiOperation(value = "收藏活动")
+    @PostMapping("/creatCollection")
+    public JSONResult userCollection(@RequestBody UserCollectionModel userCollectionModel){
+        Integer Id = activityService.saveUserCollection(userCollectionModel);
+        return JSONResult.success().add("Id",Id);
+    }
 
     @ApiOperation(value = "查看活动详情附带报名信息")
     @GetMapping("/{actId}/usersignup/{userId}")

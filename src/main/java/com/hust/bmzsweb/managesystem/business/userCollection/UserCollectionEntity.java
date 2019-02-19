@@ -18,5 +18,10 @@ public class UserCollectionEntity {
     private Date collectTime;
     private Integer actId;
     private Integer userId;
+    public UserCollectionEntity(Date collectTime,Integer actId,Integer userId) {
+        this.collectTime = collectTime;
+        this.actId = actId;
+        this.userId = userId;
+    }
 
 }

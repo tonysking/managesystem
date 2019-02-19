@@ -14,6 +14,7 @@ import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivitySign
 import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowsingHistoryEntity;
 //import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowserHistoryRepository;
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionEntity;
+import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel;
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionRepository;
 import com.hust.bmzsweb.managesystem.common.exception.Response;
 import com.hust.bmzsweb.managesystem.common.JSONResult;
@@ -32,6 +33,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 @Service
 public class ActivityServiceImpl implements ActivityService {
@@ -133,7 +136,7 @@ public class ActivityServiceImpl implements ActivityService {
             activitySignupRepository.deleteActivitySignupsByActId(actId);
             activityRepository.deleteById(actId);}
         catch(Exception e){
-            System.out.println("testEx, catch exception");
+            System.out.println("删除活动失败");
         }
     }
 
@@ -262,6 +265,21 @@ public class ActivityServiceImpl implements ActivityService {
         System.out.println("requiredItemId:"+req.getRequiredItemId());
         ActivityInfo act = activityRepository.save(activityInfo.createAct());
         return act.getActId();
+    }
+
+    //小程序 收藏活动
+    @Override
+    @Transactional
+    public Integer saveUserCollection(UserCollectionModel userCollectionModel) {
+        //UserCollectionEntity uc =new UserCollectionEntity(userCollectionModel.createCollection());
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+        System.out.println(df.format(new Date()));// new Date()为获取当前系统时间
+        userCollectionModel.setCollectTime(new Date());
+        try{UserCollectionEntity uu = userCollectionRepository.save(userCollectionModel.createCollection());return uu.getCId();}
+        catch(Exception e){
+            System.out.println("收藏活动失败");
+        }
+        return 400;
     }
 
     //小程序 通过活动标题搜索活动
