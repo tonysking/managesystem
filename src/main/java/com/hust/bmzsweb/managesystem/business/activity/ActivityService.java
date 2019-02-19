@@ -3,6 +3,7 @@ package com.hust.bmzsweb.managesystem.business.activity;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityRequiredItem;
 import com.hust.bmzsweb.managesystem.business.activity.model.*;
+import com.hust.bmzsweb.managesystem.business.userCollection.DeleteCollectionModel;
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel;
 import com.hust.bmzsweb.managesystem.common.exception.Response;
 import org.springframework.data.domain.Page;
@@ -35,6 +36,10 @@ public interface ActivityService {
      Integer saveActivityInfo(ActivityWithRequiredItemModel activityInfo);
 
      Integer saveUserCollection(UserCollectionModel userCollectionModel);
+
+     void deleteUserCollection(Integer userId,Integer actId);
+
+//     void deleteUserCollection(  DeleteCollectionModel deleteCollectionModel);
 
      List<QueryActivityDetailModel> queryActivityByTitleorderByHeat(String searchText);
 

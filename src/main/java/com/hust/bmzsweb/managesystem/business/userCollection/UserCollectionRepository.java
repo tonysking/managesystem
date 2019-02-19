@@ -17,4 +17,16 @@ public interface UserCollectionRepository extends JpaRepository<UserCollectionEn
 
     void deleteUserCollectionEntitiesByActId(Integer actId);
 
+    void deleteUserCollectionEntityByUserIdAndActId(Integer userId,Integer actId);
+
+//    @Transactional
+//    @Modifying
+//    @Query("delete from UserCollectionEntity where userId = ?1 and actId =?2")
+//    void deleteByUserIdAndActId(Integer userId,Integer actId);
+
+//    @Transactional
+//    @Modifying
+//    @Query("update ActivityInfo  a set a.actRunStatus=?2 where a.actId=?1")
+//    void deleteUserCollectionEntitiesByActIdEqualsAndUserIdEquals(Integer actId,Integer actRunStatus)
+
 }

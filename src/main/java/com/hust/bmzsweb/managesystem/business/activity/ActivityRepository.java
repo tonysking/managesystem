@@ -34,6 +34,8 @@ public interface ActivityRepository extends JpaRepository<ActivityInfo,Integer>,
         @Query("update ActivityInfo  a set a.actRunStatus=?2 where a.actId=?1")
         void updateActRunStatus(Integer actId,Integer actRunStatus);
 
+
+
 //        @Transactional
 //        @Modifying
 //        @Query("delete a from ActivityInfo a where a.actId=?1")

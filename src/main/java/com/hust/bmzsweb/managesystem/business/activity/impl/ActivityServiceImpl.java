@@ -13,6 +13,7 @@ import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupRepos
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivitySignup;
 import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowsingHistoryEntity;
 //import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowserHistoryRepository;
+import com.hust.bmzsweb.managesystem.business.userCollection.DeleteCollectionModel;
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionEntity;
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel;
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionRepository;
@@ -281,6 +282,24 @@ public class ActivityServiceImpl implements ActivityService {
         }
         return 400;
     }
+
+    //小程序 取消收藏活动
+    @Override
+    public void deleteUserCollection(Integer userId,Integer actId) {
+       try{userCollectionRepository.deleteUserCollectionEntityByUserIdAndActId(userId,actId);}
+        catch(Exception e){
+            System.out.println("取消收藏失败");
+        }
+    }
+
+//    @Override
+//    public void deleteUserCollection(DeleteCollectionModel deleteCollectionModel) {
+//        try{userCollectionRepository.deleteUserCollectionEntityByActIdAndUserId(deleteCollectionModel.getActId,deleteCollectionModel.getUserId);}
+//        catch(Exception e){
+//            System.out.println("取消收藏失败");
+//        }
+//    }
+
 
     //小程序 通过活动标题搜索活动
     @Override

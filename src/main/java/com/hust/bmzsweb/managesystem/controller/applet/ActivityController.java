@@ -7,6 +7,7 @@ import com.hust.bmzsweb.managesystem.business.activity.model.ActivityWithRequire
 import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityDetailModel;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupService;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivityRequiredItemDetail;
+import com.hust.bmzsweb.managesystem.business.userCollection.DeleteCollectionModel;
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel;
 import com.hust.bmzsweb.managesystem.common.JSONResult;
 import io.swagger.annotations.Api;
@@ -35,7 +36,7 @@ public class ActivityController {
     @Autowired
     ActivitySignupService activitySignupService;
 
-    @ApiOperation(value = "创建报名")
+    @ApiOperation(value = "创建活动")
     @PostMapping("/creation")
     public JSONResult getActDetailAndSignUpInfo(@RequestBody ActivityWithRequiredItemModel activityInfo){
         System.out.println("input activityInfo:"+activityInfo);
@@ -109,4 +110,10 @@ public class ActivityController {
         return JSONResult.success();
     }
 
+    @ApiOperation(value = "取消收藏对应活动")
+    @GetMapping("/delete/userCollection")
+    public JSONResult deleteUserCollection(@PathVariable("userId")Integer userId, @PathVariable("actId")Integer actId){
+        activityService.deleteUserCollection(userId,actId);
+        return JSONResult.success();
+    }
 }

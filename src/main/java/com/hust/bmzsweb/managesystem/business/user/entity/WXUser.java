@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 //微信授权登录用户
@@ -12,7 +13,7 @@ import javax.persistence.Id;
 public class WXUser {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String nickName;
     private String province;
