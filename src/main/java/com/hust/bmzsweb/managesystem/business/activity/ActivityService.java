@@ -36,6 +36,8 @@ public interface ActivityService {
 
      Integer saveUserCollection(UserCollectionModel userCollectionModel);
 
+     void deleteUserCollection(Integer userCollectionId);
+
      List<QueryActivityDetailModel> queryActivityByTitleorderByHeat(String searchText);
 
      Integer updateActivityInfo(ActivityWithRequiredItemModel activityInfo);

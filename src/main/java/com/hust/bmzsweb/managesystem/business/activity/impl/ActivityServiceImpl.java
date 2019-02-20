@@ -282,6 +282,13 @@ public class ActivityServiceImpl implements ActivityService {
         return 400;
     }
 
+    //删除活动收藏
+    @Override
+    @Transactional
+    public void deleteUserCollection(Integer userCollectionId){
+        userCollectionRepository.deleteUserCollectionEntityByCId(userCollectionId);
+    }
+
     //小程序 通过活动标题搜索活动
     @Override
     public List<QueryActivityDetailModel> queryActivityByTitleorderByHeat(String searchText) {

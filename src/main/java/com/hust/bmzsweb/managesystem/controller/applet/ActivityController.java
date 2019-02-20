@@ -51,6 +51,13 @@ public class ActivityController {
         return JSONResult.success().add("Id",Id);
     }
 
+    @ApiOperation(value = "删除收藏的活动")
+    @GetMapping("/delete/collection/{cId}")
+    public JSONResult deleteCollection( @PathVariable("cId")Integer cId){
+        activityService.deleteUserCollection(cId);
+        return JSONResult.success();
+    }
+
     @ApiOperation(value = "查看活动详情附带报名信息")
     @GetMapping("/{actId}/usersignup/{userId}")
     public JSONResult getActDetailAndSignUpInfo(@PathVariable("actId")Integer actId, @PathVariable("userId")Integer userId){
@@ -103,7 +110,7 @@ public class ActivityController {
     }
 
     @ApiOperation(value = "删除对应活动")
-    @GetMapping("/delete/{actId}")
+    @GetMapping("/delete/activity/{actId}")
     public JSONResult deleteInfo( @PathVariable("actId")Integer actId){
         activityService.deleteAct(actId);
         return JSONResult.success();
