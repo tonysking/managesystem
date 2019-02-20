@@ -1,13 +1,28 @@
 package com.hust.bmzsweb.managesystem.business.activitySignup.impl;
 
+import com.hust.bmzsweb.managesystem.business.activity.ActivityRepository;
+import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityRequiredItem;
+import com.hust.bmzsweb.managesystem.business.activity.ActivityRequiredItemRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivityRequiredItemDetailRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupService;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivityRequiredItemDetail;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivitySignup;
+import com.hust.bmzsweb.managesystem.business.activitySignup.model.ActivitySignupModel;
+import com.hust.bmzsweb.managesystem.business.activitySignup.model.RequiredItemDetailModel;
+import com.hust.bmzsweb.managesystem.business.activitySignup.model.SignUpWithRequiredItemDetailModel;
+import com.hust.bmzsweb.managesystem.business.user.*;
+import com.hust.bmzsweb.managesystem.business.user.entity.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
+import org.springframework.web.client.HttpClientErrorException;
 
+import javax.transaction.Transactional;
+import java.util.Date;
+
+@Slf4j
 @Service
 public class ActivitySignupServiceImpl implements ActivitySignupService {
 
@@ -15,7 +30,16 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
     ActivitySignupRepository activitySignupRepository;
 
     @Autowired
+    UsersRepository usersRepository;
+
+    @Autowired
     ActivityRequiredItemDetailRepository activityRequiredItemDetailRepository;
+
+    @Autowired
+    ActivityRepository activityRepository;
+
+    @Autowired
+    ActivityRequiredItemRepository activityRequiredItemRepository;
 
      @Override
     public ActivityRequiredItemDetail getDetail(Integer userId, Integer actId) {
@@ -26,5 +50,152 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
          }
          ActivityRequiredItemDetail detail = activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(actSignup.getRequiredItemDetailId());
          return detail;
+    }
+
+//    @Override
+//    public Integer deleteActivitySignup(Integer signId)throws Exception {
+//        ActivitySignup activitySignup = activitySignupRepository.findByUserSignupId(signId);
+//        if (activitySignup == null){log.info("该报名不存在");
+//            throw new Exception("该报名不存在");}
+//        if (activitySignup.getUserSignupStatus()==1){log.info("该报名已失效");
+//            throw new Exception("该报名已失效");}
+//        activitySignup.setUserSignupStatus(1);
+//        activitySignupRepository.save(activitySignup);
+//         return activitySignup.getUserSignupId();
+//     }
+
+    //取消报名（置报名状态为1）
+    @Transactional
+    @Override
+    public void banActivitySignup(Integer userSignId) {
+        activitySignupRepository.banSignUp(userSignId);
+     }
+
+
+    //活动报名
+    @Override
+    public ActivityRequiredItemDetail saveActivitySignup(SignUpWithRequiredItemDetailModel signUpWithRequiredItemDetailModel) throws Exception {
+
+         //查找是否已存在该报名信息
+        ActivitySignup as = activitySignupRepository.findByUserIdAndActIdEquals(signUpWithRequiredItemDetailModel.getUserId(),signUpWithRequiredItemDetailModel.getActId());
+         if(as!=null){ log.info("已报名该活动");
+             throw new Exception("已报名该活动");}
+        //查找对应活动，判断报名是否有效
+          ActivityInfo activityInfo = activityRepository.findByActId(signUpWithRequiredItemDetailModel.getActId());
+//          try {
+          if (activityInfo == null) {
+              log.info("活动不存在");
+              throw new Exception("活动不存在");
+             }
+//          } catch (Exception e){e.printStackTrace();}
+          if ((activityInfo.getMaxNum() < activityInfo.getActHeat()) && activityInfo.getIsLimitNum() == true) {
+              log.info("活动报名人数已满");
+              throw new Exception("活动报名人数已满");
+          }
+          if (activityInfo.getActRunStatus() == 1) {
+              log.info("活动已禁止");
+              throw new Exception("活动已禁止");
+          }//0正常 1表示被禁止(失效)
+          User user = usersRepository.findUserByUserId(signUpWithRequiredItemDetailModel.getUserId());
+          if (user == null) {
+              log.info("用户不存在");
+              throw new Exception("该用户不存在");
+          }
+          //参与人数+1
+          activityInfo.setParticipantsNumber(activityInfo.getParticipantsNumber() + 1);
+          //判断必填项是否为空
+          int a = activityInfo.getRequiredItemId();
+          ActivityRequiredItem activityRequiredItem = activityRequiredItemRepository.findByRequiredItemIdEquals(a);
+          if ((activityRequiredItem.getAddress()) && (signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getAddress() == null)) {
+              log.info("必填项不能为空");
+              throw new Exception("必填项不能为空");
+          }
+          if ((activityRequiredItem.getAge()) && (signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getAge() == null)) {
+              log.info("必填项不能为空");throw new Exception("必填项不能为空");
+          }
+          if ((activityRequiredItem.getCity()) && (signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getCity() == null)) {
+              log.info("必填项不能为空");throw new Exception("必填项不能为空");
+          }
+          if ((activityRequiredItem.getClassNumber()) && (signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getClassNumber() == null)) {
+              log.info("必填项不能为空");throw new Exception("必填项不能为空");
+          }
+          if ((activityRequiredItem.getDepartment()) && (signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getDepartment() == null)) {
+              log.info("必填项不能为空");throw new Exception("必填项不能为空");
+          }
+          if ((activityRequiredItem.getGrade()) && (signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getGrade() == null)) {
+              log.info("必填项不能为空");throw new Exception("必填项不能为空");
+          }
+          if ((activityRequiredItem.getName()) && (signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getName() == null)) {
+              log.info("必填项不能为空");throw new Exception("必填项不能为空");
+          }
+          if ((activityRequiredItem.getSex()) && (signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getSex() == null)) {
+              log.info("必填项不能为空");throw new Exception("必填项不能为空");
+          }
+          if ((activityRequiredItem.getSchool()) && (signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getSchool() == null)) {
+              log.info("必填项不能为空");throw new Exception("必填项不能为空");
+          }
+          if ((activityRequiredItem.getJobNumber()) && (signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getJobNumber() == null)) {
+              log.info("必填项不能为空");throw new Exception("必填项不能为空");
+          }
+          if ((activityRequiredItem.getProvince()) && (signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getProvince() == null)) {
+              log.info("必填项不能为空");throw new Exception("必填项不能为空");
+          }
+          if ((activityRequiredItem.getStudentId()) && (signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getStudentId() == null)) {
+              log.info("必填项不能为空");throw new Exception("必填项不能为空");
+          }
+          if ((activityRequiredItem.getQqNumber()) && (signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getQqNumber() == null)) {
+              log.info("必填项不能为空");throw new Exception("必填项不能为空");
+          }
+          if ((activityRequiredItem.getWechatNumber()) && (signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getWechatNumber() == null)) {
+              log.info("必填项不能为空"); throw new Exception("必填项不能为空");
+          }
+          if ((activityRequiredItem.getWorkPlace()) && (signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getWorkPlace() == null)) {
+              log.info("必填项不能为空");throw new Exception("必填项不能为空");
+          }
+          if ((activityRequiredItem.getFieldOne()) && (signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getFieldOne() == null)) {
+              log.info("必填项不能为空"); throw new Exception("必填项不能为空");
+          }
+          if ((activityRequiredItem.getFieldTwo()) && (signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getFieldTwo() == null)) {
+              log.info("必填项不能为空");throw new Exception("必填项不能为空");
+          }
+          if ((activityRequiredItem.getFieldThree()) && (signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getFieldThree() == null)) {
+              log.info("必填项不能为空"); throw new Exception("必填项不能为空");
+          }
+
+          //填入报名详情表
+          ActivityRequiredItemDetail activityRequiredItemDetail = new ActivityRequiredItemDetail();
+          activityRequiredItemDetail.setAddress(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getAddress());
+          activityRequiredItemDetail.setAge(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getAge());
+          activityRequiredItemDetail.setCity(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getCity());
+          activityRequiredItemDetail.setClassNumber(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getClassNumber());
+          activityRequiredItemDetail.setDepartment(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getDepartment());
+          activityRequiredItemDetail.setGrade(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getGrade());
+          activityRequiredItemDetail.setName(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getName());
+          activityRequiredItemDetail.setSex(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getSex());
+          activityRequiredItemDetail.setSchool(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getSchool());
+          activityRequiredItemDetail.setJobNumber(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getJobNumber());
+          activityRequiredItemDetail.setProvince(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getProvince());
+          activityRequiredItemDetail.setStudentId(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getStudentId());
+          activityRequiredItemDetail.setQqNumber(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getQqNumber());
+          activityRequiredItemDetail.setWechatNumber(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getWechatNumber());
+          activityRequiredItemDetail.setWorkPlace(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getWorkPlace());
+          activityRequiredItemDetail.setFieldOne(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getFieldOne());
+          activityRequiredItemDetail.setFieldTwo(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getFieldTwo());
+          activityRequiredItemDetail.setFieldThree(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getFieldThree());
+          activityRequiredItemDetailRepository.save(activityRequiredItemDetail);
+
+          //填入报名表
+          ActivitySignup activitySignup = new ActivitySignup();
+          activitySignup.setActId(signUpWithRequiredItemDetailModel.getActId());
+          activitySignup.setUserId(signUpWithRequiredItemDetailModel.getUserId());
+          activitySignup.setCreateTime(new Date());
+          activitySignup.setUpdateTime(new Date());
+          activitySignup.setUserSignupStatus(0);//0表示正常报名，1表示取消报名
+          //activitySignup.setRequiredItemDetailId(activityInfo.getRequiredItemId());
+          activitySignup.setRequiredItemDetailId(activityRequiredItemDetail.getRequiredItemDetailId());
+          activitySignupRepository.save(activitySignup);
+          return activityRequiredItemDetail;
+
+//      return activityRequiredItemDetail;
     }
 }

@@ -5,6 +5,7 @@ import com.hust.bmzsweb.managesystem.business.activity.ActivityRepository;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityCategory;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityListModel;
+import com.hust.bmzsweb.managesystem.business.activitySignup.ActivityBrowserHistoryRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivitySignup;
 import com.hust.bmzsweb.managesystem.business.user.UsersRepository;
@@ -12,6 +13,7 @@ import com.hust.bmzsweb.managesystem.business.user.UsersService;
 import com.hust.bmzsweb.managesystem.business.user.WXUserRepository;
 import com.hust.bmzsweb.managesystem.business.user.entity.User;
 import com.hust.bmzsweb.managesystem.business.user.entity.WXUser;
+import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowsingHistoryEntity;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UsersServiceImpl implements UsersService {
@@ -35,6 +38,8 @@ public class UsersServiceImpl implements UsersService {
     ActivitySignupRepository activitySignupRepository;
     @Autowired
     ActivityRepository activityRepository;
+    @Autowired
+    ActivityBrowserHistoryRepository activityBrowserHistoryRepository;
 
 
 
@@ -141,6 +146,25 @@ public class UsersServiceImpl implements UsersService {
         return activityListModels;
     }
 
+    @Override
+    public boolean queryUserNickNameIsExist(String userNickName) {
+        User userByUserNickName = usersRepository.findUserByUserNickName(userNickName);
+        if (userByUserNickName!=null) return true;
+        else return false;
+    }
+
+    @Override
+    public void saveUserInfo(User user) {
+        usersRepository.save(user);
+    }
+
+    @Override
+    public User findUserByNickName(String userNickName) {
+        User userByUserNickName = usersRepository.findUserByUserNickName(userNickName);
+        return userByUserNickName;
+
+    }
+
     //如果nickName不存在就存入user表
     @Override
     public Integer saveUser(String nickName,String openId) {
@@ -158,6 +182,13 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public User findUserByOpenId(Integer openId) {
         return usersRepository.findByUserOpenidEquals(openId);
+    }
+
+    @Override
+    public List<UserBrowsingHistoryEntity> findUserBrowsingHistory(Integer userID) {
+        List<UserBrowsingHistoryEntity> userBrowsingHistoryEntitiesByUserId = activityBrowserHistoryRepository.findUserBrowsingHistoryEntitiesByUserId(userID);
+        return  userBrowsingHistoryEntitiesByUserId;
+
     }
 
 }
