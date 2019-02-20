@@ -6,6 +6,7 @@ import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityRequiredItem;
 import com.hust.bmzsweb.managesystem.business.activity.model.ActivityWithRequiredItemModel;
 import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityDetailModel;
+import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityWithAllStatusModel;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupService;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivityRequiredItemDetail;
 import com.hust.bmzsweb.managesystem.common.JSONResult;
@@ -40,6 +41,7 @@ public class ActivityController {
     public JSONResult getActDetailAndSignUpInfo(@RequestBody ActivityWithRequiredItemModel activityInfo){
         System.out.println("input activityInfo:"+activityInfo);
         Integer actId = activityService.saveActivityInfo(activityInfo);
+        System.out.println(actId);
         return JSONResult.success().add("actId",actId);
     }
 
@@ -60,6 +62,22 @@ public class ActivityController {
             return JSONResult.success().add("act",act).add("detail",detail ).add("isSponsor",isIniator).add("requiredItem",requiredItem);
         }else{
             return JSONResult.success().add("act",act).add("detail","0" ).add("isSponsor",isIniator).add("requiredItem",requiredItem);
+        }
+    }
+
+    @ApiOperation(value = "查看活动详情附带报名信息以及所有状态")
+    @GetMapping("/{actId}/usersignupWithAllStatus/{userId}")
+    public JSONResult getUsersignupWithAllStatus(@PathVariable("actId")Integer actId, @PathVariable("userId")Integer userId){
+
+        QueryActivityWithAllStatusModel act = activityService.queryActWithAllStatus(actId, userId);
+        ActivityRequiredItemDetail detail  = activitySignupService.getDetail(userId, actId);
+        ActivityRequiredItem requiredItem = activityService.findRequiredItem(act.getRequiredItemId());
+        Boolean isTakePart = detail!=null;
+        if(detail!=null)
+        {
+            return JSONResult.success().add("act",act).add("detail",detail ).add("requiredItem",requiredItem).add("isTakePart",isTakePart);
+        }else{
+            return JSONResult.success().add("act",act).add("detail","0" ).add("requiredItem",requiredItem).add("isTakePart",isTakePart);
         }
     }
 

@@ -20,7 +20,7 @@ public class ActivityServiceImplTest {
 
     @Test
     public void testWithAllStatus(){
-        QueryActivityWithAllStatusModel queryActivityWithAllStatusModel = activityService.queryActWithAllStatus(1, 1);
-        System.out.println(queryActivityWithAllStatusModel);
+        QueryActivityWithAllStatusModel queryActivityWithAllStatusModel = activityService.queryActWithAllStatus(2, 9);
+        System.out.println("queryActivityWithAllStatusModel:"+queryActivityWithAllStatusModel);
     }
 }
