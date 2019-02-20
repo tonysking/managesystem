@@ -1,3 +1,4 @@
+/*
 package com.hust.bmzsweb.managesystem.config;
 
 import org.apache.shiro.mgt.SecurityManager;
@@ -79,3 +80,4 @@ public class ShiroConfig {
 
 
 }
+*/

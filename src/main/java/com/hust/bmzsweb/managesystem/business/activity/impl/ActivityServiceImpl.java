@@ -224,8 +224,8 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     @Transactional
     public Integer saveActivityInfo(ActivityWithRequiredItemModel activityInfo) {
-        activityInfo.setCategoryType(1);
         activityInfo.setParticipantsNumber(1);
+        activityInfo.setCategoryType(activityInfo.getCategoryType()+1);
         activityInfo.setUserId(1);
         activityInfo.setActHeat(0);
         activityInfo.setActLike(0);
@@ -318,5 +318,20 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public ActivityRequiredItem findRequiredItem(Integer requiredItemId) {
         return activityRequiredItemRepository.findByRequiredItemIdEquals(requiredItemId);
+    }
+
+    //小程序 查询所有活动种类
+    public List<ActivityCategory> getAllActivityCategories(){
+        return activityCategoryRepository.findAllByCategoryNameNotNull();
+    }
+
+    @Override
+    public boolean isActivityEnd(Integer actId) {
+        return false;
+    }
+
+    @Override
+    public boolean isTakePartEnd(Integer actId) {
+        return false;
     }
 }

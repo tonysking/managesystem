@@ -1,5 +1,6 @@
 package com.hust.bmzsweb.managesystem.business.activity;
 
+import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityCategory;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityRequiredItem;
 import com.hust.bmzsweb.managesystem.business.activity.model.*;
@@ -42,5 +43,11 @@ public interface ActivityService {
 
      ActivityRequiredItem findRequiredItem(Integer actRequiredItemId);
 
+     List<ActivityCategory> getAllActivityCategories();
 
+     boolean isActivityEnd(Integer actId);
+
+     boolean isTakePartEnd(Integer actId);
+
+     
 }

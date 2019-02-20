@@ -1,6 +1,7 @@
 package com.hust.bmzsweb.managesystem.controller.applet;
 
 import com.hust.bmzsweb.managesystem.business.activity.ActivityService;
+import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityCategory;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityRequiredItem;
 import com.hust.bmzsweb.managesystem.business.activity.model.ActivityWithRequiredItemModel;
@@ -51,7 +52,7 @@ public class ActivityController {
         System.out.println("act.getRequiredItemId():"+act.getRequiredItemId());
         ActivityRequiredItem requiredItem = activityService.findRequiredItem(act.getRequiredItemId());
         System.out.println("requiredItem:"+requiredItem);
-        activityService.saveBrowserHistory(userId,actId );
+        activityService.saveBrowserHistory(userId,actId);
         boolean isIniator = activityService.isIniator(actId, userId);
         Integer init = isIniator==true?1:0;
         ActivityRequiredItemDetail detail = null;
@@ -92,6 +93,13 @@ public class ActivityController {
     public JSONResult editInfo( @RequestBody ActivityWithRequiredItemModel activityInfo){
         Integer actId = activityService.updateActivityInfo(activityInfo);
         return JSONResult.success().add("actId",actId);
+    }
+
+    @ApiOperation(value = "查询所有活动种类信息")
+    @GetMapping("/actCategories")
+    public JSONResult getActCategories(){
+        List<ActivityCategory> categories = activityService.getAllActivityCategories();
+        return JSONResult.success().add("categories",categories);
     }
 
 }
