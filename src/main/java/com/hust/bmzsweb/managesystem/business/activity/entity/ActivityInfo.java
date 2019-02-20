@@ -44,6 +44,8 @@ public class ActivityInfo {
     private Boolean isPrivate;
     private String actPassword;
 
+    private Boolean isDelete;
+
     public ActivityInfo(Integer userId, Integer requiredItemId, String actTitle, String actDetailInfo, Date actSignupDeadline, Date actStartTime, Boolean actReminder, Integer categoryType, String actAddress, Double longitude, Double latitude, Integer participantsNumber, Integer actHeat, Integer actLike, Integer actStatus, Integer actRunStatus, Date createTime, Date updateTime, Boolean isLimitNum, Integer maxNum, Boolean isPrivate, String actPassword) {
         this.userId = userId;
         this.requiredItemId = requiredItemId;

@@ -3,6 +3,7 @@ package com.hust.bmzsweb.managesystem.business.user;
 import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityListModel;
 import com.hust.bmzsweb.managesystem.business.user.entity.User;
 import com.hust.bmzsweb.managesystem.business.user.entity.WXUser;
+import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowsingHistoryEntity;
 import io.swagger.models.auth.In;
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,4 +29,5 @@ public interface UsersService {
      Integer saveUser(String nickName,String openId);
 
      User findUserByOpenId(Integer openId);
+     List<UserBrowsingHistoryEntity> findUserBrowsingHistory(Integer userID);
 }
