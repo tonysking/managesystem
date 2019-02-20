@@ -1,1 +1,1 @@
-alter table  `activity_info` add `isDelete` Boolean COMMENT '活动是否被发起者删除 0未被删除1已被删除';
+alter table  `activity_info` add `isDelete` Boolean DEFAULT 0 COMMENT '活动是否被发起者删除 0未被删除1已被删除';

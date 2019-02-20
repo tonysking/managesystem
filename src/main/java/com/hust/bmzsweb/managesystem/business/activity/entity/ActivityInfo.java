@@ -37,9 +37,7 @@ public class ActivityInfo {
     private Integer actRunStatus;
     private Date createTime;
     private Date updateTime;
-
-
-
+    private Boolean isDelete;
 
     private Boolean isLimitNum;
     private Integer maxNum;

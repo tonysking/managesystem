@@ -45,9 +45,5 @@ public interface ActivityService {
 
      List<ActivityCategory> getAllActivityCategories();
 
-     boolean isActivityEnd(Integer actId);
-
-     boolean isTakePartEnd(Integer actId);
-
-     
+     QueryActivityWithAllStatusModel queryActWithAllStatus(Integer actId,Integer userId);
 }

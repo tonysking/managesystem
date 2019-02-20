@@ -54,18 +54,12 @@ public class ActivityController {
         System.out.println("requiredItem:"+requiredItem);
         activityService.saveBrowserHistory(userId,actId);
         boolean isIniator = activityService.isIniator(actId, userId);
-        Integer init = isIniator==true?1:0;
-        ActivityRequiredItemDetail detail = null;
-        //参与者查看自己填写的详情
-         if(init==0)
-         {
-             detail  = activitySignupService.getDetail(userId, actId);
-         }
+        ActivityRequiredItemDetail detail  = activitySignupService.getDetail(userId, actId);
         if(detail!=null)
         {
-            return JSONResult.success().add("act",act).add("detail",detail ).add("init",init).add("requiredItem",requiredItem);
+            return JSONResult.success().add("act",act).add("detail",detail ).add("isSponsor",isIniator).add("requiredItem",requiredItem);
         }else{
-            return JSONResult.success().add("act",act).add("detail","0" ).add("init",init).add("requiredItem",requiredItem);
+            return JSONResult.success().add("act",act).add("detail","0" ).add("isSponsor",isIniator).add("requiredItem",requiredItem);
         }
     }
 

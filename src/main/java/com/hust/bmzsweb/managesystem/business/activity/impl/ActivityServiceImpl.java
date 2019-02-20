@@ -23,10 +23,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ActivityServiceImpl implements ActivityService {
@@ -321,17 +318,33 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     //小程序 查询所有活动种类
+    @Override
     public List<ActivityCategory> getAllActivityCategories(){
         return activityCategoryRepository.findAllByCategoryNameNotNull();
     }
 
+    //小程序 查询活动信息附带活动所有的状态
     @Override
-    public boolean isActivityEnd(Integer actId) {
-        return false;
+    public QueryActivityWithAllStatusModel queryActWithAllStatus(Integer actId,Integer userId) {
+
+        ActivityInfo actInfo = activityRepository.findByActId(actId);
+        List<ActivityCategory> categories = activityCategoryRepository.findAllByCategoryNameNotNull();
+        Map<Integer,String> categoryMap = new HashMap<>();
+        for (int i = 0; i < categories.size(); i++) {
+            categoryMap.put(categories.get(i).getCategoryType(), categories.get(i).getCategoryName());
+        }
+        String actStatus = actInfo.getActStatus()==0?"审核中":(actInfo.getActStatus()==1?"审核通过":"审核未通过");
+        QueryActivityDetailModel act = new QueryActivityDetailModel(actInfo.getActId(), actInfo.getRequiredItemId(),actInfo.getActTitle(), categoryMap.get(actInfo.getCategoryType()), actStatus,actInfo.getActDetailInfo(), actInfo.getActAddress(),actInfo.getActSignupDeadline(),actInfo.getActStartTime(),actInfo.getActHeat(),actInfo.getIsDelete(), actInfo.getParticipantsNumber(), actInfo.getActRunStatus());
+        Boolean isSponsor = isIniator(actId, userId);
+        Date date = new Date();
+        int i = date.compareTo(actInfo.getActStartTime());
+        int j = date.compareTo(actInfo.getActSignupDeadline());
+        Boolean isActivityStart = i>0;
+        Boolean isTakePartEnd = j>0;
+        Boolean isAuthorized = actInfo.getActStatus()==1;
+        
+        QueryActivityWithAllStatusModel actWithStatus = new QueryActivityWithAllStatusModel(act,isActivityStart,isTakePartEnd,isSponsor,isAuthorized);
+        return actWithStatus;
     }
 
-    @Override
-    public boolean isTakePartEnd(Integer actId) {
-        return false;
-    }
 }
