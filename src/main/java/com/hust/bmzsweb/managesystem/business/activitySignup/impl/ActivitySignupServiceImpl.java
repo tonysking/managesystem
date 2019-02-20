@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 import org.springframework.web.client.HttpClientErrorException;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 
 @Slf4j
@@ -51,8 +52,27 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
          return detail;
     }
 
-    //活动报名
+//    @Override
+//    public Integer deleteActivitySignup(Integer signId)throws Exception {
+//        ActivitySignup activitySignup = activitySignupRepository.findByUserSignupId(signId);
+//        if (activitySignup == null){log.info("该报名不存在");
+//            throw new Exception("该报名不存在");}
+//        if (activitySignup.getUserSignupStatus()==1){log.info("该报名已失效");
+//            throw new Exception("该报名已失效");}
+//        activitySignup.setUserSignupStatus(1);
+//        activitySignupRepository.save(activitySignup);
+//         return activitySignup.getUserSignupId();
+//     }
 
+    //取消报名（置报名状态为1）
+    @Transactional
+    @Override
+    public void banActivitySignup(Integer userSignId) {
+        activitySignupRepository.banSignUp(userSignId);
+     }
+
+
+    //活动报名
     @Override
     public ActivityRequiredItemDetail saveActivitySignup(SignUpWithRequiredItemDetailModel signUpWithRequiredItemDetailModel) throws Exception {
 

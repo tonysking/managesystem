@@ -11,10 +11,7 @@ import com.hust.bmzsweb.managesystem.common.JSONResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 报名活动
@@ -38,5 +35,14 @@ public class ActivitySignupController {
         ActivityRequiredItemDetail actSignupId = activitySignupService.saveActivitySignup(signUpWithRequiredItemDetailModel);
         return JSONResult.success().add("actSignupId",actSignupId);
     }
+
+    @ApiOperation(value = "取消报名（置报名状态为1）")
+    @GetMapping("/deleteSigup/{userSignId}")
+    public JSONResult deleteActivitySignup(@PathVariable("userSignId") Integer userSignId){
+        activitySignupService.banActivitySignup(userSignId);
+        return JSONResult.success();
+    }
+
+
 
 }
