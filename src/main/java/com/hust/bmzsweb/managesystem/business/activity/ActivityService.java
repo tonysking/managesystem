@@ -1,11 +1,9 @@
 package com.hust.bmzsweb.managesystem.business.activity;
 
+import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityCategory;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityRequiredItem;
 import com.hust.bmzsweb.managesystem.business.activity.model.*;
-import com.hust.bmzsweb.managesystem.business.userCollection.DeleteCollectionModel;
-import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel;
-import com.hust.bmzsweb.managesystem.common.exception.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,8 +23,6 @@ public interface ActivityService {
 
      void updateActRunstatus(Integer actId,Integer actRunStatus);
 
-     void deleteAct(Integer actId);
-
      QueryActivityDetailModel queryAct(Integer actId);
 
      Page<QueryActivityListModel> findUserSignupAct(Integer userId, PageRequest pageRequest);
@@ -34,12 +30,6 @@ public interface ActivityService {
      Page<QueryActivityLocationListModel> queryLocation(Integer type,String searchText,PageRequest pageRequest);
 
      Integer saveActivityInfo(ActivityWithRequiredItemModel activityInfo);
-
-     Integer saveUserCollection(UserCollectionModel userCollectionModel);
-
-     void deleteUserCollection(Integer userId,Integer actId);
-
-//     void deleteUserCollection(  DeleteCollectionModel deleteCollectionModel);
 
      List<QueryActivityDetailModel> queryActivityByTitleorderByHeat(String searchText);
 
@@ -53,5 +43,7 @@ public interface ActivityService {
 
      ActivityRequiredItem findRequiredItem(Integer actRequiredItemId);
 
+     List<ActivityCategory> getAllActivityCategories();
 
+     QueryActivityWithAllStatusModel queryActWithAllStatus(Integer actId,Integer userId);
 }

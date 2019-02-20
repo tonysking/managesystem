@@ -30,9 +30,7 @@ public interface UsersRepository extends JpaRepository<User,Integer>, JpaSpecifi
     void unLockUserById(Integer userId);
 
     //小程序
-    User findUserByUserId(Integer userId);
-    User findUserByUserNickName(String userNickName);
-
+    User findUserByUserId(Integer userID);
 
 
     User findByUserOpenidEquals(Integer openId);

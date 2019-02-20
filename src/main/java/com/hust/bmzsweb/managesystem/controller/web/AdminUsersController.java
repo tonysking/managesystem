@@ -8,6 +8,9 @@ import com.hust.bmzsweb.managesystem.common.JSONResult;
 import com.hust.bmzsweb.managesystem.controller.BaseController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.ui.ModelMap;
@@ -48,10 +51,25 @@ public class AdminUsersController extends BaseController {
 
     @ApiOperation(value = "后台登录校验")
     @PostMapping("/login")
+
     public ModelAndView login(@RequestParam("username") String username,
                         @RequestParam("password") String password, ModelMap model
     ) {
-        return new ModelAndView("admin/index");
+
+        Subject subject = SecurityUtils.getSubject();
+        UsernamePasswordToken usernamePasswordToken =
+                new UsernamePasswordToken(username,password);
+        ModelAndView mav;
+        try{
+            subject.login(usernamePasswordToken);
+            System.out.println("isAuthenticated:"+subject.isAuthenticated());
+        }catch (Exception e)
+        {
+           mav =new ModelAndView("admin/login");
+            mav.addObject("msg", e.getMessage());
+        }
+        mav= new ModelAndView("admin/index");
+        return mav;
     }
 
     @ApiOperation(value = "显示用户主页")

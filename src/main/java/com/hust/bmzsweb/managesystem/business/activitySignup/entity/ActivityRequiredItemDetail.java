@@ -4,7 +4,6 @@ import lombok.Data;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 //必填信息（用户填写详情）
@@ -13,7 +12,7 @@ import javax.persistence.Id;
 public class ActivityRequiredItemDetail {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Integer requiredItemDetailId;
     private String name;
     private Integer sex;

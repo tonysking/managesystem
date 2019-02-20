@@ -1,12 +1,13 @@
 package com.hust.bmzsweb.managesystem.controller.applet;
 
 import com.hust.bmzsweb.managesystem.business.activity.ActivityService;
+import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityCategory;
+import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityRequiredItem;
 import com.hust.bmzsweb.managesystem.business.activity.model.ActivityWithRequiredItemModel;
 import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityDetailModel;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupService;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivityRequiredItemDetail;
-import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel;
 import com.hust.bmzsweb.managesystem.common.JSONResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,7 +35,7 @@ public class ActivityController {
     @Autowired
     ActivitySignupService activitySignupService;
 
-    @ApiOperation(value = "创建活动")
+    @ApiOperation(value = "创建报名")
     @PostMapping("/creation")
     public JSONResult getActDetailAndSignUpInfo(@RequestBody ActivityWithRequiredItemModel activityInfo){
         System.out.println("input activityInfo:"+activityInfo);
@@ -42,13 +43,6 @@ public class ActivityController {
         return JSONResult.success().add("actId",actId);
     }
 
-
-    @ApiOperation(value = "收藏活动")
-    @PostMapping("/creatCollection")
-    public JSONResult userCollection(@RequestBody UserCollectionModel userCollectionModel){
-        Integer Id = activityService.saveUserCollection(userCollectionModel);
-        return JSONResult.success().add("Id",Id);
-    }
 
     @ApiOperation(value = "查看活动详情附带报名信息")
     @GetMapping("/{actId}/usersignup/{userId}")
@@ -58,20 +52,14 @@ public class ActivityController {
         System.out.println("act.getRequiredItemId():"+act.getRequiredItemId());
         ActivityRequiredItem requiredItem = activityService.findRequiredItem(act.getRequiredItemId());
         System.out.println("requiredItem:"+requiredItem);
-        activityService.saveBrowserHistory(userId,actId );
+        activityService.saveBrowserHistory(userId,actId);
         boolean isIniator = activityService.isIniator(actId, userId);
-        Integer init = isIniator==true?1:0;
-        ActivityRequiredItemDetail detail = null;
-        //参与者查看自己填写的详情
-         if(init==0)
-         {
-             detail  = activitySignupService.getDetail(userId, actId);
-         }
+        ActivityRequiredItemDetail detail  = activitySignupService.getDetail(userId, actId);
         if(detail!=null)
         {
-            return JSONResult.success().add("act",act).add("detail",detail ).add("init",init).add("requiredItem",requiredItem);
+            return JSONResult.success().add("act",act).add("detail",detail ).add("isSponsor",isIniator).add("requiredItem",requiredItem);
         }else{
-            return JSONResult.success().add("act",act).add("detail","0" ).add("init",init).add("requiredItem",requiredItem);
+            return JSONResult.success().add("act",act).add("detail","0" ).add("isSponsor",isIniator).add("requiredItem",requiredItem);
         }
     }
 
@@ -101,17 +89,11 @@ public class ActivityController {
         return JSONResult.success().add("actId",actId);
     }
 
-    @ApiOperation(value = "删除对应活动")
-    @GetMapping("/delete/{actId}")
-    public JSONResult deleteInfo( @PathVariable("actId")Integer actId){
-        activityService.deleteAct(actId);
-        return JSONResult.success();
+    @ApiOperation(value = "查询所有活动种类信息")
+    @GetMapping("/actCategories")
+    public JSONResult getActCategories(){
+        List<ActivityCategory> categories = activityService.getAllActivityCategories();
+        return JSONResult.success().add("categories",categories);
     }
 
-    @ApiOperation(value = "取消收藏对应活动")
-    @GetMapping("/delete/userCollection")
-    public JSONResult deleteUserCollection(@PathVariable("userId")Integer userId, @PathVariable("actId")Integer actId){
-        activityService.deleteUserCollection(userId,actId);
-        return JSONResult.success();
-    }
 }

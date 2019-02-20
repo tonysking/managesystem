@@ -8,5 +8,4 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 public interface ActivityRequiredItemDetailRepository extends JpaRepository<ActivityRequiredItemDetail,Integer>, JpaSpecificationExecutor<ActivityRequiredItemDetail> {
 
     ActivityRequiredItemDetail findByRequiredItemDetailIdEquals(Integer requiredItemDetailId);
-
 }
