@@ -1,1 +1,0 @@
-alter table activity_info change  `is_limitNum` `is_limit_num` Boolean COMMENT '是否有最大人数限制';

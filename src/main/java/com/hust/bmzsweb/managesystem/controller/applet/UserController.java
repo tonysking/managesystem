@@ -3,15 +3,14 @@ package com.hust.bmzsweb.managesystem.controller.applet;
 import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityListModel;
 import com.hust.bmzsweb.managesystem.business.user.UsersService;
 import com.hust.bmzsweb.managesystem.business.user.entity.User;
-import com.hust.bmzsweb.managesystem.business.user.entity.WXUser;
+import com.hust.bmzsweb.managesystem.business.user.model.UserInfoModel;
 import com.hust.bmzsweb.managesystem.business.user.model.WXSessionModel;
 import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowsingHistoryEntity;
 import com.hust.bmzsweb.managesystem.common.JSONResult;
 import com.hust.bmzsweb.managesystem.common.utils.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.Data;
-import org.bouncycastle.jce.provider.symmetric.AES;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -144,10 +143,11 @@ public class UserController {
         return JSONResult.success().add("updateUser",user);
     }
     //查看浏览历史
+    @ApiOperation(value = "查看浏览历史")
     @GetMapping("/getUserBrowsingHistory/{userId}")
     public JSONResult getUserBrowsingHistory(@PathVariable("userId") Integer userId){
-
-        return JSONResult.success();
+        List<UserBrowsingHistoryEntity> userBrowsingHistory = usersService.findUserBrowsingHistory(userId);
+        return JSONResult.success().add("userBrowsingHistory",userBrowsingHistory);
     }
     //查看发起的活动
     @ApiOperation(value = "查看发起的活动")

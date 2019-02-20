@@ -20,7 +20,7 @@ public interface ActivityRepository extends JpaRepository<ActivityInfo,Integer>,
 
         @Transactional
         @Modifying
-        @Query("update ActivityInfo  a set a.actRunStatus=1 where a.actId=?1")
+        @Query("update ActivityInfo a  set a.actRunStatus=1 where a.actId=?1")
         void banAcitivity(Integer actId);
 
         @Transactional
@@ -33,6 +33,11 @@ public interface ActivityRepository extends JpaRepository<ActivityInfo,Integer>,
         @Modifying
         @Query("update ActivityInfo  a set a.actRunStatus=?2 where a.actId=?1")
         void updateActRunStatus(Integer actId,Integer actRunStatus);
+
+//        @Transactional
+//        @Modifying
+//        @Query("delete a from ActivityInfo a where a.actId=?1")
+//        void deleteActivityInfoBy(Integer actId);
 
 
         ActivityInfo findByActId(Integer actId);

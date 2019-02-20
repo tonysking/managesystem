@@ -26,6 +26,11 @@ public interface UsersService {
      List<QueryActivityListModel> findUserCreateAct(Integer userID);
      List<QueryActivityListModel> findUserSignupAct(Integer userID);
 
+     boolean queryUserNickNameIsExist(String userNickName);
+     void saveUserInfo(User user);
+
+     User findUserByNickName(String userNickName);
+
      Integer saveUser(String nickName,String openId);
 
      User findUserByOpenId(Integer openId);
