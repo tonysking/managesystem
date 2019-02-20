@@ -6,6 +6,7 @@ import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupServi
 import com.hust.bmzsweb.managesystem.business.activity.ActivityService;
 import com.hust.bmzsweb.managesystem.business.activitySignup.model.ActivitySignupModel;
 import com.hust.bmzsweb.managesystem.business.activitySignup.model.SignUpWithRequiredItemDetailModel;
+import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivityRequiredItemDetail;
 import com.hust.bmzsweb.managesystem.common.JSONResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,7 +35,7 @@ public class ActivitySignupController {
     @ApiOperation(value = "报名活动")
     @PostMapping("/creation/Sigup")
     public JSONResult saveActivitySignup(@RequestBody SignUpWithRequiredItemDetailModel signUpWithRequiredItemDetailModel)throws Exception{
-        Integer actSignupId = activitySignupService.saveActivitySignup(signUpWithRequiredItemDetailModel);
+        ActivityRequiredItemDetail actSignupId = activitySignupService.saveActivitySignup(signUpWithRequiredItemDetailModel);
         return JSONResult.success().add("actSignupId",actSignupId);
     }
 
