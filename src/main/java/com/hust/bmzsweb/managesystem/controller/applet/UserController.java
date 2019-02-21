@@ -74,8 +74,8 @@ public class UserController {
 
         String url = "https://api.weixin.qq.com/sns/jscode2session";
         Map<String,String> param = new HashMap<>();
-        param.put("appid","wx68a522d3964051da");
-        param.put("secret","fd964f98cc605ad910b800cf828390fc");
+        param.put("appid","wxc6467a1616a9bf95");
+        param.put("secret","c2c3b087848e9c806bc72e8564ae08af");
         param.put("js_code",code);
         param.put("grant_type","authorization_code");
         //获取{"session_key":"","openid":""}
