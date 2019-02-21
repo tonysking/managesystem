@@ -2,8 +2,9 @@ package com.hust.bmzsweb.managesystem.business.activitySignup;
 
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivityRequiredItemDetail;
 import com.hust.bmzsweb.managesystem.business.activitySignup.model.ActivitySignupModel;
-import com.hust.bmzsweb.managesystem.business.activitySignup.model.RequiredItemDetailModel;
+import com.hust.bmzsweb.managesystem.business.activitySignup.model.AlterSignUpRequestModel;
 import com.hust.bmzsweb.managesystem.business.activitySignup.model.SignUpWithRequiredItemDetailModel;
+import com.hust.bmzsweb.managesystem.business.activitySignup.model.RequiredItemDetailModel;
 
 public interface ActivitySignupService {
     ActivityRequiredItemDetail getDetail(Integer userId, Integer actId);
@@ -11,4 +12,6 @@ public interface ActivitySignupService {
     ActivityRequiredItemDetail saveActivitySignup(SignUpWithRequiredItemDetailModel signUpWithRequiredItemDetailModel) throws Exception;
     //Integer deleteActivitySignup(Integer signId)throws Exception;
     void banActivitySignup(Integer userSignId);
+
+    void alterSignUp(AlterSignUpRequestModel alterSignUpRequestModel) throws Exception;
 }

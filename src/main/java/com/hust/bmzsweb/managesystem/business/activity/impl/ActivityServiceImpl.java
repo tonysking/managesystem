@@ -11,13 +11,11 @@ import com.hust.bmzsweb.managesystem.business.activity.model.*;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivityBrowserHistoryRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivitySignup;
+
 import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowsingHistoryEntity;
-//import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowserHistoryRepository;
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionEntity;
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel;
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionRepository;
-import com.hust.bmzsweb.managesystem.common.exception.Response;
-import com.hust.bmzsweb.managesystem.common.JSONResult;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -29,12 +27,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class ActivityServiceImpl implements ActivityService {
@@ -53,9 +47,6 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Autowired
     ActivityBrowserHistoryRepository activityBrowserHistoryRepository;
-
-//    @Autowired
-//    UserBrowserHistoryRepository userBrowserHistoryRepository;
 
     @Autowired
     UserCollectionRepository userCollectionRepository;
@@ -82,6 +73,26 @@ public class ActivityServiceImpl implements ActivityService {
       return newPage;
     }
 
+    //删除对应ID的活动
+    @Transactional
+    @Override
+    public void deleteAct(Integer actId){
+        try{
+            userCollectionRepository.deleteUserCollectionEntitiesByActId(actId);
+            activityBrowserHistoryRepository.deleteUserBrowsingHistoryEntityByActId(actId);
+            activitySignupRepository.deleteActivitySignupsByActId(actId);
+            activityRepository.deleteById(actId);}
+        catch(Exception e){
+            System.out.println("删除活动失败");
+        }
+    }
+
+    //删除活动收藏
+    @Override
+    @Transactional
+    public void deleteUserCollection(Integer userCollectionId){
+        userCollectionRepository.deleteUserCollectionEntityByCId(userCollectionId);
+    }
 
     //模糊查询活动通过活动标题 分页结果
     @Override
@@ -124,20 +135,6 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public void updateActRunstatus(Integer actId, Integer actRunStatus) {
         activityRepository.updateActRunStatus(actId,actRunStatus );
-    }
-
-    //删除对应ID的活动
-    @Transactional
-    @Override
-    public void deleteAct(Integer actId){
-        try{
-            userCollectionRepository.deleteUserCollectionEntitiesByActId(actId);
-            activityBrowserHistoryRepository.deleteUserBrowsingHistoryEntityByActId(actId);
-            activitySignupRepository.deleteActivitySignupsByActId(actId);
-            activityRepository.deleteById(actId);}
-        catch(Exception e){
-            System.out.println("删除活动失败");
-        }
     }
 
     //通过id查询活动信息
@@ -252,12 +249,13 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     @Transactional
     public Integer saveActivityInfo(ActivityWithRequiredItemModel activityInfo) {
-        activityInfo.setCategoryType(1);
         activityInfo.setParticipantsNumber(1);
+        activityInfo.setCategoryType(activityInfo.getCategoryType()+1);
         activityInfo.setUserId(1);
         activityInfo.setActHeat(0);
         activityInfo.setActLike(0);
         activityInfo.setActReminder(false);
+        activityInfo.setIsDelete(false);
         activityInfo.setActStatus(1);
         activityInfo.setActRunStatus(0);
         ActivityRequiredItem req = activityRequiredItemRepository.save(activityInfo.getActivityRequiredItem());
@@ -275,7 +273,8 @@ public class ActivityServiceImpl implements ActivityService {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
         System.out.println(df.format(new Date()));// new Date()为获取当前系统时间
         userCollectionModel.setCollectTime(new Date());
-        try{UserCollectionEntity uu = userCollectionRepository.save(userCollectionModel.createCollection());return uu.getCId();}
+        try{
+            UserCollectionEntity uu = userCollectionRepository.save(userCollectionModel.createCollection());return uu.getCId();}
         catch(Exception e){
             System.out.println("收藏活动失败");
         }
@@ -362,4 +361,36 @@ public class ActivityServiceImpl implements ActivityService {
     public ActivityRequiredItem findRequiredItem(Integer requiredItemId) {
         return activityRequiredItemRepository.findByRequiredItemIdEquals(requiredItemId);
     }
+
+    //小程序 查询所有活动种类
+    @Override
+    public List<ActivityCategory> getAllActivityCategories(){
+        return activityCategoryRepository.findAllByCategoryNameNotNull();
+    }
+
+    //小程序 查询活动信息附带活动所有的状态
+    @Override
+    public QueryActivityWithAllStatusModel queryActWithAllStatus(Integer actId,Integer userId) {
+
+        ActivityInfo actInfo = activityRepository.findByActId(actId);
+        List<ActivityCategory> categories = activityCategoryRepository.findAllByCategoryNameNotNull();
+        Map<Integer,String> categoryMap = new HashMap<>();
+        for (int i = 0; i < categories.size(); i++) {
+            categoryMap.put(categories.get(i).getCategoryType(), categories.get(i).getCategoryName());
+        }
+        String actStatus = actInfo.getActStatus()==0?"审核中":(actInfo.getActStatus()==1?"审核通过":"审核未通过");
+        QueryActivityDetailModel act = new QueryActivityDetailModel(actInfo.getActId(), actInfo.getRequiredItemId(),actInfo.getActTitle(), categoryMap.get(actInfo.getCategoryType()), actStatus,actInfo.getActDetailInfo(), actInfo.getActAddress(),actInfo.getActSignupDeadline(),actInfo.getActStartTime(),actInfo.getActHeat(),actInfo.getIsDelete(),
+                actInfo.getParticipantsNumber(), actInfo.getActRunStatus(),actInfo.getIsLimitNum(),actInfo.getMaxNum(),actInfo.getIsPrivate(),actInfo.getActPassword());
+        Boolean isSponsor = isIniator(actId, userId);
+        Date date = new Date();
+        int i = date.compareTo(actInfo.getActStartTime());
+        int j = date.compareTo(actInfo.getActSignupDeadline());
+        Boolean isActivityStart = i>0;
+        Boolean isTakePartEnd = j>0;
+        Boolean isAuthorized = actInfo.getActStatus()==1;
+        
+        QueryActivityWithAllStatusModel actWithStatus = new QueryActivityWithAllStatusModel(act,isActivityStart,isTakePartEnd,isSponsor,isAuthorized);
+        return actWithStatus;
+    }
+
 }

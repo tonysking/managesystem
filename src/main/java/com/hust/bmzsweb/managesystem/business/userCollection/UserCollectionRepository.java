@@ -14,12 +14,12 @@ public interface UserCollectionRepository extends JpaRepository<UserCollectionEn
 
     UserCollectionEntity findByUserIdAndActIdEquals(Integer userId, Integer actId);
 
+    @Transactional
     void deleteUserCollectionEntitiesByActId(Integer actId);
 
     @Transactional
     void deleteUserCollectionEntityByCId(Integer cId);
-    @Transactional
-    void deleteUserCollectionEntityByUserIdAndActId(Integer userId,Integer actId);
+
 
 //    @Modifying
 //    @Transactional

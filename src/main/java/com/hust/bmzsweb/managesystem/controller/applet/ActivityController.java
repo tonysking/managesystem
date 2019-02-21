@@ -5,6 +5,7 @@ import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityRequiredItem;
 import com.hust.bmzsweb.managesystem.business.activity.model.ActivityWithRequiredItemModel;
 import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityDetailModel;
+import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityWithAllStatusModel;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupService;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivityRequiredItemDetail;
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel;
@@ -40,6 +41,7 @@ public class ActivityController {
     public JSONResult getActDetailAndSignUpInfo(@RequestBody ActivityWithRequiredItemModel activityInfo){
         System.out.println("input activityInfo:"+activityInfo);
         Integer actId = activityService.saveActivityInfo(activityInfo);
+        System.out.println(actId);
         return JSONResult.success().add("actId",actId);
     }
 
@@ -49,6 +51,13 @@ public class ActivityController {
     public JSONResult userCollection(@RequestBody UserCollectionModel userCollectionModel){
         Integer Id = activityService.saveUserCollection(userCollectionModel);
         return JSONResult.success().add("Id",Id);
+    }
+
+    @ApiOperation(value = "删除收藏的活动")
+    @GetMapping("/delete/collection/{cId}")
+    public JSONResult deleteCollection( @PathVariable("cId")Integer cId){
+        activityService.deleteUserCollection(cId);
+        return JSONResult.success();
     }
 
     @ApiOperation(value = "查看活动详情附带报名信息")
@@ -73,6 +82,22 @@ public class ActivityController {
             return JSONResult.success().add("act",act).add("detail",detail ).add("init",init).add("requiredItem",requiredItem);
         }else{
             return JSONResult.success().add("act",act).add("detail","0" ).add("init",init).add("requiredItem",requiredItem);
+        }
+    }
+
+    @ApiOperation(value = "查看活动详情附带报名信息以及所有状态")
+    @GetMapping("/{actId}/usersignupWithAllStatus/{userId}")
+    public JSONResult getUsersignupWithAllStatus(@PathVariable("actId")Integer actId, @PathVariable("userId")Integer userId){
+
+        QueryActivityWithAllStatusModel act = activityService.queryActWithAllStatus(actId, userId);
+        ActivityRequiredItemDetail detail  = activitySignupService.getDetail(userId, actId);
+        ActivityRequiredItem requiredItem = activityService.findRequiredItem(act.getRequiredItemId());
+        Boolean isTakePart = detail!=null;
+        if(detail!=null)
+        {
+            return JSONResult.success().add("act",act).add("detail",detail ).add("requiredItem",requiredItem).add("isTakePart",isTakePart);
+        }else{
+            return JSONResult.success().add("act",act).add("detail","0" ).add("requiredItem",requiredItem).add("isTakePart",isTakePart);
         }
     }
 
@@ -103,7 +128,7 @@ public class ActivityController {
     }
 
     @ApiOperation(value = "删除对应活动")
-    @GetMapping("/delete/{actId}")
+    @GetMapping("/delete/activity/{actId}")
     public JSONResult deleteInfo( @PathVariable("actId")Integer actId){
         activityService.deleteAct(actId);
         return JSONResult.success();
