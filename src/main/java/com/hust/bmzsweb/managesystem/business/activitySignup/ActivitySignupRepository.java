@@ -34,6 +34,7 @@ public interface ActivitySignupRepository extends JpaRepository<ActivitySignup,I
 //        @Modifying
 //        @Query("delete from ActivityInfo a where a.actId=?1")
 //        int deleteActivitySignupsByActId(Integer actId);
-void deleteActivitySignupsByActId(Integer actId);
+    void deleteActivitySignupsByActId(Integer actId);
 
+    void deleteActivitySignupByActIdAndUserId(Integer actId, Integer userId);
 }

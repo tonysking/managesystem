@@ -49,6 +49,9 @@ public interface ActivityRepository extends JpaRepository<ActivityInfo,Integer>,
 
         ActivityInfo findByActIdAndUserIdEquals(Integer actId,Integer userId);
 
+        @Transactional
+        void deleteActivityInfoByActId(Integer actId);
+
 
 
 

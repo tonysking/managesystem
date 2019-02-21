@@ -1,5 +1,6 @@
 package com.hust.bmzsweb.managesystem.business.userCollection;
 
+import com.hust.bmzsweb.managesystem.business.activity.ActivityRepository;
 import com.hust.bmzsweb.managesystem.business.user.UsersRepository;
 import com.hust.bmzsweb.managesystem.business.user.entity.User;
 import org.junit.Test;
@@ -19,11 +20,21 @@ public class DeleTest {
     UserCollectionRepository userCollectionRepository;
     @Autowired
     UsersRepository usersRepository;
+
+    @Autowired
+    ActivityRepository activityRepository;
     //测试jpa接口方法
     @Test
     public void test1(){
 
         userCollectionRepository.deleteUserCollectionEntityByCId(1);
+
+
+    }
+    @Test
+    public void test2(){
+
+        activityRepository.deleteActivityInfoByActId(11);
 
 
     }

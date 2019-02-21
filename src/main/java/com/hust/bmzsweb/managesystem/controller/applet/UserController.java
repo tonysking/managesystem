@@ -163,4 +163,12 @@ public class UserController {
         List<QueryActivityListModel> userSignupAct = usersService.findUserSignupAct(userId);
         return JSONResult.success().add("userSignupActList",userSignupAct);
     }
+    //发起者删除报名成员
+    @ApiOperation(value = "发起者删除报名成员")
+    @GetMapping("/{actId}/deleteSignupUser/{userId}")
+    public JSONResult deleteSignupUser(@PathVariable("actId") Integer actId, @PathVariable("userId") Integer userId) {
+        Boolean isDelete = usersService.deleteSignupUser(actId, userId);
+        return isDelete?JSONResult.success().add("删除信息-报名的活动：",actId).add("删除信息-报名的用户：",userId):
+                        JSONResult.fail();
+    }
 }
