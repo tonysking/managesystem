@@ -11,6 +11,11 @@ import com.hust.bmzsweb.managesystem.business.activity.model.*;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivityBrowserHistoryRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivitySignup;
+
+import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowsingHistoryEntity;
+import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionEntity;
+import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel;
+import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionRepository;
 import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowsingHistoryEntity;
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel;
 import com.hust.bmzsweb.managesystem.common.utils.SensitivewordFilter;
@@ -25,6 +30,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -44,6 +50,9 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Autowired
     ActivityBrowserHistoryRepository activityBrowserHistoryRepository;
+
+    @Autowired
+    UserCollectionRepository userCollectionRepository;
 
     @Autowired
     SensitivewordFilter sensitivewordFilter;
@@ -70,6 +79,26 @@ public class ActivityServiceImpl implements ActivityService {
       return newPage;
     }
 
+    //删除对应ID的活动
+    @Transactional
+    @Override
+    public void deleteAct(Integer actId){
+        try{
+            userCollectionRepository.deleteUserCollectionEntitiesByActId(actId);
+            activityBrowserHistoryRepository.deleteUserBrowsingHistoryEntityByActId(actId);
+            activitySignupRepository.deleteActivitySignupsByActId(actId);
+            activityRepository.deleteById(actId);}
+        catch(Exception e){
+            System.out.println("删除活动失败");
+        }
+    }
+
+    //删除活动收藏
+    @Override
+    @Transactional
+    public void deleteUserCollection(Integer userCollectionId){
+        userCollectionRepository.deleteUserCollectionEntityByCId(userCollectionId);
+    }
 
     //模糊查询活动通过活动标题 分页结果
     @Override
@@ -114,10 +143,7 @@ public class ActivityServiceImpl implements ActivityService {
         activityRepository.updateActRunStatus(actId,actRunStatus );
     }
 
-    @Override
-    public void deleteAct(Integer actId) {
 
-    }
 
     //通过id查询活动信息
     @Override
@@ -227,8 +253,6 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
 
-
-
     //小程序 发起活动
     @Override
     @Transactional
@@ -253,14 +277,20 @@ public class ActivityServiceImpl implements ActivityService {
         return act.getActId();
     }
 
+    //小程序 收藏活动
     @Override
+    @Transactional
     public Integer saveUserCollection(UserCollectionModel userCollectionModel) {
-        return null;
-    }
-
-    @Override
-    public void deleteUserCollection(Integer userCollectionId) {
-
+        //UserCollectionEntity uc =new UserCollectionEntity(userCollectionModel.createCollection());
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+        System.out.println(df.format(new Date()));// new Date()为获取当前系统时间
+        userCollectionModel.setCollectTime(new Date());
+        try{
+            UserCollectionEntity uu = userCollectionRepository.save(userCollectionModel.createCollection());return uu.getCId();}
+        catch(Exception e){
+            System.out.println("收藏活动失败");
+        }
+        return 400;
     }
 
     //小程序 通过活动标题搜索活动

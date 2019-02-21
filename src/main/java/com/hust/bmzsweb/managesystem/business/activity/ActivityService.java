@@ -51,9 +51,9 @@ public interface ActivityService {
 
      ActivityRequiredItem findRequiredItem(Integer actRequiredItemId);
 
-     List<ActivityCategory> getAllActivityCategories();
-
      QueryActivityWithAllStatusModel queryActWithAllStatus(Integer actId,Integer userId);
+
+     List<ActivityCategory> getAllActivityCategories();
 
      Boolean hasSensitiveWord(String word);
 }

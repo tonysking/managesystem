@@ -6,6 +6,7 @@ import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityCategory;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityListModel;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivityBrowserHistoryRepository;
+import com.hust.bmzsweb.managesystem.business.activitySignup.ActivityRequiredItemDetailRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivitySignup;
 import com.hust.bmzsweb.managesystem.business.user.UsersRepository;
@@ -15,18 +16,21 @@ import com.hust.bmzsweb.managesystem.business.user.entity.User;
 import com.hust.bmzsweb.managesystem.business.user.entity.WXUser;
 import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowsingHistoryEntity;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class UsersServiceImpl implements UsersService {
 
     @Autowired
@@ -40,6 +44,8 @@ public class UsersServiceImpl implements UsersService {
     ActivityRepository activityRepository;
     @Autowired
     ActivityBrowserHistoryRepository activityBrowserHistoryRepository;
+    @Autowired
+    ActivityRequiredItemDetailRepository requiredItemDetailRepository;
 
 
 
@@ -189,6 +195,36 @@ public class UsersServiceImpl implements UsersService {
         List<UserBrowsingHistoryEntity> userBrowsingHistoryEntitiesByUserId = activityBrowserHistoryRepository.findUserBrowsingHistoryEntitiesByUserId(userID);
         return  userBrowsingHistoryEntitiesByUserId;
 
+    }
+
+    @Override
+    @Transactional
+    public Boolean deleteSignupUser(Integer actId, Integer userId) {
+
+        
+        //查询用户报名
+        ActivitySignup userSignup = activitySignupRepository.findByUserIdAndActIdEquals(userId, actId);
+        try {
+
+            if (userSignup!=null){
+                //删除报名详情
+                requiredItemDetailRepository.deleteActivityRequiredItemDetailByRequiredItemDetailId(userSignup.getRequiredItemDetailId());
+                //删除报名信息
+                activitySignupRepository.deleteActivitySignupByActIdAndUserId(actId, userId);
+                //查看是否删除
+                ActivitySignup isUserDelete = activitySignupRepository.findByUserIdAndActIdEquals(actId, userId);
+                if (isUserDelete == null){
+                    log.info("删除成功！");
+                    return true;
+                }
+            } else {
+                log.info("用户"+userId+"未报名活动"+actId);
+                return false;
+            }
+        } catch (Exception e) {
+            log.info("删除失败...");
+        }
+        return false;
     }
 
 }

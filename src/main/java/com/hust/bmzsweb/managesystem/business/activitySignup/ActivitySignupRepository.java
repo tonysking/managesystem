@@ -18,7 +18,9 @@ public interface ActivitySignupRepository extends JpaRepository<ActivitySignup,I
 
     ActivitySignup findByUserIdAndActIdEquals(Integer userId,Integer actId);
 
-   // ActivitySignup findByUserSignupId(Integer userSignId);
+    ActivitySignup findByUserSignupId(Integer userSignId);
+
+    // ActivitySignup findByUserSignupId(Integer userSignId);
 
 //    @Transactional
 //    @Modifying
@@ -30,10 +32,11 @@ public interface ActivitySignupRepository extends JpaRepository<ActivitySignup,I
     @Modifying
     void banSignUp(Integer stadiumId);
 
-//        @Transactional
+    //        @Transactional
 //        @Modifying
 //        @Query("delete from ActivityInfo a where a.actId=?1")
 //        int deleteActivitySignupsByActId(Integer actId);
-void deleteActivitySignupsByActId(Integer actId);
+    void deleteActivitySignupsByActId(Integer actId);
 
+    void deleteActivitySignupByActIdAndUserId(Integer actId, Integer userId);
 }

@@ -1,10 +1,9 @@
 package com.hust.bmzsweb.managesystem.controller.applet;
 
 
-import com.hust.bmzsweb.managesystem.business.activity.model.ActivityWithRequiredItemModel;
-import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupService;
 import com.hust.bmzsweb.managesystem.business.activity.ActivityService;
-import com.hust.bmzsweb.managesystem.business.activitySignup.model.ActivitySignupModel;
+import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupService;
+import com.hust.bmzsweb.managesystem.business.activitySignup.model.AlterSignUpRequestModel;
 import com.hust.bmzsweb.managesystem.business.activitySignup.model.SignUpWithRequiredItemDetailModel;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivityRequiredItemDetail;
 import com.hust.bmzsweb.managesystem.common.JSONResult;
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * 取消报名
  */
 
-@Api(value = "小程序活动报名接口",tags = "小程序活动报名接口")
+@Api(value = "活动报名接口",tags = "活动报名接口")
 @RestController()
 @RequestMapping("/applet/activitySignUp")
 public class ActivitySignupController {
@@ -43,6 +42,12 @@ public class ActivitySignupController {
         return JSONResult.success();
     }
 
+    @ApiOperation(value = "修改报名信息")
+    @PostMapping("/altering/Sigup")
+    public JSONResult alterActivitySignup(@RequestBody AlterSignUpRequestModel alterSignUpRequestModel)throws Exception {
+        activitySignupService.alterSignUp(alterSignUpRequestModel);
+        return JSONResult.success();
+    }
 
 
 }

@@ -35,4 +35,7 @@ public interface UsersService {
 
      User findUserByOpenId(Integer openId);
      List<UserBrowsingHistoryEntity> findUserBrowsingHistory(Integer userID);
+
+     //发起者删除报名成员
+     Boolean deleteSignupUser(Integer actId, Integer userId);
 }

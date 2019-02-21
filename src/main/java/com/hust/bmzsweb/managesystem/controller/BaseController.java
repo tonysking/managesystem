@@ -45,7 +45,7 @@ public class BaseController {
     		if(StringUtils.isNoneBlank(sortName) && StringUtils.isNoneBlank(sortOrder)){
     			if(sortOrder.equalsIgnoreCase("desc")){
     				sort = new Sort(Direction.DESC, sortName);
-    			}else{
+				}else{
     				sort = new Sort(Direction.ASC, sortName);
     			}
     		}
