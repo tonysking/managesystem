@@ -11,7 +11,9 @@ import com.hust.bmzsweb.managesystem.business.activity.model.*;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivityBrowserHistoryRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivitySignup;
-import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowserHistoryEntity;
+import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowsingHistoryEntity;
+import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel;
+import com.hust.bmzsweb.managesystem.common.utils.SensitivewordFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -42,6 +44,9 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Autowired
     ActivityBrowserHistoryRepository activityBrowserHistoryRepository;
+
+    @Autowired
+    SensitivewordFilter sensitivewordFilter;
 
     //查询用户创建的所有活动 分页结果
     public Page<QueryActivityListModel> findAllActsByUserId(Integer userId, PageRequest pageRequest){
@@ -107,6 +112,11 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public void updateActRunstatus(Integer actId, Integer actRunStatus) {
         activityRepository.updateActRunStatus(actId,actRunStatus );
+    }
+
+    @Override
+    public void deleteAct(Integer actId) {
+
     }
 
     //通过id查询活动信息
@@ -217,24 +227,40 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
 
+
+
     //小程序 发起活动
     @Override
     @Transactional
     public Integer saveActivityInfo(ActivityWithRequiredItemModel activityInfo) {
+
+
+        if(hasSensitiveWord(activityInfo.getActTitle())||hasSensitiveWord(activityInfo.getActDetailInfo()))
+        {
+            return -1;
+        }
+
         activityInfo.setParticipantsNumber(1);
         activityInfo.setCategoryType(activityInfo.getCategoryType()+1);
         activityInfo.setUserId(1);
-        activityInfo.setActHeat(0);
-        activityInfo.setActLike(0);
         activityInfo.setActReminder(false);
         activityInfo.setIsDelete(false);
         activityInfo.setActStatus(1);
         activityInfo.setActRunStatus(0);
         ActivityRequiredItem req = activityRequiredItemRepository.save(activityInfo.getActivityRequiredItem());
         activityInfo.setRequiredItemId(req.getRequiredItemId());
-        System.out.println("requiredItemId:"+req.getRequiredItemId());
-        ActivityInfo act = activityRepository.save(activityInfo.createAct());
+        ActivityInfo act = activityRepository.save(activityInfo.createActWithActHeatActLikeZero());
         return act.getActId();
+    }
+
+    @Override
+    public Integer saveUserCollection(UserCollectionModel userCollectionModel) {
+        return null;
+    }
+
+    @Override
+    public void deleteUserCollection(Integer userCollectionId) {
+
     }
 
     //小程序 通过活动标题搜索活动
@@ -276,7 +302,21 @@ public class ActivityServiceImpl implements ActivityService {
     //小程序 更改活动状态
     @Override
     public Integer updateActivityInfo(ActivityWithRequiredItemModel activityInfo) {
-        ActivityInfo act = activityInfo.createAct();
+
+        if(hasSensitiveWord(activityInfo.getActTitle())||hasSensitiveWord(activityInfo.getActDetailInfo()))
+        {
+            return -1;
+        }
+
+        ActivityInfo act = activityInfo.createActWithActHeatActLikeZero();
+        act.setActReminder(false);
+        act.setIsDelete(false);
+        act.setActStatus(1);
+        act.setActRunStatus(0);
+        act.setCategoryType(activityInfo.getCategoryType()+1);
+        act.setUserId(1);
+        act.setParticipantsNumber(1);
+        act.setRequiredItemId(activityInfo.getActivityRequiredItem().getRequiredItemId());
         activityRequiredItemRepository.save(activityInfo.getActivityRequiredItem());
         activityRepository.save(act);
         return act.getActId();
@@ -285,7 +325,7 @@ public class ActivityServiceImpl implements ActivityService {
     //小程序 保存活动浏览历史
     @Override
     public void saveBrowserHistory(Integer userId, Integer actId) {
-        activityBrowserHistoryRepository.save(new UserBrowserHistoryEntity( actId,userId ));
+        activityBrowserHistoryRepository.save(new UserBrowsingHistoryEntity( actId,userId ));
     }
 
     //小程序 判断是否是发起者
@@ -327,7 +367,6 @@ public class ActivityServiceImpl implements ActivityService {
     //小程序 查询活动信息附带活动所有的状态
     @Override
     public QueryActivityWithAllStatusModel queryActWithAllStatus(Integer actId,Integer userId) {
-
         ActivityInfo actInfo = activityRepository.findByActId(actId);
         List<ActivityCategory> categories = activityCategoryRepository.findAllByCategoryNameNotNull();
         Map<Integer,String> categoryMap = new HashMap<>();
@@ -345,8 +384,20 @@ public class ActivityServiceImpl implements ActivityService {
         Boolean isTakePartEnd = j>0;
         Boolean isAuthorized = actInfo.getActStatus()==1;
         
-        QueryActivityWithAllStatusModel actWithStatus = new QueryActivityWithAllStatusModel(act,isActivityStart,isTakePartEnd,isSponsor,isAuthorized);
+        QueryActivityWithAllStatusModel actWithStatus =
+                new QueryActivityWithAllStatusModel(act,isActivityStart,isTakePartEnd,isSponsor,isAuthorized,actInfo.getCategoryType()-1,actInfo.getLatitude(),actInfo.getLongitude());
         return actWithStatus;
+    }
+
+    @Override
+    public Boolean hasSensitiveWord(String word) {
+
+        Set<String> sensitiveWord = sensitivewordFilter.getSensitiveWord(word, 1);
+        if(!sensitiveWord.isEmpty())
+        {
+            return true;
+        }
+        return false;
     }
 
 }
