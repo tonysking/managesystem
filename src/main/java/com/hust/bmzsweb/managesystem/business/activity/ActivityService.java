@@ -1,5 +1,6 @@
 package com.hust.bmzsweb.managesystem.business.activity;
 
+import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityCategory;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityRequiredItem;
 import com.hust.bmzsweb.managesystem.business.activity.model.*;
@@ -49,6 +50,10 @@ public interface ActivityService {
      QueryActivityDetailModel queryActWithRequiredItemId(Integer actId);
 
      ActivityRequiredItem findRequiredItem(Integer actRequiredItemId);
+
+     QueryActivityWithAllStatusModel queryActWithAllStatus(Integer actId,Integer userId);
+
+     List<ActivityCategory> getAllActivityCategories();
 
 
 }
