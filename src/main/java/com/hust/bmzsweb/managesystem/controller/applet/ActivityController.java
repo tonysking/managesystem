@@ -1,6 +1,7 @@
 package com.hust.bmzsweb.managesystem.controller.applet;
 
 import com.hust.bmzsweb.managesystem.business.activity.ActivityService;
+import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityCategory;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityRequiredItem;
 import com.hust.bmzsweb.managesystem.business.activity.model.ActivityWithRequiredItemModel;
@@ -58,6 +59,13 @@ public class ActivityController {
     public JSONResult deleteCollection( @PathVariable("cId")Integer cId){
         activityService.deleteUserCollection(cId);
         return JSONResult.success();
+    }
+
+    @ApiOperation(value = "查询所有种类信息")
+    @GetMapping("/actCategories")
+    public JSONResult getActCategories(){
+        List<ActivityCategory> categories = activityService.getAllActivityCategories();
+        return JSONResult.success().add("categories", categories);
     }
 
     @ApiOperation(value = "查看活动详情附带报名信息")

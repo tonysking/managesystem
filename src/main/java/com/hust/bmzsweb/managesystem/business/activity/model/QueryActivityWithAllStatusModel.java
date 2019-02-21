@@ -16,6 +16,8 @@ public class QueryActivityWithAllStatusModel {
     private String actStatus;
     private String actDetailInfo;
     private String actAddress;
+    private Double longitude;
+    private Double latitude;
     @JsonFormat(pattern="yyyy-MM-dd hh:mm:ss",locale="zh", timezone="GMT+8")
     private Date actSignupDeadline;
     @JsonFormat(pattern="yyyy-MM-dd hh:mm:ss",locale="zh", timezone="GMT+8")
@@ -24,6 +26,10 @@ public class QueryActivityWithAllStatusModel {
     private Integer participantsNumber;
     private Integer actRunStatus;
 
+
+
+    //种类索引
+    private Integer type;
 
     private Boolean isLimitNum;
     private Integer maxNum;
@@ -43,7 +49,7 @@ public class QueryActivityWithAllStatusModel {
     //是否审核通过
     private Boolean isAuthorized;
 
-    public QueryActivityWithAllStatusModel(QueryActivityDetailModel activityInfo,Boolean isActivityStart,Boolean isTakePartEnd,Boolean isSponsor,Boolean isAuthorized)
+    public QueryActivityWithAllStatusModel(QueryActivityDetailModel activityInfo,Boolean isActivityStart,Boolean isTakePartEnd,Boolean isSponsor,Boolean isAuthorized,Integer type,Double latitude,Double longitude)
     {
         this.actId = activityInfo.getActId();
         this.requiredItemId = activityInfo.getRequiredItemId();
@@ -67,6 +73,10 @@ public class QueryActivityWithAllStatusModel {
         this.isTakePartEnd = isTakePartEnd;
         this.isSponsor = isSponsor;
         this.isAuthorized= isAuthorized;
+
+        this.type = type;
+        this.latitude = latitude;
+        this.longitude = longitude;
 
     }
 

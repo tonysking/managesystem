@@ -28,8 +28,6 @@ public class ActivityWithRequiredItemModel {
     private Double longitude;
     private Double latitude;
     private Integer participantsNumber;
-    private Integer actHeat;
-    private Integer actLike;
     private Integer actStatus;
     private Integer actRunStatus;
     private Date createTime;
@@ -46,6 +44,12 @@ public class ActivityWithRequiredItemModel {
     public  ActivityInfo createAct(){
         return new ActivityInfo(userId,requiredItemId,actTitle,actDetailInfo,actSignupDeadline,
                 actStartTime,actReminder,categoryType,actAddress,longitude,latitude,
-                participantsNumber,actHeat,actLike,actStatus,actRunStatus,createTime,updateTime,isLimitNum,maxNum,isPrivate,actPassword);
+                participantsNumber,actStatus,actRunStatus,createTime,updateTime,isLimitNum,maxNum,isPrivate,actPassword,isDelete);
+    }
+
+    public  ActivityInfo createActWithActHeatActLikeZero(){
+        return new ActivityInfo(userId,requiredItemId,actTitle,actDetailInfo,actSignupDeadline,
+                actStartTime,actReminder,categoryType,actAddress,longitude,latitude,
+                participantsNumber,0,0,actStatus,actRunStatus,createTime,updateTime,isLimitNum,maxNum,isPrivate,actPassword,isDelete);
     }
 }
