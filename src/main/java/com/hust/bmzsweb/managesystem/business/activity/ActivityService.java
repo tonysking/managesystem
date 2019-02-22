@@ -4,6 +4,7 @@ import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityCategory;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityRequiredItem;
 import com.hust.bmzsweb.managesystem.business.activity.model.*;
+import com.hust.bmzsweb.managesystem.business.user.model.UserPositionModel;
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel;
 import com.hust.bmzsweb.managesystem.common.exception.ActivityException;
 import com.hust.bmzsweb.managesystem.common.exception.Response;
@@ -57,4 +58,6 @@ public interface ActivityService {
      List<ActivityCategory> getAllActivityCategories();
 
      Boolean hasSensitiveWord(String word);
+
+     List<QueryActivityLocationListModel> findActLocationsFromUserPosition(UserPositionModel userPositionModel,Double distance);
 }

@@ -12,6 +12,7 @@ import com.hust.bmzsweb.managesystem.business.activitySignup.ActivityBrowserHist
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivitySignup;
 
+import com.hust.bmzsweb.managesystem.business.user.model.UserPositionModel;
 import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowsingHistoryEntity;
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionEntity;
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel;
@@ -20,6 +21,7 @@ import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowsingHist
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel;
 import com.hust.bmzsweb.managesystem.common.enums.ResultEnum;
 import com.hust.bmzsweb.managesystem.common.exception.ActivityException;
+import com.hust.bmzsweb.managesystem.common.utils.GSUtil;
 import com.hust.bmzsweb.managesystem.common.utils.SensitivewordFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -260,9 +262,10 @@ public class ActivityServiceImpl implements ActivityService {
     @Transactional
     public Integer saveActivityInfo(ActivityWithRequiredItemModel activityInfo) throws ActivityException {
 
-        if("a".equals(activityInfo.getActTitle()))
+
+        if(hasSensitiveWord(activityInfo.getActTitle())||hasSensitiveWord(activityInfo.getActDetailInfo()))
         {
-            throw new ActivityException(ResultEnum.VERIFICATION_FAILED);
+            return -1;
         }
 
         activityInfo.setParticipantsNumber(1);
@@ -437,6 +440,46 @@ public class ActivityServiceImpl implements ActivityService {
             return true;
         }
         return false;
+    }
+
+    //小程序 查询用户周围的活动位置信息
+    @Override
+    public List<QueryActivityLocationListModel> findActLocationsFromUserPosition(UserPositionModel userPositionModel,Double distance) {
+        List<QueryActivityLocationListModel> locationListModels = new ArrayList<>();
+
+        if (distance == null){
+            distance = 3244.79;
+        }
+        System.out.println("距离："+distance);
+        //获取用户经纬度
+        Double longitude = userPositionModel.getLongitude();
+        Double latitude = userPositionModel.getLatitude();
+        //按热度降序查找所有活动
+        Sort sort = new Sort(Sort.Direction.DESC,"actHeat");
+        List<ActivityInfo> all = activityRepository.findAll(sort);
+        //将所有活动类型放入map
+        List<ActivityCategory> categories = activityCategoryRepository.findAllByCategoryNameNotNull();
+        Map<Integer,String> categoryMap = new HashMap<>();
+        for (int i = 0; i < categories.size(); i++) {
+            categoryMap.put(categories.get(i).getCategoryType(), categories.get(i).getCategoryName());
+        }
+        //查询距离用户位置distance米的活动
+        QueryActivityLocationListModel actLocationModel = null;
+        for (ActivityInfo act: all) {
+            if (GSUtil.getmeter(longitude,latitude,act.getLongitude(),act.getLatitude())<=distance) {
+                actLocationModel = new QueryActivityLocationListModel();
+                actLocationModel.setActId(act.getActId());
+                actLocationModel.setActTitle(act.getActTitle());
+                actLocationModel.setCategory(categoryMap.get(act.getCategoryType()));
+                actLocationModel.setActAddress(act.getActAddress());
+                actLocationModel.setLatitude(act.getLongitude());
+                actLocationModel.setLatitude(act.getLatitude());
+                actLocationModel.setParticipantsNumber(act.getParticipantsNumber());
+                actLocationModel.setActHeat(act.getActHeat());
+                locationListModels.add(actLocationModel);
+            }
+        }
+        return locationListModels;
     }
 
 }
