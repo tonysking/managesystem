@@ -9,9 +9,9 @@ import com.hust.bmzsweb.managesystem.business.activitySignup.model.RequiredItemD
 public interface ActivitySignupService {
     ActivityRequiredItemDetail getDetail(Integer userId, Integer actId);
 
-    ActivityRequiredItemDetail saveActivitySignup(SignUpWithRequiredItemDetailModel signUpWithRequiredItemDetailModel) throws Exception;
+    ActivityRequiredItemDetail saveActivitySignup(SignUpWithRequiredItemDetailModel signUpWithRequiredItemDetailModel);
     //Integer deleteActivitySignup(Integer signId)throws Exception;
     void banActivitySignup(Integer userSignId);
 
-    void alterSignUp(AlterSignUpRequestModel alterSignUpRequestModel) throws Exception;
+    void alterSignUp(AlterSignUpRequestModel alterSignUpRequestModel);
 }
