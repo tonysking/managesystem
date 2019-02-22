@@ -45,6 +45,6 @@ public class ExceptionHandle {
                 ActivitySignupException  activitySignupException= (ActivitySignupException) e;
                 return JSONResult.fail(activitySignupException.getMessage(),activitySignupException.getCode());
             }
-           return JSONResult.fail(ResultEnum.UNKNOWN_ERROR);
+           return JSONResult.fail(e.getMessage(), 500);
     }
 }

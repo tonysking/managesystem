@@ -40,7 +40,7 @@ public class ActivityController {
 
     @ApiOperation(value = "创建报名")
     @PostMapping("/creation")
-    public JSONResult getActDetailAndSignUpInfo(@RequestBody ActivityWithRequiredItemModel activityInfo){
+    public JSONResult getActDetailAndSignUpInfo(@RequestBody ActivityWithRequiredItemModel activityInfo,String userId){
         System.out.println("input activityInfo:"+activityInfo);
         Integer actId = activityService.saveActivityInfo(activityInfo);
         System.out.println(actId);

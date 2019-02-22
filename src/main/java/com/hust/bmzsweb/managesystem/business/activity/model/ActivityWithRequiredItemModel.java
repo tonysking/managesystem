@@ -18,6 +18,7 @@ public class ActivityWithRequiredItemModel {
     private Integer requiredItemId;
     private String actTitle;
     private String actDetailInfo;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date actSignupDeadline;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")

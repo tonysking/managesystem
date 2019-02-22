@@ -12,6 +12,8 @@ import com.hust.bmzsweb.managesystem.business.activitySignup.ActivityBrowserHist
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivitySignup;
 
+import com.hust.bmzsweb.managesystem.business.user.UsersRepository;
+import com.hust.bmzsweb.managesystem.business.user.entity.User;
 import com.hust.bmzsweb.managesystem.business.user.model.UserPositionModel;
 import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowsingHistoryEntity;
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionEntity;
@@ -60,6 +62,10 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Autowired
     SensitivewordFilter sensitivewordFilter;
+
+
+    @Autowired
+    UsersRepository usersRepository;
 
     //查询用户创建的所有活动 分页结果
     public Page<QueryActivityListModel> findAllActsByUserId(Integer userId, PageRequest pageRequest){
@@ -260,17 +266,18 @@ public class ActivityServiceImpl implements ActivityService {
     //小程序 发起活动
     @Override
     @Transactional
-    public Integer saveActivityInfo(ActivityWithRequiredItemModel activityInfo) throws ActivityException {
+    public Integer saveActivityInfo(ActivityWithRequiredItemModel activityInfo)  {
 
+        User user = usersRepository.findUserByUserId(activityInfo.getUserId());
 
-        if(hasSensitiveWord(activityInfo.getActTitle())||hasSensitiveWord(activityInfo.getActDetailInfo()))
+        if(user.getUserStatus()!=0)
         {
-            return -1;
+            throw new ActivityException("用户被锁定，无法发起活动");
         }
+
 
         activityInfo.setParticipantsNumber(1);
         activityInfo.setCategoryType(activityInfo.getCategoryType()+1);
-        activityInfo.setUserId(1);
         activityInfo.setActReminder(false);
         activityInfo.setIsDelete(false);
         if(hasSensitiveWord(activityInfo.getActTitle())||hasSensitiveWord(activityInfo.getActDetailInfo()))
@@ -356,7 +363,6 @@ public class ActivityServiceImpl implements ActivityService {
         }
         act.setActRunStatus(0);
         act.setCategoryType(activityInfo.getCategoryType()+1);
-        act.setUserId(1);
         act.setParticipantsNumber(1);
         act.setRequiredItemId(activityInfo.getActivityRequiredItem().getRequiredItemId());
         activityRequiredItemRepository.save(activityInfo.getActivityRequiredItem());
