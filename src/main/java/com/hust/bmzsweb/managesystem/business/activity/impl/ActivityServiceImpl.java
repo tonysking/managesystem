@@ -12,6 +12,8 @@ import com.hust.bmzsweb.managesystem.business.activitySignup.ActivityBrowserHist
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivitySignup;
 
+import com.hust.bmzsweb.managesystem.business.user.UsersRepository;
+import com.hust.bmzsweb.managesystem.business.user.entity.User;
 import com.hust.bmzsweb.managesystem.business.user.model.UserPositionModel;
 import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowsingHistoryEntity;
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionEntity;
@@ -19,6 +21,8 @@ import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionRepository;
 import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowsingHistoryEntity;
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel;
+import com.hust.bmzsweb.managesystem.common.enums.ResultEnum;
+import com.hust.bmzsweb.managesystem.common.exception.ActivityException;
 import com.hust.bmzsweb.managesystem.common.utils.GSUtil;
 import com.hust.bmzsweb.managesystem.common.utils.SensitivewordFilter;
 import org.apache.commons.lang3.StringUtils;
@@ -58,6 +62,10 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Autowired
     SensitivewordFilter sensitivewordFilter;
+
+
+    @Autowired
+    UsersRepository usersRepository;
 
     //查询用户创建的所有活动 分页结果
     public Page<QueryActivityListModel> findAllActsByUserId(Integer userId, PageRequest pageRequest){
@@ -258,20 +266,27 @@ public class ActivityServiceImpl implements ActivityService {
     //小程序 发起活动
     @Override
     @Transactional
-    public Integer saveActivityInfo(ActivityWithRequiredItemModel activityInfo) {
+    public Integer saveActivityInfo(ActivityWithRequiredItemModel activityInfo)  {
 
+        User user = usersRepository.findUserByUserId(activityInfo.getUserId());
 
-        if(hasSensitiveWord(activityInfo.getActTitle())||hasSensitiveWord(activityInfo.getActDetailInfo()))
+        if(user.getUserStatus()!=0)
         {
-            return -1;
+            throw new ActivityException("用户被锁定，无法发起活动");
         }
+
 
         activityInfo.setParticipantsNumber(1);
         activityInfo.setCategoryType(activityInfo.getCategoryType()+1);
-        activityInfo.setUserId(1);
         activityInfo.setActReminder(false);
         activityInfo.setIsDelete(false);
-        activityInfo.setActStatus(1);
+        if(hasSensitiveWord(activityInfo.getActTitle())||hasSensitiveWord(activityInfo.getActDetailInfo()))
+        {
+            activityInfo.setActStatus(2);
+        }else{
+            activityInfo.setActStatus(1);
+        }
+
         activityInfo.setActRunStatus(0);
         ActivityRequiredItem req = activityRequiredItemRepository.save(activityInfo.getActivityRequiredItem());
         activityInfo.setRequiredItemId(req.getRequiredItemId());
@@ -333,20 +348,21 @@ public class ActivityServiceImpl implements ActivityService {
 
     //小程序 更改活动状态
     @Override
-    public Integer updateActivityInfo(ActivityWithRequiredItemModel activityInfo) {
-
-        if(hasSensitiveWord(activityInfo.getActTitle())||hasSensitiveWord(activityInfo.getActDetailInfo()))
-        {
-            return -1;
-        }
-
+    public Integer updateActivityInfo(ActivityWithRequiredItemModel activityInfo){
         ActivityInfo act = activityInfo.createActWithActHeatActLikeZero();
+
+
+
         act.setActReminder(false);
         act.setIsDelete(false);
-        act.setActStatus(1);
+        if(hasSensitiveWord(activityInfo.getActTitle())||hasSensitiveWord(activityInfo.getActDetailInfo()))
+        {
+            act.setActStatus(2);
+        }else{
+            act.setActStatus(1);
+        }
         act.setActRunStatus(0);
         act.setCategoryType(activityInfo.getCategoryType()+1);
-        act.setUserId(1);
         act.setParticipantsNumber(1);
         act.setRequiredItemId(activityInfo.getActivityRequiredItem().getRequiredItemId());
         activityRequiredItemRepository.save(activityInfo.getActivityRequiredItem());

@@ -6,6 +6,7 @@ import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityRequiredIt
 import com.hust.bmzsweb.managesystem.business.activity.model.*;
 import com.hust.bmzsweb.managesystem.business.user.model.UserPositionModel;
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel;
+import com.hust.bmzsweb.managesystem.common.exception.ActivityException;
 import com.hust.bmzsweb.managesystem.common.exception.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

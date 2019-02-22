@@ -38,7 +38,7 @@ public class AdminActivityController extends BaseController {
     ActivitySignupService activitySignupService;
 
     @ApiOperation(value = "显示活动信息主页")
-    @RequestMapping({"/activity/","/activity/index"})
+    @GetMapping({"/activity/","/activity/index"})
     public ModelAndView index() {
         return new ModelAndView("admin/activity/index");
     }

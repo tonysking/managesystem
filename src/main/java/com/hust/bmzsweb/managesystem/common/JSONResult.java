@@ -1,5 +1,6 @@
 package com.hust.bmzsweb.managesystem.common;
 
+import com.hust.bmzsweb.managesystem.common.enums.ResultEnum;
 import lombok.Data;
 
 import java.util.HashMap;
@@ -28,6 +29,29 @@ public class JSONResult {
         result.setMsg("处理失败");
         return result;
     }
+
+    public static JSONResult fail(String errorMsg) {
+        JSONResult result = new JSONResult();
+        result.setMsg(errorMsg);
+        return result;
+    }
+
+    public static JSONResult fail(String errorMsg,Integer code) {
+        JSONResult result = new JSONResult();
+        result.setMsg(errorMsg);
+        result.setCode(code);
+        return result;
+    }
+
+    public static JSONResult fail(ResultEnum resultEnum) {
+        JSONResult result = new JSONResult();
+        result.setCode(resultEnum.getCode());
+        result.setMsg(resultEnum.getMsg());
+        return result;
+    }
+
+
+
 
     public JSONResult add(String key, Object value) {
         this.getExtend().put(key,value);

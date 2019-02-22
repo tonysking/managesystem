@@ -11,6 +11,7 @@ import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupServi
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivityRequiredItemDetail;
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel;
 import com.hust.bmzsweb.managesystem.common.JSONResult;
+import com.hust.bmzsweb.managesystem.common.exception.ActivityException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class ActivityController {
 
     @ApiOperation(value = "发起活动")
     @PostMapping("/creation")
-    public JSONResult getActDetailAndSignUpInfo(@RequestBody ActivityWithRequiredItemModel activityInfo){
+    public JSONResult getActDetailAndSignUpInfo(@RequestBody ActivityWithRequiredItemModel activityInfo,String userId){
         System.out.println("input activityInfo:"+activityInfo);
         Integer actId = activityService.saveActivityInfo(activityInfo);
         System.out.println(actId);
@@ -130,7 +131,7 @@ public class ActivityController {
 
     @ApiOperation(value = "发起者修改活动信息")
     @PutMapping("/edit/{actId}")
-    public JSONResult editInfo( @RequestBody ActivityWithRequiredItemModel activityInfo){
+    public JSONResult editInfo(@RequestBody ActivityWithRequiredItemModel activityInfo){
         Integer actId = activityService.updateActivityInfo(activityInfo);
         return JSONResult.success().add("actId",actId);
     }
