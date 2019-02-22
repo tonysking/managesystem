@@ -18,6 +18,8 @@ import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionRepository;
 import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowsingHistoryEntity;
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel;
+import com.hust.bmzsweb.managesystem.common.enums.ResultEnum;
+import com.hust.bmzsweb.managesystem.common.exception.ActivityException;
 import com.hust.bmzsweb.managesystem.common.utils.SensitivewordFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -256,12 +258,11 @@ public class ActivityServiceImpl implements ActivityService {
     //小程序 发起活动
     @Override
     @Transactional
-    public Integer saveActivityInfo(ActivityWithRequiredItemModel activityInfo) {
+    public Integer saveActivityInfo(ActivityWithRequiredItemModel activityInfo) throws ActivityException {
 
-
-        if(hasSensitiveWord(activityInfo.getActTitle())||hasSensitiveWord(activityInfo.getActDetailInfo()))
+        if("a".equals(activityInfo.getActTitle()))
         {
-            return -1;
+            throw new ActivityException(ResultEnum.VERIFICATION_FAILED);
         }
 
         activityInfo.setParticipantsNumber(1);
@@ -269,7 +270,13 @@ public class ActivityServiceImpl implements ActivityService {
         activityInfo.setUserId(1);
         activityInfo.setActReminder(false);
         activityInfo.setIsDelete(false);
-        activityInfo.setActStatus(1);
+        if(hasSensitiveWord(activityInfo.getActTitle())||hasSensitiveWord(activityInfo.getActDetailInfo()))
+        {
+            activityInfo.setActStatus(2);
+        }else{
+            activityInfo.setActStatus(1);
+        }
+
         activityInfo.setActRunStatus(0);
         ActivityRequiredItem req = activityRequiredItemRepository.save(activityInfo.getActivityRequiredItem());
         activityInfo.setRequiredItemId(req.getRequiredItemId());
@@ -331,17 +338,19 @@ public class ActivityServiceImpl implements ActivityService {
 
     //小程序 更改活动状态
     @Override
-    public Integer updateActivityInfo(ActivityWithRequiredItemModel activityInfo) {
-
-        if(hasSensitiveWord(activityInfo.getActTitle())||hasSensitiveWord(activityInfo.getActDetailInfo()))
-        {
-            return -1;
-        }
-
+    public Integer updateActivityInfo(ActivityWithRequiredItemModel activityInfo){
         ActivityInfo act = activityInfo.createActWithActHeatActLikeZero();
+
+
+
         act.setActReminder(false);
         act.setIsDelete(false);
-        act.setActStatus(1);
+        if(hasSensitiveWord(activityInfo.getActTitle())||hasSensitiveWord(activityInfo.getActDetailInfo()))
+        {
+            act.setActStatus(2);
+        }else{
+            act.setActStatus(1);
+        }
         act.setActRunStatus(0);
         act.setCategoryType(activityInfo.getCategoryType()+1);
         act.setUserId(1);
