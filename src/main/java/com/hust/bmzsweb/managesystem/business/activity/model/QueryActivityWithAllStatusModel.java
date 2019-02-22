@@ -10,6 +10,7 @@ import java.util.Date;
 public class QueryActivityWithAllStatusModel {
 
     private Integer actId;
+    private Integer userId;
     private Integer requiredItemId;
     private String actTitle;
     private String category;
@@ -26,7 +27,33 @@ public class QueryActivityWithAllStatusModel {
     private Integer participantsNumber;
     private Integer actRunStatus;
 
-
+    public QueryActivityWithAllStatusModel(Integer actId, Integer userId, Integer requiredItemId, String actTitle, String category, String actStatus, String actDetailInfo, String actAddress, Double longitude, Double latitude, Date actSignupDeadline, Date actStartTime, Integer actHeat, Integer participantsNumber, Integer actRunStatus, Integer type, Boolean isLimitNum, Integer maxNum, Boolean isPrivate, String actPassword, Boolean isActivityStart, Boolean isTakePartEnd, Boolean isDelete, Boolean isSponsor, Boolean isAuthorized) {
+        this.actId = actId;
+        this.userId = userId;
+        this.requiredItemId = requiredItemId;
+        this.actTitle = actTitle;
+        this.category = category;
+        this.actStatus = actStatus;
+        this.actDetailInfo = actDetailInfo;
+        this.actAddress = actAddress;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.actSignupDeadline = actSignupDeadline;
+        this.actStartTime = actStartTime;
+        this.actHeat = actHeat;
+        this.participantsNumber = participantsNumber;
+        this.actRunStatus = actRunStatus;
+        this.type = type;
+        this.isLimitNum = isLimitNum;
+        this.maxNum = maxNum;
+        this.isPrivate = isPrivate;
+        this.actPassword = actPassword;
+        this.isActivityStart = isActivityStart;
+        this.isTakePartEnd = isTakePartEnd;
+        this.isDelete = isDelete;
+        this.isSponsor = isSponsor;
+        this.isAuthorized = isAuthorized;
+    }
 
     //种类索引
     private Integer type;
@@ -52,6 +79,7 @@ public class QueryActivityWithAllStatusModel {
     public QueryActivityWithAllStatusModel(QueryActivityDetailModel activityInfo,Boolean isActivityStart,Boolean isTakePartEnd,Boolean isSponsor,Boolean isAuthorized,Integer type,Double latitude,Double longitude)
     {
         this.actId = activityInfo.getActId();
+        this.userId = activityInfo.getUserId();
         this.requiredItemId = activityInfo.getRequiredItemId();
         this.actTitle = activityInfo.getActTitle();
         this.category = activityInfo.getCategory();
