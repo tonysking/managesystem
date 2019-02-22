@@ -74,8 +74,8 @@ public class UserController {
 
         String url = "https://api.weixin.qq.com/sns/jscode2session";
         Map<String,String> param = new HashMap<>();
-        param.put("appid","wxc6467a1616a9bf95");
-        param.put("secret","c2c3b087848e9c806bc72e8564ae08af");
+        param.put("appid","wxfffccfb0952d64e0");
+        param.put("secret","fc7fdbef714319da6346d601603e9215");
         param.put("js_code",code);
         param.put("grant_type","authorization_code");
         //获取{"session_key":"","openid":""}
@@ -83,6 +83,9 @@ public class UserController {
         System.out.println(wxResult);
         //将获得的json字符串转换为对象
         WXSessionModel wxSessionModel = JsonUtils.jsonToPojo(wxResult, WXSessionModel.class);
+        if (wxSessionModel == null) {
+            throw new Exception("json字符串转换为对象失败");
+        }
         //获取openid和session_key
         String openid = wxSessionModel.getOpenid();
         String session_key = wxSessionModel.getSession_key();
@@ -105,6 +108,8 @@ public class UserController {
             User user = new User();
             user.setUserOpenid(openid);
             user.setUserNickName(nickName);
+            user.setUserStatus(0);  //默认用户状态正常
+            user.setUserRole(0);    //默认普通用户
             usersService.saveUserInfo(user);
         }
 

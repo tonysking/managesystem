@@ -8,7 +8,7 @@ import java.util.Map;
 @Data
 public class JSONResult {
 
-    //状态码 100-成功 200-失败
+    //状态码 200-成功 500-失败
     private int code;
     //提示信息
     private String msg;
@@ -17,14 +17,14 @@ public class JSONResult {
 
     public static JSONResult success() {
         JSONResult result = new JSONResult();
-        result.setCode(100);
+        result.setCode(200);
         result.setMsg("处理成功");
         return result;
     }
 
     public static JSONResult fail() {
         JSONResult result = new JSONResult();
-        result.setCode(200);
+        result.setCode(500);
         result.setMsg("处理失败");
         return result;
     }
