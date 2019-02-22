@@ -88,7 +88,12 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
             log.info("活动不存在");
             throw new ActivitySignupException("活动不存在");
         }
-//          } catch (Exception e){e.printStackTrace();}
+        if(isSignupEnd(activityInfo.getActSignupDeadline()))
+        {
+            log.info("报名已经截止");
+            throw new ActivitySignupException("报名已经截止");
+        }
+
         if ((activityInfo.getMaxNum() < activityInfo.getActHeat()) && activityInfo.getIsLimitNum() == true) {
             log.info("活动报名人数已满");
             throw new ActivitySignupException("活动报名人数已满");
@@ -97,6 +102,18 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
             log.info("活动已禁止");
             throw new ActivitySignupException("活动已禁止");
         }//0正常 1表示被禁止(失效)
+        if (activityInfo.getActRunStatus() == 0) {
+            log.info("活动还在审核中");
+            throw new ActivitySignupException("活动还在审核中");
+        }
+        if (activityInfo.getActRunStatus() == 2) {
+            log.info("活动未通过审核");
+            throw new ActivitySignupException("活动未通过审核");
+        }
+        if (activityInfo.getIsDelete()) {
+            log.info("活动已被删除");
+            throw new ActivitySignupException("活动已被删除");
+        }
         User user = usersRepository.findUserByUserId(signUpWithRequiredItemDetailModel.getUserId());
         if (user == null) {
             log.info("用户不存在");
@@ -246,4 +263,18 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
 
         activitySignupRepository.save(activitySignup);
     }
+
+
+    //判断报名是否截止
+    @Override
+    public  boolean isSignupEnd(Date date) {
+
+        Date now = new Date();
+        if(date.compareTo(now)<=0)
+        {
+            return true;
+        }
+        return false;
+    }
+
 }

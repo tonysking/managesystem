@@ -166,7 +166,11 @@ public class ActivityServiceImpl implements ActivityService {
             categoryMap.put(categories.get(i).getCategoryType(), categories.get(i).getCategoryName());
         }
         String actStatus = actInfo.getActStatus()==0?"审核中":(actInfo.getActStatus()==1?"审核通过":"审核未通过");
-        QueryActivityDetailModel act = new QueryActivityDetailModel(actInfo.getActId(), actInfo.getRequiredItemId(),actInfo.getActTitle(), categoryMap.get(actInfo.getCategoryType()), actStatus,actInfo.getActDetailInfo(), actInfo.getActAddress(),actInfo.getActSignupDeadline(),actInfo.getActStartTime(), actInfo.getParticipantsNumber(), actInfo.getActRunStatus());
+        QueryActivityDetailModel act = new QueryActivityDetailModel(actInfo.getActId(),actInfo.getUserId(),actInfo.getRequiredItemId(),actInfo.getActTitle(),
+                categoryMap.get(actInfo.getCategoryType()),actStatus,actInfo.getActDetailInfo(),actInfo.getActAddress(),actInfo.getActSignupDeadline(),
+                actInfo.getActStartTime(),actInfo.getActHeat(),actInfo.getIsDelete(),actInfo.getParticipantsNumber(),actInfo.getActRunStatus(),actInfo.getIsLimitNum(),
+                actInfo.getMaxNum(),actInfo.getIsPrivate(),actInfo.getActPassword());
+
         return act;
     }
 

@@ -6,6 +6,8 @@ import com.hust.bmzsweb.managesystem.business.activitySignup.model.AlterSignUpRe
 import com.hust.bmzsweb.managesystem.business.activitySignup.model.SignUpWithRequiredItemDetailModel;
 import com.hust.bmzsweb.managesystem.business.activitySignup.model.RequiredItemDetailModel;
 
+import java.util.Date;
+
 public interface ActivitySignupService {
     ActivityRequiredItemDetail getDetail(Integer userId, Integer actId);
 
@@ -14,4 +16,6 @@ public interface ActivitySignupService {
     void banActivitySignup(Integer userSignId);
 
     void alterSignUp(AlterSignUpRequestModel alterSignUpRequestModel);
+
+    boolean isSignupEnd(Date date);
 }
