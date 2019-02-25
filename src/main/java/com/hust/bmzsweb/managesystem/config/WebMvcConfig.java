@@ -13,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.util.ArrayList;
@@ -22,6 +24,9 @@ import java.util.List;
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	@Autowired
 	private CommonIntercepter commonIntercepter;
+
+
+
 	@Autowired
 	private AppletInterceptor appletInterceptor;
 
@@ -77,9 +82,23 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 		registry.addInterceptor(commonIntercepter).addPathPatterns("/**");
 		//微信授权拦截器
 //		registry.addInterceptor(appletInterceptor).addPathPatterns("/**/applet/user/**")
+//		registry.addInterceptor(appletInterceptor).addPathPatterns("/**/*")
 //				/*放过*/
-//				.excludePathPatterns("/applet/user/wxLogin2");
+//				.excludePathPatterns("/applet/user/wxLogin2")
+//				.excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**");
 		super.addInterceptors(registry);
+	}
+
+	/**
+	 * 添加静态资源映射目录
+	 */
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		super.addResourceHandlers(registry);
+		registry.addResourceHandler("swagger-ui.html")
+				.addResourceLocations("classpath:/META-INF/resources/");
+		registry.addResourceHandler("/webjars/**")
+				.addResourceLocations("classpath:/META-INF/resources/webjars/");
 	}
 	
     @Bean
