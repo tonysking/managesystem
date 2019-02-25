@@ -5,9 +5,15 @@ import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityListMo
 import com.hust.bmzsweb.managesystem.business.user.UsersService;
 import com.hust.bmzsweb.managesystem.business.user.entity.User;
 import com.hust.bmzsweb.managesystem.common.JSONResult;
+import com.hust.bmzsweb.managesystem.common.exception.UserException;
 import com.hust.bmzsweb.managesystem.controller.BaseController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.ui.ModelMap;
@@ -49,10 +55,49 @@ public class AdminUsersController extends BaseController {
     @ApiOperation(value = "后台登录校验")
     @PostMapping("/login")
     public ModelAndView login(@RequestParam("username") String username,
-                        @RequestParam("password") String password, ModelMap model
+                        @RequestParam("password") String password, ModelMap model,HttpServletRequest request
     ) {
+        Subject subject = SecurityUtils.getSubject();
+        UsernamePasswordToken usernamePasswordToken =
+                new UsernamePasswordToken(username,password);
+        try{
+            subject.login(usernamePasswordToken);
+        }catch (Exception e)
+        {
+            String exception = (String) request.getAttribute("shiroLoginFailure");
+            if (exception != null) {
+                if (UnknownAccountException.class.getName().equals(exception)) {
+                   throw new UserException("账号不存在");
+                } else if (IncorrectCredentialsException.class.getName().equals(exception)) {
+                    throw new UserException("密码不正确");
+                } else {
+
+                    throw new UserException("未知错误");
+                }
+            }
+        }
         return new ModelAndView("admin/index");
     }
+
+    @ApiOperation(value = "后台退出登录")
+    @PostMapping("/logout")
+    public ModelAndView logout(@RequestParam("username") String username,
+                              @RequestParam("password") String password,HttpServletRequest request
+    ){
+        Subject subject = SecurityUtils.getSubject();
+        subject.logout();
+        return new ModelAndView("admin/login");
+    }
+
+
+/*
+    @ApiOperation(value = "跳转到错误页面")
+    @GetMapping("/error")
+    public ModelAndView error() {
+        return new ModelAndView("admin/error");
+    }
+*/
+
 
     @ApiOperation(value = "显示用户主页")
         @GetMapping({"/user/index","/user/"})

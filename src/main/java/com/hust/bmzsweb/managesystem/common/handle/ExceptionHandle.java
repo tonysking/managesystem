@@ -31,20 +31,41 @@ public class ExceptionHandle {
 
     @ExceptionHandler(Exception.class)
     @ResponseBody
-    public Object handle(Exception e) {
+    public Object handle(HttpServletRequest request,Exception e) {
+
             logger.error("系统异常:", e);
-            if (e instanceof ActivityException) {
-                ActivityException  activityException= (ActivityException) e;
-                return JSONResult.fail(activityException.getMessage(),activityException.getCode());
-            }else if(e instanceof UserException)
+
+            if(isAjax(request))
             {
-                UserException  userException= (UserException) e;
-            return JSONResult.fail(userException.getMessage(),userException.getCode());
-             }else if(e instanceof ActivitySignupException)
-            {
-                ActivitySignupException  activitySignupException= (ActivitySignupException) e;
-                return JSONResult.fail(activitySignupException.getMessage(),activitySignupException.getCode());
+                if (e instanceof ActivityException) {
+                    ActivityException  activityException= (ActivityException) e;
+                    return JSONResult.fail(activityException.getMessage(),activityException.getCode());
+                }else if(e instanceof UserException)
+                {
+                    UserException  userException= (UserException) e;
+                    return JSONResult.fail(userException.getMessage(),userException.getCode());
+                }else if(e instanceof ActivitySignupException)
+                {
+                    ActivitySignupException  activitySignupException= (ActivitySignupException) e;
+                    return JSONResult.fail(activitySignupException.getMessage(),activitySignupException.getCode());
+                }
+                return JSONResult.fail(e.getMessage(), 500);
             }
-           return JSONResult.fail(e.getMessage(), 500);
+
+            ModelAndView mav = new ModelAndView();
+             if(e instanceof UserException){
+                 mav.addObject("msg",e.getMessage());
+                 mav.addObject("url",request.getRequestURL());
+                 mav.setViewName("/admin/login");
+                 return mav ;
+             }
+            mav.addObject("exception",e);
+            mav.addObject("url",request.getRequestURL());
+            mav.setViewName("/admin/error");
+         //返回错误页面
+            return mav ;
+
+
+
     }
 }

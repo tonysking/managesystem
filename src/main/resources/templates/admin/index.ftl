@@ -93,7 +93,7 @@
                                     <a href="${ctx!}/admin/logout">
                                         <div>
                                             <i class="fa fa-remove"></i> 注销
-                                            <span class="pull-right text-muted small"></span>
+                                            <a class="pull-right text-muted small"></a>
                                         </div>
                                     </a>
                                 </li>
