@@ -166,7 +166,11 @@ public class ActivityServiceImpl implements ActivityService {
             categoryMap.put(categories.get(i).getCategoryType(), categories.get(i).getCategoryName());
         }
         String actStatus = actInfo.getActStatus()==0?"审核中":(actInfo.getActStatus()==1?"审核通过":"审核未通过");
-        QueryActivityDetailModel act = new QueryActivityDetailModel(actInfo.getActId(), actInfo.getActTitle(), categoryMap.get(actInfo.getCategoryType()), actStatus,actInfo.getActDetailInfo(), actInfo.getActAddress(),actInfo.getActSignupDeadline(),actInfo.getActStartTime(), actInfo.getParticipantsNumber(), actInfo.getActRunStatus());
+        QueryActivityDetailModel act = new QueryActivityDetailModel(actInfo.getActId(),actInfo.getUserId(),actInfo.getRequiredItemId(),actInfo.getActTitle(),
+                categoryMap.get(actInfo.getCategoryType()),actStatus,actInfo.getActDetailInfo(),actInfo.getActAddress(),actInfo.getActSignupDeadline(),
+                actInfo.getActStartTime(),actInfo.getActHeat(),actInfo.getIsDelete(),actInfo.getParticipantsNumber(),actInfo.getActRunStatus(),actInfo.getIsLimitNum(),
+                actInfo.getMaxNum(),actInfo.getIsPrivate(),actInfo.getActPassword());
+
         return act;
     }
 
@@ -270,6 +274,11 @@ public class ActivityServiceImpl implements ActivityService {
 
         User user = usersRepository.findUserByUserId(activityInfo.getUserId());
 
+
+        if(user==null)
+        {
+            throw new ActivityException("用户未登录，无法发起活动");
+        }
         if(user.getUserStatus()!=0)
         {
             throw new ActivityException("用户被锁定，无法发起活动");
@@ -351,8 +360,6 @@ public class ActivityServiceImpl implements ActivityService {
     public Integer updateActivityInfo(ActivityWithRequiredItemModel activityInfo){
         ActivityInfo act = activityInfo.createActWithActHeatActLikeZero();
 
-
-
         act.setActReminder(false);
         act.setIsDelete(false);
         if(hasSensitiveWord(activityInfo.getActTitle())||hasSensitiveWord(activityInfo.getActDetailInfo()))
@@ -422,7 +429,7 @@ public class ActivityServiceImpl implements ActivityService {
             categoryMap.put(categories.get(i).getCategoryType(), categories.get(i).getCategoryName());
         }
         String actStatus = actInfo.getActStatus()==0?"审核中":(actInfo.getActStatus()==1?"审核通过":"审核未通过");
-        QueryActivityDetailModel act = new QueryActivityDetailModel(actInfo.getActId(), actInfo.getRequiredItemId(),actInfo.getActTitle(), categoryMap.get(actInfo.getCategoryType()), actStatus,actInfo.getActDetailInfo(), actInfo.getActAddress(),actInfo.getActSignupDeadline(),actInfo.getActStartTime(),actInfo.getActHeat(),actInfo.getIsDelete(),
+        QueryActivityDetailModel act = new QueryActivityDetailModel(actInfo.getActId(),actInfo.getUserId(), actInfo.getRequiredItemId(),actInfo.getActTitle(), categoryMap.get(actInfo.getCategoryType()), actStatus,actInfo.getActDetailInfo(), actInfo.getActAddress(),actInfo.getActSignupDeadline(),actInfo.getActStartTime(),actInfo.getActHeat(),actInfo.getIsDelete(),
                 actInfo.getParticipantsNumber(), actInfo.getActRunStatus(),actInfo.getIsLimitNum(),actInfo.getMaxNum(),actInfo.getIsPrivate(),actInfo.getActPassword());
         Boolean isSponsor = isIniator(actId, userId);
         Date date = new Date();

@@ -30,7 +30,7 @@ public class AdminActivityLocationController extends BaseController {
     ActivityService activityService;
 
     @ApiOperation(value = "显示活动位置主页")
-    @RequestMapping(value = { "/location/", "/location/index" })
+    @GetMapping(value = { "/location/", "/location/index" })
     public ModelAndView index() {
         return new ModelAndView("admin/location/index");
     }

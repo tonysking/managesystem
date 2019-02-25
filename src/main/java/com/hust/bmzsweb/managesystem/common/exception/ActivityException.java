@@ -3,7 +3,7 @@ package com.hust.bmzsweb.managesystem.common.exception;
 import com.hust.bmzsweb.managesystem.common.enums.ResultEnum;
 
 public class ActivityException extends  RuntimeException{
-    private Integer code = 500;
+    private Integer code = 501;
 
     public ActivityException(ResultEnum resultEnum) {
         super(resultEnum.getMsg());
