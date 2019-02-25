@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-public class WebMvcConfig extends WebMvcConfigurationSupport {
+public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	@Autowired
 	private CommonIntercepter commonIntercepter;
 
