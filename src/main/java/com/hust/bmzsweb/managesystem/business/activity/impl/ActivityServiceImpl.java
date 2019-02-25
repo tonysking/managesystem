@@ -274,6 +274,11 @@ public class ActivityServiceImpl implements ActivityService {
 
         User user = usersRepository.findUserByUserId(activityInfo.getUserId());
 
+
+        if(user==null)
+        {
+            throw new ActivityException("用户未登录，无法发起活动");
+        }
         if(user.getUserStatus()!=0)
         {
             throw new ActivityException("用户被锁定，无法发起活动");
@@ -354,8 +359,6 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public Integer updateActivityInfo(ActivityWithRequiredItemModel activityInfo){
         ActivityInfo act = activityInfo.createActWithActHeatActLikeZero();
-
-
 
         act.setActReminder(false);
         act.setIsDelete(false);

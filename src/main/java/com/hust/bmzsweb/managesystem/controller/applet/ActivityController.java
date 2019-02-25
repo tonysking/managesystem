@@ -38,9 +38,9 @@ public class ActivityController {
     @Autowired
     ActivitySignupService activitySignupService;
 
-    @ApiOperation(value = "创建报名")
+    @ApiOperation(value = "发起活动")
     @PostMapping("/creation")
-    public JSONResult getActDetailAndSignUpInfo(@RequestBody ActivityWithRequiredItemModel activityInfo,String userId){
+    public JSONResult getActDetailAndSignUpInfo(@RequestBody ActivityWithRequiredItemModel activityInfo){
         System.out.println("input activityInfo:"+activityInfo);
         Integer actId = activityService.saveActivityInfo(activityInfo);
         System.out.println(actId);
