@@ -485,7 +485,7 @@ public class ActivityServiceImpl implements ActivityService {
                 actLocationModel.setActTitle(act.getActTitle());
                 actLocationModel.setCategory(categoryMap.get(act.getCategoryType()));
                 actLocationModel.setActAddress(act.getActAddress());
-                actLocationModel.setLatitude(act.getLongitude());
+                actLocationModel.setLongitude(act.getLongitude());
                 actLocationModel.setLatitude(act.getLatitude());
                 actLocationModel.setParticipantsNumber(act.getParticipantsNumber());
                 actLocationModel.setActHeat(act.getActHeat());

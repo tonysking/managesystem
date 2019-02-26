@@ -14,8 +14,11 @@ public interface ActivitySignupService {
     ActivityRequiredItemDetail saveActivitySignup(SignUpWithRequiredItemDetailModel signUpWithRequiredItemDetailModel);
     //Integer deleteActivitySignup(Integer signId)throws Exception;
     void banActivitySignup(Integer userSignId);
+    void banActivitySignup(Integer userId, Integer actId);
 
     void alterSignUp(AlterSignUpRequestModel alterSignUpRequestModel);
 
     boolean isSignupEnd(Date date);
+
+
 }

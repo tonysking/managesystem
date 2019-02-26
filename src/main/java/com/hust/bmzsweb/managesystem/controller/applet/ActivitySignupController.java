@@ -42,6 +42,13 @@ public class ActivitySignupController {
         return JSONResult.success();
     }
 
+    @ApiOperation(value = "取消报名（置报名状态为1）")
+    @GetMapping("/deleteSigup")
+    public JSONResult deleteActivitySignup(@RequestParam("userId") Integer userId, @RequestParam("actId")Integer actId){
+        activitySignupService.banActivitySignup(userId,actId);
+        return JSONResult.success();
+    }
+
     @ApiOperation(value = "修改报名信息")
     @PostMapping("/altering/Sigup")
     public JSONResult alterActivitySignup(@RequestBody AlterSignUpRequestModel alterSignUpRequestModel)throws Exception {

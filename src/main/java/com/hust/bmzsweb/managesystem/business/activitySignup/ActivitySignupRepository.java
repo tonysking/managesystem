@@ -32,6 +32,7 @@ public interface ActivitySignupRepository extends JpaRepository<ActivitySignup,I
     @Modifying
     void banSignUp(Integer stadiumId);
 
+
     //        @Transactional
 //        @Modifying
 //        @Query("delete from ActivityInfo a where a.actId=?1")

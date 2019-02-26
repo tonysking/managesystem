@@ -82,7 +82,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 		registry.addInterceptor(commonIntercepter).addPathPatterns("/**");
 		//微信授权拦截器
 //		registry.addInterceptor(appletInterceptor).addPathPatterns("/**/applet/user/**")
-//		registry.addInterceptor(appletInterceptor).addPathPatterns("/**/*")
+//		registry.addInterceptor(appletInterceptor).addPathPatterns("/**/applet/**")
 //				/*放过*/
 //				.excludePathPatterns("/applet/user/wxLogin2")
 //				.excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**");

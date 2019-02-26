@@ -33,13 +33,15 @@
 	                    ${message!}
 	                </div>
                 </#if>
-                <form id="frm" method="post" onsubmit="return false" action="##" method="post">
+                <#--<form id="frm" method="post" onsubmit="return false" action="##" method="post">-->
+                <form id="frm" method="post"  action="${ctx!}/admin/login" method="post">
                     <h4 class="no-margins">登录：</h4>
                     <p class="m-t-md">登录到H+后台主题UI框架</p>
                     <input type="text" class="form-control uname" name="username" id="username" placeholder="用户名" />
                     <input type="password" class="form-control pword m-b" name="password" id="password"  placeholder="密码" />
                     <a href="" class="forget">忘记密码了？</a>账号:admin 密码:123456
-                    <button type="submit" onclick="login()" class="btn btn-success btn-block">登录</button>
+                    <#--<button type="submit" onclick="login()" class="btn btn-success btn-block">登录</button>-->
+                    <button type="submit"  class="btn btn-success btn-block">登录</button>
                 </form>
             </div>
         </div>
@@ -61,21 +63,21 @@
     <script src="${ctx!}/assets/js/plugins/validate/jquery.validate.min.js"></script>
     <script src="${ctx!}/assets/js/plugins/validate/messages_zh.min.js"></script>
 	<script type="text/javascript">
-        function login() {
-            $.ajax({
-                //几个参数需要注意一下
-                type: "POST",//方法类型
-                dataType: "json",//预期服务器返回的数据类型
-                url: "/admin/login" ,//url
-                data: $('#frm').serialize(),
-                success: function (result) {
-                    console.log(result);//打印服务端返回的数据(调试用)
-                    if (result.code == 500) {
-                        alert(result.msg);
-                    }
-                }
-            });
-        };
+        // function login() {
+        //     $.ajax({
+        //         //几个参数需要注意一下
+        //         type: "POST",//方法类型
+        //         dataType: "json",//预期服务器返回的数据类型
+        //         url: "/admin/login" ,//url
+        //         data: $('#frm').serialize(),
+        //         success: function (result) {
+        //             console.log(result);//打印服务端返回的数据(调试用)
+        //             if (result.code == 500) {
+        //                 alert(result.msg);
+        //             }
+        //         }
+        //     });
+        // };
 
     $().ready(function() {
 
