@@ -132,6 +132,7 @@ public class ActivityController {
     @ApiOperation(value = "发起者修改活动信息")
     @PutMapping("/edit/{actId}")
     public JSONResult editInfo(@RequestBody ActivityWithRequiredItemModel activityInfo){
+        System.out.println("actid con"+activityInfo.getActId());
         Integer actId = activityService.updateActivityInfo(activityInfo);
         return JSONResult.success().add("actId",actId);
     }

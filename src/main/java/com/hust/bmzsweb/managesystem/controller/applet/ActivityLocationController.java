@@ -28,7 +28,7 @@ public class ActivityLocationController {
                                                       @RequestParam(value = "distance",required = false) Double distance){
 
         List<QueryActivityLocationListModel> actLocationsList = activityService.findActLocationsFromUserPosition(userPositionModel, distance);
-        return JSONResult.success().add("附近活动位置信息：", actLocationsList);
+        return JSONResult.success().add("addressNear", actLocationsList);
     }
 
 }

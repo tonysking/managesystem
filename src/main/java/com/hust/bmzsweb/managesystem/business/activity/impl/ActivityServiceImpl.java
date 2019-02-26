@@ -349,7 +349,7 @@ public class ActivityServiceImpl implements ActivityService {
         for (int i = 0; i < activities.size(); i++) {
             ActivityInfo actInfo = activities.get(i);
             String actStatus = actInfo.getActStatus()==0?"审核中":(actInfo.getActStatus()==1?"审核通过":"审核未通过");
-            QueryActivityDetailModel act = new QueryActivityDetailModel(actInfo.getActId(),actInfo.getRequiredItemId(), actInfo.getActTitle(), categoryMap.get(actInfo.getCategoryType()), actStatus,actInfo.getActDetailInfo(), actInfo.getActAddress(),actInfo.getActSignupDeadline(),actInfo.getActStartTime(),actInfo.getActHeat(), actInfo.getParticipantsNumber(), actInfo.getActRunStatus());
+            QueryActivityDetailModel act = new QueryActivityDetailModel(actInfo.getActId(),actInfo.getUserId(),actInfo.getRequiredItemId(), actInfo.getActTitle(), categoryMap.get(actInfo.getCategoryType()), actStatus,actInfo.getActDetailInfo(), actInfo.getActAddress(),actInfo.getActSignupDeadline(),actInfo.getActStartTime(),actInfo.getActHeat(),actInfo.getIsDelete() ,actInfo.getParticipantsNumber(), actInfo.getActRunStatus(),actInfo.getIsLimitNum(),actInfo.getMaxNum(),actInfo.getIsPrivate(),actInfo.getActPassword());
             activityModels.add(act);
         }
          return activityModels;
@@ -359,7 +359,7 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public Integer updateActivityInfo(ActivityWithRequiredItemModel activityInfo){
         ActivityInfo act = activityInfo.createActWithActHeatActLikeZero();
-
+        System.out.println("修改前id"+act.getActId());
         act.setActReminder(false);
         act.setIsDelete(false);
         if(hasSensitiveWord(activityInfo.getActTitle())||hasSensitiveWord(activityInfo.getActDetailInfo()))
@@ -373,8 +373,9 @@ public class ActivityServiceImpl implements ActivityService {
         act.setParticipantsNumber(1);
         act.setRequiredItemId(activityInfo.getActivityRequiredItem().getRequiredItemId());
         activityRequiredItemRepository.save(activityInfo.getActivityRequiredItem());
-        activityRepository.save(act);
-        return act.getActId();
+        ActivityInfo save = activityRepository.save(act);
+        System.out.println("修改后id"+save.getActId());
+        return save.getActId();
     }
 
     //小程序 保存活动浏览历史

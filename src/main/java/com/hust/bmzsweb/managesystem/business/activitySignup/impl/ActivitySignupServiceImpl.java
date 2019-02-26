@@ -104,19 +104,21 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
             throw new ActivitySignupException("报名已经截止");
         }
 
-        if ((activityInfo.getMaxNum() < activityInfo.getActHeat()) && activityInfo.getIsLimitNum() == true) {
-            log.info("活动报名人数已满");
-            throw new ActivitySignupException("活动报名人数已满");
+        if (activityInfo.getMaxNum()!=null){
+            if ((activityInfo.getMaxNum() < activityInfo.getActHeat()) && activityInfo.getIsLimitNum() == true) {
+                log.info("活动报名人数已满");
+                throw new ActivitySignupException("活动报名人数已满");
+            }
         }
-        if (activityInfo.getActRunStatus() == 1) {
+        if (activityInfo.getActStatus() == 3) {
             log.info("活动已禁止");
             throw new ActivitySignupException("活动已禁止");
         }//0正常 1表示被禁止(失效)
-        if (activityInfo.getActRunStatus() == 0) {
+        if (activityInfo.getActStatus() == 0) {
             log.info("活动还在审核中");
             throw new ActivitySignupException("活动还在审核中");
         }
-        if (activityInfo.getActRunStatus() == 2) {
+        if (activityInfo.getActStatus() == 2) {
             log.info("活动未通过审核");
             throw new ActivitySignupException("活动未通过审核");
         }
