@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * 取消报名
  */
 
-@Api(value = "小程序活动报名接口",tags = "小程序活动报名接口")
+@Api(value = "活动报名接口",tags = "活动报名接口")
 @RestController()
 @RequestMapping("/applet/activitySignUp")
 public class ActivitySignupController {

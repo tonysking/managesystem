@@ -4,6 +4,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter4;
 import com.hust.bmzsweb.managesystem.config.intercepter.AppletInterceptor;
+import com.hust.bmzsweb.managesystem.config.intercepter.BackInterceptor;
 import com.hust.bmzsweb.managesystem.config.intercepter.CommonIntercepter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -24,6 +25,8 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	private CommonIntercepter commonIntercepter;
 	@Autowired
 	private AppletInterceptor appletInterceptor;
+	@Autowired
+	private BackInterceptor backInterceptor;
 
 	/**
 	 * fastJson相关设置
@@ -79,6 +82,9 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 //		registry.addInterceptor(appletInterceptor).addPathPatterns("/**/applet/user/**")
 //				/*放过*/
 //				.excludePathPatterns("/applet/user/wxLogin2");
+
+        registry.addInterceptor(backInterceptor).addPathPatterns("/admin/**")
+                .excludePathPatterns("/admin/login").excludePathPatterns("/admin/");
 		super.addInterceptors(registry);
 	}
 	
