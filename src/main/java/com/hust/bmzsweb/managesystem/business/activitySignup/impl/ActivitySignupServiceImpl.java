@@ -72,6 +72,16 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
         activitySignupRepository.banSignUp(userSignId);
     }
 
+    @Override
+    @Transactional
+    public void banActivitySignup(Integer userId, Integer actId) {
+        ActivitySignup actSignup = activitySignupRepository.findByUserIdAndActIdEquals(userId, actId);
+        if (actSignup!=null){
+
+            actSignup.setUserSignupStatus(1);
+        }
+    }
+
 
     //活动报名
     @Override

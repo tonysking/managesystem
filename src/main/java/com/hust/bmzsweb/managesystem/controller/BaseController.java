@@ -49,7 +49,9 @@ public class BaseController {
     				sort = new Sort(Direction.ASC, sortName);
     			}
     		}
+    		if (request.getParameter("pageNumber")!=null)
     		page = Integer.parseInt(request.getParameter("pageNumber")) - 1;
+    		if (request.getParameter("pageSize")!=null)
     		size = Integer.parseInt(request.getParameter("pageSize"));
     	} catch (Exception e) {
     		e.printStackTrace();
