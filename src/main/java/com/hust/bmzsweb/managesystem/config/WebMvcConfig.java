@@ -4,6 +4,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter4;
 import com.hust.bmzsweb.managesystem.config.intercepter.AppletInterceptor;
+import com.hust.bmzsweb.managesystem.config.intercepter.BackInterceptor;
 import com.hust.bmzsweb.managesystem.config.intercepter.CommonIntercepter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -13,8 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.util.ArrayList;
@@ -24,11 +23,10 @@ import java.util.List;
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	@Autowired
 	private CommonIntercepter commonIntercepter;
-
-
-
 	@Autowired
 	private AppletInterceptor appletInterceptor;
+	@Autowired
+	private BackInterceptor backInterceptor;
 
 	/**
 	 * fastJson相关设置
@@ -84,21 +82,11 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 //		registry.addInterceptor(appletInterceptor).addPathPatterns("/**/applet/user/**")
 //		registry.addInterceptor(appletInterceptor).addPathPatterns("/**/applet/**")
 //				/*放过*/
-//				.excludePathPatterns("/applet/user/wxLogin2")
-//				.excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**");
-		super.addInterceptors(registry);
-	}
+//				.excludePathPatterns("/applet/user/wxLogin2");
 
-	/**
-	 * 添加静态资源映射目录
-	 */
-	@Override
-	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		super.addResourceHandlers(registry);
-		registry.addResourceHandler("swagger-ui.html")
-				.addResourceLocations("classpath:/META-INF/resources/");
-		registry.addResourceHandler("/webjars/**")
-				.addResourceLocations("classpath:/META-INF/resources/webjars/");
+        registry.addInterceptor(backInterceptor).addPathPatterns("/admin/**")
+                .excludePathPatterns("/admin/login").excludePathPatterns("/admin/");
+		super.addInterceptors(registry);
 	}
 	
     @Bean

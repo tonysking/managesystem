@@ -41,9 +41,9 @@ public class ActivityController {
     @ApiOperation(value = "发起活动")
     @PostMapping("/creation")
     public JSONResult getActDetailAndSignUpInfo(@RequestBody ActivityWithRequiredItemModel activityInfo){
-        System.out.println("input activityInfo:"+activityInfo);
+      //  System.out.println("input activityInfo:"+activityInfo);
         Integer actId = activityService.saveActivityInfo(activityInfo);
-        System.out.println(actId);
+       // System.out.println(actId);
         return JSONResult.success().add("actId",actId);
     }
 
@@ -130,10 +130,11 @@ public class ActivityController {
 
 
     @ApiOperation(value = "发起者修改活动信息")
-    @PutMapping("/edit/{actId}")
+    @PutMapping("/edit")
     public JSONResult editInfo(@RequestBody ActivityWithRequiredItemModel activityInfo){
-        System.out.println("actid con"+activityInfo.getActId());
+        System.out.println("修改前的actId"+activityInfo.getActId());
         Integer actId = activityService.updateActivityInfo(activityInfo);
+        System.out.println("修改后的actId:"+actId);
         return JSONResult.success().add("actId",actId);
     }
 

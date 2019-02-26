@@ -49,7 +49,7 @@ public class ActivityWithRequiredItemModel {
     }
 
     public  ActivityInfo createActWithActHeatActLikeZero(){
-        return new ActivityInfo(actId,userId,requiredItemId,actTitle,actDetailInfo,actSignupDeadline,
+        return new ActivityInfo(userId,actId,requiredItemId,actTitle,actDetailInfo,actSignupDeadline,
                 actStartTime,actReminder,categoryType,actAddress,longitude,latitude,
                 participantsNumber,0,0,actStatus,actRunStatus,createTime,updateTime,isLimitNum,maxNum,isPrivate,actPassword,isDelete);
     }

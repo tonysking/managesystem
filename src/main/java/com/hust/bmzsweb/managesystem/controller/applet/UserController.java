@@ -83,9 +83,6 @@ public class UserController {
         System.out.println(wxResult);
         //将获得的json字符串转换为对象
         WXSessionModel wxSessionModel = JsonUtils.jsonToPojo(wxResult, WXSessionModel.class);
-        if (wxSessionModel == null) {
-            throw new Exception("json字符串转换为对象失败");
-        }
         //获取openid和session_key
         String openid = wxSessionModel.getOpenid();
         String session_key = wxSessionModel.getSession_key();
@@ -108,8 +105,6 @@ public class UserController {
             User user = new User();
             user.setUserOpenid(openid);
             user.setUserNickName(nickName);
-            user.setUserStatus(0);  //默认用户状态正常
-            user.setUserRole(0);    //默认普通用户
             usersService.saveUserInfo(user);
         }
 

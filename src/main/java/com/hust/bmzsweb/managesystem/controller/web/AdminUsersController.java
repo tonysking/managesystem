@@ -14,7 +14,9 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  *    后台登录
@@ -49,49 +51,32 @@ public class AdminUsersController extends BaseController {
     @ApiOperation(value = "后台登录校验")
     @PostMapping("/login")
     public ModelAndView login(@RequestParam("username") String username,
-                        @RequestParam("password") String password, ModelMap model,HttpServletRequest request
+                        @RequestParam("password") String password, HttpServletRequest request
     ) {
-//        Subject subject = SecurityUtils.getSubject();
-//        UsernamePasswordToken usernamePasswordToken =
-//                new UsernamePasswordToken(username,password);
-//        try{
-//            subject.login(usernamePasswordToken);
-//        }catch (Exception e)
-//        {
-//            String exception = (String) request.getAttribute("shiroLoginFailure");
-//            if (exception != null) {
-//                if (UnknownAccountException.class.getName().equals(exception)) {
-//                   throw new UserException("账号不存在");
-//                } else if (IncorrectCredentialsException.class.getName().equals(exception)) {
-//                    throw new UserException("密码不正确");
-//                } else {
-//
-//                    throw new UserException("未知错误");
-//                }
-//            }
-//        }
+        System.out.println("username:"+username+" password:"+password);
+        HttpSession session = request.getSession();
+        System.out.println("session username:"+session.getAttribute("username"));
+        if("admin".equals(username)&&"123456".equals(password))
+        {
+            session.setAttribute("username", username);
+            return new ModelAndView("/admin/index");
+        }else{
+            ModelAndView modelAndView = new ModelAndView("admin/login");
+            if(!"admin".equals(username))
+            {
+                modelAndView.addObject("error", "用户名错误");
+            }else{
+                modelAndView.addObject("error", "密码错误");
+            }
+            return modelAndView;
+        }
+    }
+
+    @ApiOperation(value = "显示主页")
+    @GetMapping("/index")
+    public ModelAndView toIndex() {
         return new ModelAndView("admin/index");
     }
-
-    @ApiOperation(value = "后台退出登录")
-    @PostMapping("/logout")
-    public ModelAndView logout(@RequestParam("username") String username,
-                              @RequestParam("password") String password,HttpServletRequest request
-    ){
-//        Subject subject = SecurityUtils.getSubject();
-//        subject.logout();
-        return new ModelAndView("admin/login");
-    }
-
-
-/*
-    @ApiOperation(value = "跳转到错误页面")
-    @GetMapping("/error")
-    public ModelAndView error() {
-        return new ModelAndView("admin/error");
-    }
-*/
-
 
     @ApiOperation(value = "显示用户主页")
         @GetMapping({"/user/index","/user/"})
@@ -104,6 +89,15 @@ public class AdminUsersController extends BaseController {
     public ModelAndView welcome() {
         return new ModelAndView("admin/welcome");
     }
+
+    @ApiOperation(value = "退出登录")
+    @GetMapping("/logout")
+    public ModelAndView logout(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        session.removeAttribute("username");
+        return new ModelAndView("admin/login");
+    }
+
 
     @ApiOperation(value="锁定用户")
     @GetMapping("/user/{userId}/lock")
