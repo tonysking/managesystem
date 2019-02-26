@@ -53,14 +53,22 @@ public class AdminUsersController extends BaseController {
     public ModelAndView login(@RequestParam("username") String username,
                         @RequestParam("password") String password, HttpServletRequest request
     ) {
+        System.out.println("username:"+username+" password:"+password);
         HttpSession session = request.getSession();
-
+        System.out.println("session username:"+session.getAttribute("username"));
         if("admin".equals(username)&&"123456".equals(password))
         {
             session.setAttribute("username", username);
-            return new ModelAndView("redirect:/admin/index");
+            return new ModelAndView("/admin/index");
         }else{
-            return new ModelAndView("admin/login");
+            ModelAndView modelAndView = new ModelAndView("admin/login");
+            if(!"admin".equals(username))
+            {
+                modelAndView.addObject("error", "用户名错误");
+            }else{
+                modelAndView.addObject("error", "密码错误");
+            }
+            return modelAndView;
         }
     }
 

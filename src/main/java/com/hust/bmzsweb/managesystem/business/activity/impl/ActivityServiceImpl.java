@@ -279,7 +279,8 @@ public class ActivityServiceImpl implements ActivityService {
         {
             throw new ActivityException("用户未登录，无法发起活动");
         }
-        if(user.getUserStatus()!=0)
+
+        if(user.getUserStatus()!=null&&user.getUserStatus()!=0)
         {
             throw new ActivityException("用户被锁定，无法发起活动");
         }
@@ -289,6 +290,7 @@ public class ActivityServiceImpl implements ActivityService {
         activityInfo.setCategoryType(activityInfo.getCategoryType()+1);
         activityInfo.setActReminder(false);
         activityInfo.setIsDelete(false);
+        //判断是否有敏感字 如果有就审核不通过
         if(hasSensitiveWord(activityInfo.getActTitle())||hasSensitiveWord(activityInfo.getActDetailInfo()))
         {
             activityInfo.setActStatus(2);
@@ -359,9 +361,10 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public Integer updateActivityInfo(ActivityWithRequiredItemModel activityInfo){
         ActivityInfo act = activityInfo.createActWithActHeatActLikeZero();
+        Integer actId = act.getActId();
 
         act.setActReminder(false);
-        act.setIsDelete(false);
+
         if(hasSensitiveWord(activityInfo.getActTitle())||hasSensitiveWord(activityInfo.getActDetailInfo()))
         {
             act.setActStatus(2);
@@ -370,11 +373,15 @@ public class ActivityServiceImpl implements ActivityService {
         }
         act.setActRunStatus(0);
         act.setCategoryType(activityInfo.getCategoryType()+1);
-        act.setParticipantsNumber(1);
-        act.setRequiredItemId(activityInfo.getActivityRequiredItem().getRequiredItemId());
+
+        //保存不需要修改的之前的信息
+        ActivityInfo beforeInfo = activityRepository.findByActId(actId);
+        act.setIsDelete(beforeInfo.getIsDelete());
+        act.setParticipantsNumber(beforeInfo.getParticipantsNumber());
+        act.setRequiredItemId(beforeInfo.getRequiredItemId());
         activityRequiredItemRepository.save(activityInfo.getActivityRequiredItem());
-        activityRepository.save(act);
-        return act.getActId();
+        ActivityInfo save = activityRepository.save(act);
+        return save.getActId();
     }
 
     //小程序 保存活动浏览历史
