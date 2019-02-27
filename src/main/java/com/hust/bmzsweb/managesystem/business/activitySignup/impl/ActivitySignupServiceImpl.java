@@ -3,6 +3,7 @@ package com.hust.bmzsweb.managesystem.business.activitySignup.impl;
 import com.hust.bmzsweb.managesystem.business.activity.ActivityRepository;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityRequiredItem;
 import com.hust.bmzsweb.managesystem.business.activity.ActivityRequiredItemRepository;
+import com.hust.bmzsweb.managesystem.business.activity.impl.ActivityServiceImpl;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivityRequiredItemDetailRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupService;
@@ -42,6 +43,10 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
     @Autowired
     ActivityRequiredItemRepository activityRequiredItemRepository;
 
+    @Autowired
+    ActivityServiceImpl activityServiceImpl;
+
+
     @Override
     public ActivityRequiredItemDetail getDetail(Integer userId, Integer actId) {
         ActivitySignup actSignup = activitySignupRepository.findByUserIdAndActIdEquals(userId, actId);
@@ -80,6 +85,11 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
 
             actSignup.setUserSignupStatus(1);
         }
+        //报名的活动人数减1
+        ActivityInfo actInfo = activityRepository.findByActId(actId);
+        actInfo.setParticipantsNumber(actInfo.getParticipantsNumber()-1);
+        activityRepository.save(actInfo);
+
     }
 
 
@@ -105,7 +115,7 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
         }
 
         if (activityInfo.getMaxNum()!=null){
-            if ((activityInfo.getMaxNum() < activityInfo.getActHeat()) && activityInfo.getIsLimitNum() == true) {
+            if ((activityInfo.getParticipantsNumber() >= activityInfo.getMaxNum()) && activityInfo.getIsLimitNum() == true) {
                 log.info("活动报名人数已满");
                 throw new ActivitySignupException("活动报名人数已满");
             }
@@ -131,8 +141,13 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
             log.info("用户不存在");
             throw new ActivitySignupException("该用户不存在");
         }
-        //参与人数+1
-        activityInfo.setParticipantsNumber(activityInfo.getParticipantsNumber() + 1);
+        //更改 不是发起者则参与人数加1
+        if(!activityServiceImpl.isIniator(signUpWithRequiredItemDetailModel.getActId(), signUpWithRequiredItemDetailModel.getUserId()))
+        {
+            //参与人数+1
+            activityInfo.setParticipantsNumber(activityInfo.getParticipantsNumber() + 1);
+            activityRepository.save(activityInfo);
+        }
         //判断必填项是否为空
         int a = activityInfo.getRequiredItemId();
         ActivityRequiredItem activityRequiredItem = activityRequiredItemRepository.findByRequiredItemIdEquals(a);
@@ -141,6 +156,10 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
             throw new ActivitySignupException("必填项不能为空");
         }
         if ((activityRequiredItem.getAge()) && (signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getAge() == null)) {
+            log.info("必填项不能为空");
+            throw new ActivitySignupException("必填项不能为空");
+        }
+        if((activityRequiredItem.getPhone()) && signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getPhone() == null) {
             log.info("必填项不能为空");
             throw new ActivitySignupException("必填项不能为空");
         }
@@ -206,6 +225,9 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
         ActivityRequiredItemDetail activityRequiredItemDetail = new ActivityRequiredItemDetail();
         activityRequiredItemDetail.setAddress(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getAddress());
         activityRequiredItemDetail.setAge(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getAge());
+        activityRequiredItemDetail.setPhone(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getPhone());
+        activityRequiredItemDetail.setPosition(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getPosition());
+        activityRequiredItemDetail.setEmail(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getEmail());
         activityRequiredItemDetail.setCity(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getCity());
         activityRequiredItemDetail.setClassNumber(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getClassNumber());
         activityRequiredItemDetail.setDepartment(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getDepartment());
@@ -244,7 +266,8 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
     @Override
     public void alterSignUp(AlterSignUpRequestModel alterSignUpRequestModel){
 
-        ActivitySignup activitySignup = activitySignupRepository.findByUserSignupId(alterSignUpRequestModel.getUserSignId());
+        ActivitySignup activitySignup = activitySignupRepository.findByUserIdAndActIdEquals(alterSignUpRequestModel.getUserId(), alterSignUpRequestModel.getActId());
+//        ActivitySignup activitySignup = activitySignupRepository.findByUserSignupId(alterSignUpRequestModel.getUserSignId());
         if (activitySignup == null){log.info("该报名不存在");
             throw new ActivitySignupException("该报名不存在");}
         if (activitySignup.getUserSignupStatus()==1){log.info("该报名已失效");
@@ -254,6 +277,9 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
 //        ActivityRequiredItemDetail activityRequiredItemDetail = new ActivityRequiredItemDetail();
         ActivityRequiredItemDetail activityRequiredItemDetail = activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(activitySignup.getRequiredItemDetailId());
         activityRequiredItemDetail.setAddress(alterSignUpRequestModel.getRequiredItemDetailModel().getAddress());
+        activityRequiredItemDetail.setPhone(alterSignUpRequestModel.getRequiredItemDetailModel().getPhone());
+        activityRequiredItemDetail.setEmail(alterSignUpRequestModel.getRequiredItemDetailModel().getEmail());
+        activityRequiredItemDetail.setPosition(alterSignUpRequestModel.getRequiredItemDetailModel().getPosition());
         activityRequiredItemDetail.setAge(alterSignUpRequestModel.getRequiredItemDetailModel().getAge());
         activityRequiredItemDetail.setCity(alterSignUpRequestModel.getRequiredItemDetailModel().getCity());
         activityRequiredItemDetail.setClassNumber(alterSignUpRequestModel.getRequiredItemDetailModel().getClassNumber());

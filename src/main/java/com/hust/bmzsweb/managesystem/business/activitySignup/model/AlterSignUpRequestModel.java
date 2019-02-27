@@ -4,9 +4,10 @@ import lombok.Data;
 
 @Data
 public class AlterSignUpRequestModel {
-     private Integer userSignId;
-
+//     private Integer userSignId;
+    private Integer actId;
     private RequiredItemDetailModel requiredItemDetailModel;
+    private Integer userId;
 
     public void check(){
 

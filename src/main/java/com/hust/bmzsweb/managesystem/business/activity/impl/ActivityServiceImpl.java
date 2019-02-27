@@ -337,9 +337,20 @@ public class ActivityServiceImpl implements ActivityService {
                 List<Predicate> predicates = new ArrayList<Predicate>();
                 // root(employee(age))
                 Predicate predicate1 =  cb.like(root.get("actTitle"), "%"+text+"%");
-                return cb.and(predicate1);
+                Predicate predicate2 = cb.greaterThan(root.get("actSignupDeadline"), new Date());//报名截止时间大于现在的时间
+                Predicate predicate3 =  cb.notEqual(root.get("isDelete"), 1); //isDelete为1 被删除
+                Predicate predicate4 = cb.notEqual(root.get("actRunStatus"), 1); //actRunStatus为1 失效
+                Predicate predicate5 = cb.equal(root.get("actStatus"), 1);//actStatus为1 审核通过
+                predicates.add(predicate1);
+                predicates.add(predicate2);
+                predicates.add(predicate3);
+                predicates.add(predicate4);
+                predicates.add(predicate5);
+                Predicate[] preArray = new Predicate[predicates.size()];
+                return cb.and(predicates.toArray(preArray));
             }
         };
+
         List<ActivityInfo> activities = activityRepository.findAll(specification, sort);
         List<QueryActivityDetailModel> activityModels = new ArrayList<>();
         List<ActivityCategory> categories = activityCategoryRepository.findAllByCategoryNameNotNull();

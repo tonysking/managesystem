@@ -174,31 +174,5 @@ public class ActivityInfo {
         this.updateTime = updateTime;
     }
 
-    //actid
-    public ActivityInfo(Integer actId,Integer userId, Integer requiredItemId, String actTitle, String actDetailInfo, Date actSignupDeadline, Date actStartTime, Boolean actReminder, Integer categoryType, String actAddress, Double longitude, Double latitude, Integer participantsNumber, Integer actHeat, Integer actLike, Integer actStatus, Integer actRunStatus, Date createTime, Date updateTime, Boolean isLimitNum, Integer maxNum, Boolean isPrivate, String actPassword, Boolean isDelete) {
-        this.actId = actId;
-        this.userId = userId;
-        this.requiredItemId = requiredItemId;
-        this.actTitle = actTitle;
-        this.actDetailInfo = actDetailInfo;
-        this.actSignupDeadline = actSignupDeadline;
-        this.actStartTime = actStartTime;
-        this.actReminder = actReminder;
-        this.categoryType = categoryType;
-        this.actAddress = actAddress;
-        this.longitude = longitude;
-        this.latitude = latitude;
-        this.participantsNumber = participantsNumber;
-        this.actHeat = actHeat;
-        this.actLike = actLike;
-        this.actStatus = actStatus;
-        this.actRunStatus = actRunStatus;
-        this.createTime = createTime;
-        this.updateTime = updateTime;
-        this.isLimitNum = isLimitNum;
-        this.maxNum = maxNum;
-        this.isPrivate = isPrivate;
-        this.actPassword = actPassword;
-        this.isDelete = isDelete;
-    }
+
 }

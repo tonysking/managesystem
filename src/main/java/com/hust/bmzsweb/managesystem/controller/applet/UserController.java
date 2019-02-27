@@ -7,6 +7,7 @@ import com.hust.bmzsweb.managesystem.business.user.model.UserInfoModel;
 import com.hust.bmzsweb.managesystem.business.user.model.WXSessionModel;
 import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowsingHistoryEntity;
 import com.hust.bmzsweb.managesystem.common.JSONResult;
+import com.hust.bmzsweb.managesystem.common.exception.UserException;
 import com.hust.bmzsweb.managesystem.common.utils.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -83,6 +84,9 @@ public class UserController {
         System.out.println(wxResult);
         //将获得的json字符串转换为对象
         WXSessionModel wxSessionModel = JsonUtils.jsonToPojo(wxResult, WXSessionModel.class);
+        if (wxSessionModel==null) {
+            throw new UserException("wxSessionModel为空");
+        }
         //获取openid和session_key
         String openid = wxSessionModel.getOpenid();
         String session_key = wxSessionModel.getSession_key();
@@ -105,6 +109,8 @@ public class UserController {
             User user = new User();
             user.setUserOpenid(openid);
             user.setUserNickName(nickName);
+            user.setUserStatus(0);  //默认用户状态0：正常
+            user.setUserRole(0);    //默认用户角色0：普通用户
             usersService.saveUserInfo(user);
         }
 

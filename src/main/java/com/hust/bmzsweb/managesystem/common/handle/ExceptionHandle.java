@@ -32,30 +32,21 @@ public class ExceptionHandle {
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public Object handle(HttpServletRequest request,Exception e) {
-            logger.error("系统异常:", e);
-            if(isAjax(request))
-            {
-            if (e instanceof ActivityException) {
-                ActivityException  activityException= (ActivityException) e;
-                return JSONResult.fail(activityException.getMessage(),activityException.getCode());
-            }else if(e instanceof UserException)
-            {
-                UserException  userException= (UserException) e;
-            return JSONResult.fail(userException.getMessage(),userException.getCode());
-             }else if(e instanceof ActivitySignupException)
-            {
-                ActivitySignupException  activitySignupException= (ActivitySignupException) e;
-                return JSONResult.fail(activitySignupException.getMessage(),activitySignupException.getCode());
-            }
-           return JSONResult.fail(e.getMessage(), 500);
-            }else{
-                ModelAndView mav = new ModelAndView();
-                mav.addObject("exception",e);
-                mav.addObject("url",request.getRequestURL());
-                mav.setViewName("/admin/login");
-//返回错误页面
-                return mav ;
-            }
+        logger.error("系统异常:", e);
 
+        if (e instanceof ActivityException) {
+            ActivityException  activityException= (ActivityException) e;
+            return JSONResult.fail(activityException.getMessage(),activityException.getCode());
+        }else if(e instanceof UserException)
+        {
+            UserException  userException= (UserException) e;
+            return JSONResult.fail(userException.getMessage(),userException.getCode());
+        }else if(e instanceof ActivitySignupException)
+        {
+            ActivitySignupException  activitySignupException= (ActivitySignupException) e;
+            return JSONResult.fail(activitySignupException.getMessage(),activitySignupException.getCode());
+        }
+        return JSONResult.fail(e.getMessage(), 500);
     }
+
 }

@@ -12,7 +12,7 @@ import java.util.Date;
 
 @Data
 public class SignUpWithRequiredItemDetailModel {
-       private Integer userId;
+    private Integer userId;
     private Integer actId;
 
     private RequiredItemDetailModel requiredItemDetailModel;

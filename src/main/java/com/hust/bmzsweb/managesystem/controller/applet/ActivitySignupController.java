@@ -31,8 +31,8 @@ public class ActivitySignupController {
     @ApiOperation(value = "报名活动")
     @PostMapping("/creation/Sigup")
     public JSONResult saveActivitySignup(@RequestBody SignUpWithRequiredItemDetailModel signUpWithRequiredItemDetailModel)throws Exception{
-        ActivityRequiredItemDetail actSignupId = activitySignupService.saveActivitySignup(signUpWithRequiredItemDetailModel);
-        return JSONResult.success().add("actSignupId",actSignupId);
+        ActivityRequiredItemDetail actRequiredItemDetail = activitySignupService.saveActivitySignup(signUpWithRequiredItemDetailModel);
+        return JSONResult.success().add("actRequiredItemDetail",actRequiredItemDetail);
     }
 
     @ApiOperation(value = "取消报名（置报名状态为1）")
