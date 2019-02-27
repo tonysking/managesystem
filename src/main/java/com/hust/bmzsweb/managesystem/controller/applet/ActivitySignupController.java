@@ -4,6 +4,8 @@ package com.hust.bmzsweb.managesystem.controller.applet;
 import com.hust.bmzsweb.managesystem.business.activity.ActivityService;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupService;
 import com.hust.bmzsweb.managesystem.business.activitySignup.model.AlterSignUpRequestModel;
+import com.hust.bmzsweb.managesystem.business.activitySignup.model.QuerySignUpDetailModel;
+import com.hust.bmzsweb.managesystem.business.activitySignup.model.RequiredItemDetailModel;
 import com.hust.bmzsweb.managesystem.business.activitySignup.model.SignUpWithRequiredItemDetailModel;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivityRequiredItemDetail;
 import com.hust.bmzsweb.managesystem.common.JSONResult;
@@ -11,6 +13,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 报名活动
@@ -56,5 +60,11 @@ public class ActivitySignupController {
         return JSONResult.success();
     }
 
+    @ApiOperation(value = "获取此活动的已报名信息列表")
+    @GetMapping("/querySigup/{actId}")
+    public JSONResult queryActivitySignup(@PathVariable("actId") Integer actId){
+        List<QuerySignUpDetailModel> a=activitySignupService.querySingupDetail(actId);
+        return JSONResult.success().add("actSignupDetailList",a);
+    }
 
 }

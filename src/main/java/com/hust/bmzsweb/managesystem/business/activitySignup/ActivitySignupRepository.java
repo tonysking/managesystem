@@ -20,6 +20,8 @@ public interface ActivitySignupRepository extends JpaRepository<ActivitySignup,I
 
     ActivitySignup findByUserSignupId(Integer userSignId);
 
+    List<ActivitySignup> findActivitySignupsByActId(Integer actId);
+
     // ActivitySignup findByUserSignupId(Integer userSignId);
 
 //    @Transactional
