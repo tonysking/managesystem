@@ -4,9 +4,10 @@ import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivityRequ
 import com.hust.bmzsweb.managesystem.business.activitySignup.model.ActivitySignupModel;
 import com.hust.bmzsweb.managesystem.business.activitySignup.model.AlterSignUpRequestModel;
 import com.hust.bmzsweb.managesystem.business.activitySignup.model.SignUpWithRequiredItemDetailModel;
-import com.hust.bmzsweb.managesystem.business.activitySignup.model.RequiredItemDetailModel;
+import com.hust.bmzsweb.managesystem.business.activitySignup.model.QuerySignUpDetailModel;
 
 import java.util.Date;
+import java.util.List;
 
 public interface ActivitySignupService {
     ActivityRequiredItemDetail getDetail(Integer userId, Integer actId);
@@ -19,6 +20,8 @@ public interface ActivitySignupService {
     void alterSignUp(AlterSignUpRequestModel alterSignUpRequestModel);
 
     boolean isSignupEnd(Date date);
+
+    List<QuerySignUpDetailModel> querySingupDetail(Integer actId);
 
 
 }

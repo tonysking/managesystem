@@ -8,10 +8,7 @@ import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupRepos
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivitySignupService;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivityRequiredItemDetail;
 import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivitySignup;
-import com.hust.bmzsweb.managesystem.business.activitySignup.model.ActivitySignupModel;
-import com.hust.bmzsweb.managesystem.business.activitySignup.model.AlterSignUpRequestModel;
-import com.hust.bmzsweb.managesystem.business.activitySignup.model.RequiredItemDetailModel;
-import com.hust.bmzsweb.managesystem.business.activitySignup.model.SignUpWithRequiredItemDetailModel;
+import com.hust.bmzsweb.managesystem.business.activitySignup.model.*;
 import com.hust.bmzsweb.managesystem.business.user.*;
 import com.hust.bmzsweb.managesystem.business.user.entity.User;
 import com.hust.bmzsweb.managesystem.common.exception.ActivitySignupException;
@@ -21,7 +18,9 @@ import org.springframework.stereotype.Service;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -287,6 +286,39 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public List<QuerySignUpDetailModel> querySingupDetail(Integer actId){
+       List<ActivitySignup> a = activitySignupRepository.findActivitySignupsByActId(actId);
+        List<QuerySignUpDetailModel> c = new ArrayList<>();
+        for (int i = 0; i < a.size(); i++) {
+            QuerySignUpDetailModel t = new QuerySignUpDetailModel();
+            t.setUserId(a.get(i).getUserId());
+            t.setName(activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(a.get(i).getRequiredItemDetailId()).getName());
+            t.setSex(activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(a.get(i).getRequiredItemDetailId()).getSex());
+            t.setAge(activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(a.get(i).getRequiredItemDetailId()).getAge());
+            t.setAddress(activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(a.get(i).getRequiredItemDetailId()).getAddress());
+            t.setPhone(activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(a.get(i).getRequiredItemDetailId()).getPhone());
+            t.setWechatNumber(activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(a.get(i).getRequiredItemDetailId()).getWechatNumber());
+            t.setQqNumber(activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(a.get(i).getRequiredItemDetailId()).getQqNumber());
+            t.setEmail(activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(a.get(i).getRequiredItemDetailId()).getEmail());
+            t.setSchool(activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(a.get(i).getRequiredItemDetailId()).getSchool());
+            t.setGrade(activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(a.get(i).getRequiredItemDetailId()).getGrade());
+            t.setClassNumber(activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(a.get(i).getRequiredItemDetailId()).getClassNumber());
+            t.setStudentId(activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(a.get(i).getRequiredItemDetailId()).getStudentId());
+            t.setWorkPlace(activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(a.get(i).getRequiredItemDetailId()).getWorkPlace());
+            t.setDepartment(activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(a.get(i).getRequiredItemDetailId()).getDepartment());
+            t.setPosition(activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(a.get(i).getRequiredItemDetailId()).getPosition());
+            t.setJobNumber(activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(a.get(i).getRequiredItemDetailId()).getJobNumber());
+            t.setProvince(activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(a.get(i).getRequiredItemDetailId()).getProvince());
+            t.setCity(activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(a.get(i).getRequiredItemDetailId()).getCity());
+            t.setFieldOne(activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(a.get(i).getRequiredItemDetailId()).getFieldOne());
+            t.setFieldTwo(activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(a.get(i).getRequiredItemDetailId()).getFieldTwo());
+            t.setFieldThree(activityRequiredItemDetailRepository.findByRequiredItemDetailIdEquals(a.get(i).getRequiredItemDetailId()).getFieldThree());
+            c.add(t);
+        }
+        return c;
     }
 
 }
