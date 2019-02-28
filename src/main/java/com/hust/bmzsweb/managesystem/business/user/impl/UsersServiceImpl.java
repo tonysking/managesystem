@@ -4,6 +4,7 @@ import com.hust.bmzsweb.managesystem.business.activity.ActivityCategoryRepositor
 import com.hust.bmzsweb.managesystem.business.activity.ActivityRepository;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityCategory;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityInfo;
+import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityDetailModel;
 import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityListModel;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivityBrowserHistoryRepository;
 import com.hust.bmzsweb.managesystem.business.activitySignup.ActivityRequiredItemDetailRepository;
@@ -85,29 +86,38 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public List<QueryActivityListModel> findUserCreateAct(Integer userID) {
+    public List<QueryActivityDetailModel> findUserCreateAct(Integer userID) {
 
         //查询用户发起的所有活动
         List<ActivityInfo> activityInfos = activityRepository.findAllByUserId(userID);
-        List<QueryActivityListModel> activityListModels = new ArrayList<>();
+        List<QueryActivityDetailModel> activityListModels = new ArrayList<>();
 
-        QueryActivityListModel activityModel = null;
+        QueryActivityDetailModel activityModel = null;
         for (ActivityInfo actInfo:activityInfos) {
-            activityModel = new QueryActivityListModel();
+            activityModel = new QueryActivityDetailModel();
             activityModel.setActId(actInfo.getActId());
             activityModel.setActTitle(actInfo.getActTitle());
+            activityModel.setRequiredItemId(actInfo.getRequiredItemId());
+            activityModel.setActDetailInfo(actInfo.getActDetailInfo());
             //查询活动类型名
             ActivityCategory activityCategory = activityCategoryRepository.findActivityCategoryByCategoryType(actInfo.getCategoryType());
             activityModel.setCategory(activityCategory.getCategoryName());
-
-            activityModel.setActRunStatus(actInfo.getActRunStatus());
-
             //获取活动状态名
             String actStatus = actInfo.getActStatus()==0?"审核中":(actInfo.getActStatus()==1?"审核通过":"审核未通过");
             activityModel.setActStatus(actStatus);
+            activityModel.setActRunStatus(actInfo.getActRunStatus());
+            activityModel.setActSignupDeadline(actInfo.getActSignupDeadline());
+            activityModel.setActStartTime(actInfo.getActStartTime());
+            activityModel.setActHeat(actInfo.getActHeat());
+            activityModel.setIsDelete(actInfo.getIsDelete());
+            activityModel.setParticipantsNumber(actInfo.getParticipantsNumber());
+            activityModel.setIsLimitNum(actInfo.getIsLimitNum());
+            activityModel.setMaxNum(actInfo.getMaxNum());
+            activityModel.setActPassword(actInfo.getActPassword());
+            activityModel.setIsPrivate(actInfo.getIsPrivate());
+            activityModel.setActRunStatus(actInfo.getActRunStatus());
+            activityModel.setActAddress(actInfo.getActAddress());
 
-            activityModel.setCreateTime(actInfo.getCreateTime());
-            activityModel.setUpdateTime(actInfo.getUpdateTime());
 
             activityListModels.add(activityModel);
 
@@ -120,20 +130,21 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public List<QueryActivityListModel> findUserSignupAct(Integer userID) {
+    public List<QueryActivityDetailModel> findUserSignupAct(Integer userID) {
 
         //查询用户参与的所有活动
         List<ActivitySignup> ActivitySignups = activitySignupRepository.findAllByUserIdEquals(userID);
-        List<QueryActivityListModel> activityListModels = new ArrayList<>();
-        QueryActivityListModel activityModel = null;
+        List<QueryActivityDetailModel> activityListModels = new ArrayList<>();
+        QueryActivityDetailModel activityModel = null;
         for(ActivitySignup activitySignup: ActivitySignups){
-            activityModel = new QueryActivityListModel();
+            activityModel = new QueryActivityDetailModel();
 
             //通过参与活动信息查询活动信息
             ActivityInfo actInfo = activityRepository.findByActId(activitySignup.getActId());
 
             activityModel.setActId(actInfo.getActId());
             activityModel.setActTitle(actInfo.getActTitle());
+            activityModel.setRequiredItemId(actInfo.getRequiredItemId());
             //查询活动类型名
             ActivityCategory activityCategory = activityCategoryRepository.findActivityCategoryByCategoryType(actInfo.getCategoryType());
             activityModel.setCategory(activityCategory.getCategoryName());
@@ -144,13 +155,23 @@ public class UsersServiceImpl implements UsersService {
             String actStatus = actInfo.getActStatus()==0?"审核中":(actInfo.getActStatus()==1?"审核通过":"审核未通过");
             activityModel.setActStatus(actStatus);
 
-            activityModel.setCreateTime(actInfo.getCreateTime());
-            activityModel.setUpdateTime(actInfo.getUpdateTime());
+
+            activityModel.setActSignupDeadline(actInfo.getActSignupDeadline());
+            activityModel.setActStartTime(actInfo.getActStartTime());
+            activityModel.setActHeat(actInfo.getActHeat());
+            activityModel.setIsDelete(actInfo.getIsDelete());
+            activityModel.setParticipantsNumber(actInfo.getParticipantsNumber());
+            activityModel.setIsLimitNum(actInfo.getIsLimitNum());
+            activityModel.setMaxNum(actInfo.getMaxNum());
+            activityModel.setIsPrivate(actInfo.getIsPrivate());
+            activityModel.setActRunStatus(actInfo.getActRunStatus());
+            activityModel.setActAddress(actInfo.getActAddress());
 
             activityListModels.add(activityModel);
         }
         return activityListModels;
     }
+
 
     @Override
     public boolean queryUserNickNameIsExist(String userNickName) {

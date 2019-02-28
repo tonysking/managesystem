@@ -24,9 +24,9 @@ public class ActivityLocationController {
 
     @ApiOperation(value = "查询用户周围的活动位置信息")
     @PostMapping("/getLocations")
-    public JSONResult getActLocationsFromUserPosition(@RequestBody UserPositionModel userPositionModel,
-                                                      @RequestParam(value = "distance",required = false) Double distance){
-
+    public JSONResult getActLocationsFromUserPosition(@RequestParam(value = "distance",required = false) Double distance,
+                                                      @RequestBody UserPositionModel userPositionModel)
+    {
         List<QueryActivityLocationListModel> actLocationsList = activityService.findActLocationsFromUserPosition(userPositionModel, distance);
         return JSONResult.success().add("addressNear", actLocationsList);
     }

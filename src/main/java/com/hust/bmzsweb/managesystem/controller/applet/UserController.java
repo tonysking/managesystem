@@ -1,5 +1,6 @@
 package com.hust.bmzsweb.managesystem.controller.applet;
 
+import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityDetailModel;
 import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityListModel;
 import com.hust.bmzsweb.managesystem.business.user.UsersService;
 import com.hust.bmzsweb.managesystem.business.user.entity.User;
@@ -159,14 +160,14 @@ public class UserController {
     @ApiOperation(value = "查看发起的活动")
     @GetMapping("/lookOverUserCreation/{userId}")
     public JSONResult lookOverUserSignup(@PathVariable("userId") Integer userId){
-        List<QueryActivityListModel> userCreateAct = usersService.findUserCreateAct(userId);
+        List<QueryActivityDetailModel> userCreateAct = usersService.findUserCreateAct(userId);
         return JSONResult.success().add("userCreateActList",userCreateAct);
     }
     //查看参与的活动
     @ApiOperation(value = "查看参与的活动")
     @GetMapping("/lookOverUserSignup/{userId}")
     public JSONResult lookOverUserCreation(@PathVariable("userId") Integer userId){
-        List<QueryActivityListModel> userSignupAct = usersService.findUserSignupAct(userId);
+        List<QueryActivityDetailModel> userSignupAct = usersService.findUserSignupAct(userId);
         return JSONResult.success().add("userSignupActList",userSignupAct);
     }
     //发起者删除报名成员

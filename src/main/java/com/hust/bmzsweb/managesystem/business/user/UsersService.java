@@ -1,5 +1,6 @@
 package com.hust.bmzsweb.managesystem.business.user;
 
+import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityDetailModel;
 import com.hust.bmzsweb.managesystem.business.activity.model.QueryActivityListModel;
 import com.hust.bmzsweb.managesystem.business.user.entity.User;
 import com.hust.bmzsweb.managesystem.business.user.entity.WXUser;
@@ -23,8 +24,8 @@ public interface UsersService {
      //小程序
      User findUserById(Integer userID);
      void updateUserInfo(User user);
-     List<QueryActivityListModel> findUserCreateAct(Integer userID);
-     List<QueryActivityListModel> findUserSignupAct(Integer userID);
+     List<QueryActivityDetailModel> findUserCreateAct(Integer userID);
+     List<QueryActivityDetailModel> findUserSignupAct(Integer userID);
 
      boolean queryUserNickNameIsExist(String userNickName);
      void saveUserInfo(User user);

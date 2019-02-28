@@ -1,6 +1,7 @@
 package com.hust.bmzsweb.managesystem.business.activitySignup.impl;
 
 import com.hust.bmzsweb.managesystem.business.activity.ActivityRepository;
+import com.hust.bmzsweb.managesystem.business.activity.ActivityService;
 import com.hust.bmzsweb.managesystem.business.activity.entity.ActivityRequiredItem;
 import com.hust.bmzsweb.managesystem.business.activity.ActivityRequiredItemRepository;
 import com.hust.bmzsweb.managesystem.business.activity.impl.ActivityServiceImpl;
@@ -43,7 +44,10 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
     ActivityRequiredItemRepository activityRequiredItemRepository;
 
     @Autowired
-    ActivityServiceImpl activityServiceImpl;
+    ActivityService activityServiceImpl;
+    @Autowired
+    UsersService usersService;
+
 
 
     @Override
@@ -76,18 +80,24 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
         activitySignupRepository.banSignUp(userSignId);
     }
 
+    //取消报名（删除报名信息）
     @Override
     @Transactional
     public void banActivitySignup(Integer userId, Integer actId) {
-        ActivitySignup actSignup = activitySignupRepository.findByUserIdAndActIdEquals(userId, actId);
-        if (actSignup!=null){
-
-            actSignup.setUserSignupStatus(1);
+//        ActivitySignup actSignup = activitySignupRepository.findByUserIdAndActIdEquals(userId, actId);
+//        if (actSignup!=null){
+//
+//            actSignup.setUserSignupStatus(1);
+//        }
+        Boolean isDelete = usersService.deleteSignupUser(actId, userId);
+        if (isDelete){
+            //若不是发起者，报名的活动人数减1
+            if (!activityServiceImpl.isIniator(actId,userId)){
+                ActivityInfo actInfo = activityRepository.findByActId(actId);
+                actInfo.setParticipantsNumber(actInfo.getParticipantsNumber()-1);
+                activityRepository.save(actInfo);
+            }
         }
-        //报名的活动人数减1
-        ActivityInfo actInfo = activityRepository.findByActId(actId);
-        actInfo.setParticipantsNumber(actInfo.getParticipantsNumber()-1);
-        activityRepository.save(actInfo);
 
     }
 
