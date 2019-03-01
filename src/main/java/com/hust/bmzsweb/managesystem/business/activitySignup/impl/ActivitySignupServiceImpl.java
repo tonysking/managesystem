@@ -13,7 +13,10 @@ import com.hust.bmzsweb.managesystem.business.activitySignup.entity.ActivitySign
 import com.hust.bmzsweb.managesystem.business.activitySignup.model.*;
 import com.hust.bmzsweb.managesystem.business.user.*;
 import com.hust.bmzsweb.managesystem.business.user.entity.User;
+import com.hust.bmzsweb.managesystem.common.enums.HeatEnum;
 import com.hust.bmzsweb.managesystem.common.exception.ActivitySignupException;
+import com.hust.bmzsweb.managesystem.common.exception.UserException;
+import com.hust.bmzsweb.managesystem.common.utils.HeatCalculateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -91,9 +94,16 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
 //        }
         Boolean isDelete = usersService.deleteSignupUser(actId, userId);
         if (isDelete){
+
+            ActivityInfo activityInfo = activityRepository.findByActId(actId);
+            //取消报名 活动热度减少
+            activityInfo.setActHeat(HeatCalculateUtils.reduceHeat(activityInfo.getActHeat(), HeatEnum.SignUp));
+            activityRepository.save(activityInfo);
+
+
             //若不是发起者，报名的活动人数减1
             if (!activityServiceImpl.isIniator(actId,userId)){
-                ActivityInfo actInfo = activityRepository.findByActId(actId);
+                ActivityInfo actInfo = activityInfo;
                 actInfo.setParticipantsNumber(actInfo.getParticipantsNumber()-1);
                 activityRepository.save(actInfo);
             }
@@ -117,6 +127,8 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
             log.info("活动不存在");
             throw new ActivitySignupException("活动不存在");
         }
+
+
         if(isSignupEnd(activityInfo.getActSignupDeadline()))
         {
             log.info("报名已经截止");
@@ -150,13 +162,13 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
             log.info("用户不存在");
             throw new ActivitySignupException("该用户不存在");
         }
-        //更改 不是发起者则参与人数加1
-        if(!activityServiceImpl.isIniator(signUpWithRequiredItemDetailModel.getActId(), signUpWithRequiredItemDetailModel.getUserId()))
+
+        if(user.getUserStatus()==1)
         {
-            //参与人数+1
-            activityInfo.setParticipantsNumber(activityInfo.getParticipantsNumber() + 1);
-            activityRepository.save(activityInfo);
+            log.info("该用户被锁定");
+            throw new UserException("该用户被锁定");
         }
+
         //判断必填项是否为空
         int a = activityInfo.getRequiredItemId();
         ActivityRequiredItem activityRequiredItem = activityRequiredItemRepository.findByRequiredItemIdEquals(a);
@@ -230,6 +242,14 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
             log.info("必填项不能为空");  throw new ActivitySignupException("必填项不能为空");
         }
 
+        //更改 不是发起者则参与人数加1
+        if(!activityServiceImpl.isIniator(signUpWithRequiredItemDetailModel.getActId(), signUpWithRequiredItemDetailModel.getUserId()))
+        {
+            //参与人数+1
+            activityInfo.setParticipantsNumber(activityInfo.getParticipantsNumber() + 1);
+            activityRepository.save(activityInfo);
+        }
+
         //填入报名详情表
         ActivityRequiredItemDetail activityRequiredItemDetail = new ActivityRequiredItemDetail();
         activityRequiredItemDetail.setAddress(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getAddress());
@@ -254,6 +274,11 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
         activityRequiredItemDetail.setFieldTwo(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getFieldTwo());
         activityRequiredItemDetail.setFieldThree(signUpWithRequiredItemDetailModel.getRequiredItemDetailModel().getFieldThree());
         activityRequiredItemDetailRepository.save(activityRequiredItemDetail);
+
+        //报名活动 活动热度增加
+        activityInfo.setActHeat(HeatCalculateUtils.addHeat(activityInfo.getActHeat(), HeatEnum.SignUp));
+        activityRepository.save(activityInfo);
+
 
         //填入报名表
         ActivitySignup activitySignup = new ActivitySignup();

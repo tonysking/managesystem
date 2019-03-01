@@ -19,11 +19,10 @@ import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowsingHist
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionEntity;
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel;
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionRepository;
-import com.hust.bmzsweb.managesystem.business.userBrowerHistory.UserBrowsingHistoryEntity;
-import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel;
-import com.hust.bmzsweb.managesystem.common.enums.ResultEnum;
+import com.hust.bmzsweb.managesystem.common.enums.HeatEnum;
 import com.hust.bmzsweb.managesystem.common.exception.ActivityException;
 import com.hust.bmzsweb.managesystem.common.utils.GSUtil;
+import com.hust.bmzsweb.managesystem.common.utils.HeatCalculateUtils;
 import com.hust.bmzsweb.managesystem.common.utils.SensitivewordFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -332,26 +331,49 @@ public class ActivityServiceImpl implements ActivityService {
         final String  text = searchText;
         specification = new Specification<ActivityInfo>() {
             @Override
-            public Predicate toPredicate(Root<ActivityInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
+            public Predicate toPredicate(Root<ActivityInfo> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 
-                List<Predicate> predicates = new ArrayList<Predicate>();
-                // root(employee(age))
-                Predicate predicate1 =  cb.like(root.get("actTitle"), "%"+text+"%");
-                Predicate predicate2 = cb.greaterThan(root.get("actSignupDeadline"), new Date());//报名截止时间大于现在的时间
-                Predicate predicate3 =  cb.notEqual(root.get("isDelete"), 1); //isDelete为1 被删除
-                Predicate predicate4 = cb.notEqual(root.get("actRunStatus"), 1); //actRunStatus为1 失效
-                Predicate predicate5 = cb.equal(root.get("actStatus"), 1);//actStatus为1 审核通过
-                predicates.add(predicate1);
-                predicates.add(predicate2);
-                predicates.add(predicate3);
-                predicates.add(predicate4);
-                predicates.add(predicate5);
-                Predicate[] preArray = new Predicate[predicates.size()];
-                return cb.and(predicates.toArray(preArray));
+                List<Predicate> p1List = new ArrayList<Predicate>();
+                List<Predicate> p2List = new ArrayList<Predicate>();
+
+                Predicate predicate1 = cb.greaterThan(root.get("actSignupDeadline"), new Date());//报名截止时间大于现在的时间
+                Predicate predicate2 =  cb.notEqual(root.get("isDelete"), 1); //isDelete为1 被删除
+                Predicate predicate3 = cb.notEqual(root.get("actRunStatus"), 1); //actRunStatus为1 失效
+                Predicate predicate4 = cb.equal(root.get("actStatus"), 1);//actStatus为1 审核通过
+                p1List.add(predicate1);
+                p1List.add(predicate2);
+                p1List.add(predicate3);
+                p1List.add(predicate4);
+
+                Predicate predicate5 =  cb.like(root.get("actTitle"), "%"+text+"%");
+                Predicate predicate6 =  cb.like(root.get("actDetailInfo"), "%"+text+"%");
+                p2List.add(predicate5);
+                p2List.add(predicate6);
+                Predicate predicateAnd[] = new Predicate[p1List.size()];
+                Predicate predicateAp = cb.and(p1List.toArray(predicateAnd));
+
+                Predicate predicateOr[] = new Predicate[p2List.size()];
+                Predicate predicateOp = cb.or(p2List.toArray(predicateOr));
+
+              //  Predicate preArray[] = new Predicate[predicates.size()];
+                return query.where(predicateAp,predicateOp).getRestriction();
             }
         };
-
         List<ActivityInfo> activities = activityRepository.findAll(specification, sort);
+        //如果搜索的内容不为空 则增加热度
+        if(searchText!="")
+        {
+            for(ActivityInfo activityInfo:activities)
+            {
+                //按搜索的方式增加活动热度
+                activityInfo.setActHeat(HeatCalculateUtils.addHeat(activityInfo.getActHeat(), HeatEnum.Search));
+            }
+            activityRepository.saveAll(activities);
+
+        }
+
+
+
         List<QueryActivityDetailModel> activityModels = new ArrayList<>();
         List<ActivityCategory> categories = activityCategoryRepository.findAllByCategoryNameNotNull();
         Map<Integer,String> categoryMap = new HashMap<>();
@@ -368,7 +390,7 @@ public class ActivityServiceImpl implements ActivityService {
          return activityModels;
     }
 
-    //小程序 更改活动状态
+    //小程序 更改活动信息
     @Override
     public Integer updateActivityInfo(ActivityWithRequiredItemModel activityInfo){
         ActivityInfo act = activityInfo.createActWithActHeatActLikeZero();
@@ -441,6 +463,12 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public QueryActivityWithAllStatusModel queryActWithAllStatus(Integer actId,Integer userId) {
         ActivityInfo actInfo = activityRepository.findByActId(actId);
+
+        //增加活动热度
+
+        actInfo.setActHeat(HeatCalculateUtils.addHeat(actInfo.getActHeat(), HeatEnum.LookOver));
+        activityRepository.save(actInfo);
+
         List<ActivityCategory> categories = activityCategoryRepository.findAllByCategoryNameNotNull();
         Map<Integer,String> categoryMap = new HashMap<>();
         for (int i = 0; i < categories.size(); i++) {
