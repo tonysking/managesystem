@@ -14,6 +14,11 @@ public class QueryActivityLocationListModel {
     private Integer participantsNumber;
     private Integer actHeat;
 
+    //用于前端判断活动是否报名截止(被禁止或失效)来调整显示样式
+    private Integer actStatus; //(暂不用)
+    private Integer actRunStatus;//(暂不用
+    private Boolean isSignupEnd;
+
 
     public QueryActivityLocationListModel() {
     }

@@ -161,14 +161,14 @@ public class UserController {
     @GetMapping("/lookOverUserCreation/{userId}")
     public JSONResult lookOverUserSignup(@PathVariable("userId") Integer userId){
         List<QueryActivityDetailModel> userCreateAct = usersService.findUserCreateAct(userId);
-        return JSONResult.success().add("userCreateActList",userCreateAct);
+        return JSONResult.success().add("userCreateActList",userCreateAct).add("createNum",userCreateAct.size());
     }
     //查看参与的活动
     @ApiOperation(value = "查看参与的活动")
     @GetMapping("/lookOverUserSignup/{userId}")
     public JSONResult lookOverUserCreation(@PathVariable("userId") Integer userId){
         List<QueryActivityDetailModel> userSignupAct = usersService.findUserSignupAct(userId);
-        return JSONResult.success().add("userSignupActList",userSignupAct);
+        return JSONResult.success().add("userSignupActList",userSignupAct).add("signupNum",userSignupAct.size());
     }
     //发起者删除报名成员
     @ApiOperation(value = "发起者删除报名成员")
