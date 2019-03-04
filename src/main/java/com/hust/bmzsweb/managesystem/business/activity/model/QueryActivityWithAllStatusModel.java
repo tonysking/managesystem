@@ -48,7 +48,7 @@ public class QueryActivityWithAllStatusModel {
     //是否审核通过
     private Boolean isAuthorized;
 
-    public QueryActivityWithAllStatusModel(QueryActivityDetailModel activityInfo,Boolean isActivityStart,Boolean isTakePartEnd,Boolean isSponsor,Boolean isAuthorized,Integer type,Double latitude,Double longitude)
+    public QueryActivityWithAllStatusModel(QueryActivityDetailModel activityInfo,Boolean isActivityStart,Boolean isTakePartEnd,Boolean isSponsor,Boolean    isAuthorized,Integer type,Double latitude,Double longitude)
     {
         this.actId = activityInfo.getActId();
         this.userId = activityInfo.getUserId();

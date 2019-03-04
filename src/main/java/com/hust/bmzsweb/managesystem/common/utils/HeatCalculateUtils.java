@@ -6,10 +6,10 @@ import com.hust.bmzsweb.managesystem.common.enums.HeatEnum;
 public class HeatCalculateUtils {
 
     public static int addHeat(int preHeat, HeatEnum heatEnum){
-        return preHeat*(int)heatEnum.getPropotion()+heatEnum.getCount();
+        return (int)(preHeat*heatEnum.getPropotion()+heatEnum.getCount());
     }
 
     public static int reduceHeat(int preHeat, HeatEnum heatEnum){
-        return preHeat*(2-(int)heatEnum.getPropotion())-heatEnum.getCount();
+        return (int)(preHeat*(2-(int)heatEnum.getPropotion())-heatEnum.getCount());
     }
 }

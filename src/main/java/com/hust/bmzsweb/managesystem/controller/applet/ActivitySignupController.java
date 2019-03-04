@@ -46,7 +46,7 @@ public class ActivitySignupController {
         return JSONResult.success();
     }
 
-    @ApiOperation(value = "取消报名（置报名状态为1）")
+    @ApiOperation(value = "取消报名（删除报名）")
     @GetMapping("/deleteSigup")
     public JSONResult deleteActivitySignup(@RequestParam("userId") Integer userId, @RequestParam("actId")Integer actId){
         activitySignupService.banActivitySignup(userId,actId);
