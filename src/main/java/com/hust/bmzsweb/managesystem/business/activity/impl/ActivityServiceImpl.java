@@ -523,6 +523,18 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     //小程序 查询用户周围的活动位置信息
+
+    //判断报名是否截止
+    private boolean isSignupEnd(Date date) {
+
+        Date now = new Date();
+        if(date.compareTo(now)<=0)
+        {
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public List<QueryActivityLocationListModel> findActLocationsFromUserPosition(UserPositionModel userPositionModel,Double distance) {
         List<QueryActivityLocationListModel> locationListModels = new ArrayList<>();
@@ -546,18 +558,28 @@ public class ActivityServiceImpl implements ActivityService {
         //查询距离用户位置distance米的活动
         QueryActivityLocationListModel actLocationModel = null;
         for (ActivityInfo act: all) {
-            if (GSUtil.getmeter(longitude,latitude,act.getLongitude(),act.getLatitude())<=distance) {
-                actLocationModel = new QueryActivityLocationListModel();
-                actLocationModel.setActId(act.getActId());
-                actLocationModel.setActTitle(act.getActTitle());
-                actLocationModel.setCategory(categoryMap.get(act.getCategoryType()));
-                actLocationModel.setActAddress(act.getActAddress());
-                actLocationModel.setLongitude(act.getLongitude());
-                actLocationModel.setLatitude(act.getLatitude());
-                actLocationModel.setParticipantsNumber(act.getParticipantsNumber());
-                actLocationModel.setActHeat(act.getActHeat());
-                locationListModels.add(actLocationModel);
+            //活动通过审核且未失效
+            if (act.getActStatus()==1 && act.getActRunStatus()==0){
+
+                if (GSUtil.getmeter(longitude,latitude,act.getLongitude(),act.getLatitude())<=distance) {
+                    actLocationModel = new QueryActivityLocationListModel();
+                    actLocationModel.setActId(act.getActId());
+                    actLocationModel.setActTitle(act.getActTitle());
+                    actLocationModel.setCategory(categoryMap.get(act.getCategoryType()));
+                    actLocationModel.setActAddress(act.getActAddress());
+                    actLocationModel.setLongitude(act.getLongitude());
+                    actLocationModel.setLatitude(act.getLatitude());
+                    actLocationModel.setParticipantsNumber(act.getParticipantsNumber());
+                    actLocationModel.setActHeat(act.getActHeat());
+
+                    actLocationModel.setActStatus(act.getActStatus());
+                    actLocationModel.setActRunStatus(act.getActRunStatus());
+                    actLocationModel.setIsSignupEnd(isSignupEnd(act.getActSignupDeadline()));
+
+                    locationListModels.add(actLocationModel);
+                }
             }
+
         }
         return locationListModels;
     }
