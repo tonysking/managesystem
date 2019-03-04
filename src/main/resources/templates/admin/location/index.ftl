@@ -153,7 +153,7 @@
                     responseHandler: oTableInit.responseHandler,
                     //数据列
                     columns: [{
-                        title: "排名",
+                        title: "活动id",
                         field: "actId",
                         sortable: true
                     },{

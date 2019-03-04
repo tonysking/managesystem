@@ -114,7 +114,20 @@ public class ActivitySignupServiceImpl implements ActivitySignupService {
 
     //活动报名
     @Override
+    @Transactional
     public ActivityRequiredItemDetail saveActivitySignup(SignUpWithRequiredItemDetailModel signUpWithRequiredItemDetailModel) {
+
+        if(signUpWithRequiredItemDetailModel.getUserId()==null)
+        {
+            log.info("用户还未登录");
+            throw new UserException("您还未登录，无法报名");
+        }
+
+        if(signUpWithRequiredItemDetailModel.getActId()==null)
+        {
+            log.info("活动查询不到");
+            throw new UserException("活动查询不到");
+        }
 
         //查找是否已存在该报名信息
         ActivitySignup as = activitySignupRepository.findByUserIdAndActIdEquals(signUpWithRequiredItemDetailModel.getUserId(),signUpWithRequiredItemDetailModel.getActId());

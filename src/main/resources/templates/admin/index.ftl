@@ -86,7 +86,7 @@
                     <ul class="nav navbar-top-links navbar-right">
                         <li class="dropdown">
                             <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
-                                <i class="fa fa-user"></i> <span class="label label-primary"></span>【】
+                                <i class="fa fa-user"></i> <span class="label label-primary"></span>【注销】
                             </a>
                             <ul class="dropdown-menu dropdown-alerts">
                                 <li>
