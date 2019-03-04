@@ -41,7 +41,7 @@ public interface ActivityService {
 
      void deleteUserCollection(Integer userCollectionId);
 
-     List<QueryActivityDetailModel> queryActivityByTitleorderByHeat(String searchText);
+     List<QueryActivityDetailModel> queryActivityByTitleorderByHeat(String searchText,Boolean isSearched);
 
      Integer updateActivityInfo(ActivityWithRequiredItemModel activityInfo);
 

@@ -4,7 +4,7 @@ CREATE TABLE `required_item_detail` (
   `sex` tinyint(4) DEFAULT NULL COMMENT '用户性别',
   `age` tinyint(4) DEFAULT NULL COMMENT '用户年龄',
   `address` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '用户地址',
-  `phone` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '用户手机号',
+  `phone` varchar(16) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '用户手机号',
   `wechat_number` varchar(16) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '用户微信号',
   `qq_number` varchar(16) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '用户qq号',
   `email` varchar(16) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '用户邮箱',

@@ -113,9 +113,9 @@ public class ActivityController {
 
     @ApiOperation(value = "搜索活动按热度排行")
     @GetMapping("/search")
-    public JSONResult searchActivity(@RequestParam(value="searchText",required=false) String searchText){
+    public JSONResult searchActivity(@RequestParam(value="searchText",required=false) String searchText,@RequestParam(value="isSearched",required=false)Boolean isSearched){
         System.out.println("searchText:"+searchText);
-        List<QueryActivityDetailModel> act = activityService.queryActivityByTitleorderByHeat(searchText);
+        List<QueryActivityDetailModel> act = activityService.queryActivityByTitleorderByHeat(searchText,isSearched);
         System.out.println("act:"+act);
         return JSONResult.success().add("act",act);
     }

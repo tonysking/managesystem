@@ -20,7 +20,7 @@ public class ActivityServiceTest {
 
     @Test
     public void testSearchByContent(){
-        List<QueryActivityDetailModel> activity = activityService.queryActivityByTitleorderByHeat("活动1");
+        List<QueryActivityDetailModel> activity = activityService.queryActivityByTitleorderByHeat("活动1",false);
         System.out.println("活动1:"+activity);
     }
 }

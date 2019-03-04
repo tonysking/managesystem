@@ -29,7 +29,7 @@ public class ActivityServiceImplTest {
 
     @Test
     public void testSearch(){
-        List<QueryActivityDetailModel> activity = activityService.queryActivityByTitleorderByHeat("");
+        List<QueryActivityDetailModel> activity = activityService.queryActivityByTitleorderByHeat("",false);
         System.out.println(activity);
 
     }

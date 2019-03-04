@@ -322,13 +322,21 @@ public class ActivityServiceImpl implements ActivityService {
 
     //小程序 通过活动标题搜索活动
     @Override
-    public List<QueryActivityDetailModel> queryActivityByTitleorderByHeat(String searchText) {
+    public List<QueryActivityDetailModel> queryActivityByTitleorderByHeat(String searchText,Boolean isSearched) {
         if(StringUtils.isBlank(searchText)){
             searchText = "";
         }
         Sort sort = new Sort(Sort.Direction.DESC,"actHeat");
+
+        //热门活动搜索按searchText=""进行查找 只有手动输入内容搜索才加入类型判断
+        ActivityCategory activityCategory = null;
+        ActivityCategory finalActivityCategory = activityCategory;//必须为final
+        if(!searchText.equals("")){
+
+            activityCategory = activityCategoryRepository.findByCategoryNameContains(searchText);
+        }
         Specification<ActivityInfo> specification;
-        final String  text = searchText;
+        String  text = searchText;
         specification = new Specification<ActivityInfo>() {
             @Override
             public Predicate toPredicate(Root<ActivityInfo> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -351,17 +359,25 @@ public class ActivityServiceImpl implements ActivityService {
                 p2List.add(predicate6);
                 Predicate predicateAnd[] = new Predicate[p1List.size()];
                 Predicate predicateAp = cb.and(p1List.toArray(predicateAnd));
+                Predicate predicateOp = null;
 
-                Predicate predicateOr[] = new Predicate[p2List.size()];
-                Predicate predicateOp = cb.or(p2List.toArray(predicateOr));
-
-              //  Predicate preArray[] = new Predicate[predicates.size()];
+                if(finalActivityCategory !=null)
+                {
+                    Predicate predicate7 =  cb.equal(root.get("categoryType"),
+                            finalActivityCategory.getCategoryType());
+                    p2List.add(predicate7);
+                    Predicate predicateOr[] = new Predicate[p2List.size()];
+                    predicateOp = cb.or(p2List.toArray(predicateOr));
+                }else{
+                    Predicate predicateOr[] = new Predicate[p2List.size()];
+                    predicateOp = cb.or(p2List.toArray(predicateOr));
+                }
                 return query.where(predicateAp,predicateOp).getRestriction();
             }
         };
         List<ActivityInfo> activities = activityRepository.findAll(specification, sort);
         //如果搜索的内容不为空 则增加热度
-        if(searchText!="")
+        if(searchText!="" && isSearched==false)
         {
             for(ActivityInfo activityInfo:activities)
             {
@@ -371,8 +387,6 @@ public class ActivityServiceImpl implements ActivityService {
             activityRepository.saveAll(activities);
 
         }
-
-
 
         List<QueryActivityDetailModel> activityModels = new ArrayList<>();
         List<ActivityCategory> categories = activityCategoryRepository.findAllByCategoryNameNotNull();
@@ -387,8 +401,9 @@ public class ActivityServiceImpl implements ActivityService {
             QueryActivityDetailModel act = new QueryActivityDetailModel(actInfo.getActId(),actInfo.getUserId(),actInfo.getRequiredItemId(), actInfo.getActTitle(), categoryMap.get(actInfo.getCategoryType()), actStatus,actInfo.getActDetailInfo(), actInfo.getActAddress(),actInfo.getActSignupDeadline(),actInfo.getActStartTime(),actInfo.getActHeat(),actInfo.getIsDelete() ,actInfo.getParticipantsNumber(), actInfo.getActRunStatus(),actInfo.getIsLimitNum(),actInfo.getMaxNum(),actInfo.getIsPrivate(),actInfo.getActPassword());
             activityModels.add(act);
         }
-         return activityModels;
+        return activityModels;
     }
+
 
     //小程序 更改活动信息
     @Override
