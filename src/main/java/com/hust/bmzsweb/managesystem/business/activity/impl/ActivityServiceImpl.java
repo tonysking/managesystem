@@ -21,6 +21,7 @@ import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionModel
 import com.hust.bmzsweb.managesystem.business.userCollection.UserCollectionRepository;
 import com.hust.bmzsweb.managesystem.common.enums.HeatEnum;
 import com.hust.bmzsweb.managesystem.common.exception.ActivityException;
+import com.hust.bmzsweb.managesystem.common.exception.UserException;
 import com.hust.bmzsweb.managesystem.common.utils.GSUtil;
 import com.hust.bmzsweb.managesystem.common.utils.HeatCalculateUtils;
 import com.hust.bmzsweb.managesystem.common.utils.SensitivewordFilter;
@@ -28,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -186,6 +188,8 @@ public class ActivityServiceImpl implements ActivityService {
         Page<ActivityInfo> page = activityRepository.findAllByActIdIn(actIds,pageRequest);
         System.out.println(page.getContent());
 
+
+
         List<ActivityCategory> categories = activityCategoryRepository.findAllByCategoryNameNotNull();
         Map<Integer,String> categoryMap = new HashMap<>();
         List<ActivityInfo> content = page.getContent();
@@ -226,7 +230,7 @@ public class ActivityServiceImpl implements ActivityService {
 
                     List<Predicate> predicates = new ArrayList<Predicate>();
                     // root(employee(age))
-                    Predicate predicate1 =  cb.equal(root.get("actAddress"), text);
+                    Predicate predicate1 =  cb.like(root.get("actAddress"), "%"+text+"%");
                     return cb.and(predicate1);
                 }
             };
@@ -273,7 +277,6 @@ public class ActivityServiceImpl implements ActivityService {
 
         User user = usersRepository.findUserByUserId(activityInfo.getUserId());
 
-
         if(user==null)
         {
             throw new ActivityException("用户未登录，无法发起活动");
@@ -283,7 +286,6 @@ public class ActivityServiceImpl implements ActivityService {
         {
             throw new ActivityException("用户被锁定，无法发起活动");
         }
-
 
         activityInfo.setParticipantsNumber(1);
         activityInfo.setCategoryType(activityInfo.getCategoryType()+1);
@@ -327,6 +329,8 @@ public class ActivityServiceImpl implements ActivityService {
             searchText = "";
         }
         Sort sort = new Sort(Sort.Direction.DESC,"actHeat");
+
+        ActivityCategory activityCategory = activityCategoryRepository.findByCategoryNameContains(searchText);
         Specification<ActivityInfo> specification;
         final String  text = searchText;
         specification = new Specification<ActivityInfo>() {
@@ -351,11 +355,20 @@ public class ActivityServiceImpl implements ActivityService {
                 p2List.add(predicate6);
                 Predicate predicateAnd[] = new Predicate[p1List.size()];
                 Predicate predicateAp = cb.and(p1List.toArray(predicateAnd));
+                Predicate predicateOp = null;
 
-                Predicate predicateOr[] = new Predicate[p2List.size()];
-                Predicate predicateOp = cb.or(p2List.toArray(predicateOr));
-
-              //  Predicate preArray[] = new Predicate[predicates.size()];
+                //如果查询到包含该searchText的activityCategory，增加categoryType搜索条件
+                if(activityCategory!=null)
+                {
+                    Predicate predicate7 =  cb.equal(root.get("categoryType"),
+                            activityCategory.getCategoryType());
+                    p2List.add(predicate7);
+                    Predicate predicateOr[] = new Predicate[p2List.size()];
+                    predicateOp = cb.or(p2List.toArray(predicateOr));
+                }else{
+                    Predicate predicateOr[] = new Predicate[p2List.size()];
+                    predicateOp = cb.or(p2List.toArray(predicateOr));
+                }
                 return query.where(predicateAp,predicateOp).getRestriction();
             }
         };
@@ -371,8 +384,6 @@ public class ActivityServiceImpl implements ActivityService {
             activityRepository.saveAll(activities);
 
         }
-
-
 
         List<QueryActivityDetailModel> activityModels = new ArrayList<>();
         List<ActivityCategory> categories = activityCategoryRepository.findAllByCategoryNameNotNull();
@@ -462,11 +473,21 @@ public class ActivityServiceImpl implements ActivityService {
     //小程序 查询活动信息附带活动所有的状态
     @Override
     public QueryActivityWithAllStatusModel queryActWithAllStatus(Integer actId,Integer userId) {
+
+        if(userId==null)
+        {
+            throw new UserException("用户未登录，无法查看活动详情");
+        }
+
+        if(actId==null)
+        {
+            throw new ActivityException("活动详情无法查看");
+        }
         ActivityInfo actInfo = activityRepository.findByActId(actId);
 
         //增加活动热度
-
-        actInfo.setActHeat(HeatCalculateUtils.addHeat(actInfo.getActHeat(), HeatEnum.LookOver));
+        actInfo.setActHeat(HeatCalculateUtils.addHeat(actInfo.getActHeat()
+                , HeatEnum.LookOver));
         activityRepository.save(actInfo);
 
         List<ActivityCategory> categories = activityCategoryRepository.findAllByCategoryNameNotNull();

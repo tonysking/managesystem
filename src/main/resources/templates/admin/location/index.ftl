@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
-    <title>角色列表</title>
+    <title>活动位置信息管理</title>
     <meta name="keywords" content="">
     <meta name="description" content="">
 
@@ -40,7 +40,7 @@
                                             <div class="col-sm-2">
                                             <select class="form-control">
                                                 <option value="0">条件</option>
-                                                <option value="1">城市</option>
+                                                <option value="1">地址</option>
                                                 <option value="2">名称</option>
                                             </select>
                                             </div>
@@ -153,7 +153,7 @@
                     responseHandler: oTableInit.responseHandler,
                     //数据列
                     columns: [{
-                        title: "排名",
+                        title: "活动id",
                         field: "actId",
                         sortable: true
                     },{

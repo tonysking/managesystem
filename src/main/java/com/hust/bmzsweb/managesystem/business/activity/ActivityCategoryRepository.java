@@ -12,4 +12,6 @@ public interface ActivityCategoryRepository extends JpaRepository<ActivityCatego
 
     //小程序
     ActivityCategory findActivityCategoryByCategoryType(Integer categoryType);
+
+    ActivityCategory findByCategoryNameContains(String categoryName);
 }

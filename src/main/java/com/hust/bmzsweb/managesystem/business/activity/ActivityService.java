@@ -18,7 +18,6 @@ public interface ActivityService {
 
      Page<QueryActivityListModel> findAllActsByUserId(Integer userId, PageRequest pageRequest);
 
-
      Page<QueryActivityListModel> findAllActsByActTitleContaining(String searchText,  PageRequest pageRequest);
 
      void banActivity(Integer actId);
