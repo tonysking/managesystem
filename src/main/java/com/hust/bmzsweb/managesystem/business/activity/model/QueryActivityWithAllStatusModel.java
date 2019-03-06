@@ -19,9 +19,9 @@ public class QueryActivityWithAllStatusModel {
     private String actAddress;
     private Double longitude;
     private Double latitude;
-    @JsonFormat(pattern="yyyy-MM-dd hh:mm:ss",locale="zh", timezone="GMT+8")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
     private Date actSignupDeadline;
-    @JsonFormat(pattern="yyyy-MM-dd hh:mm:ss",locale="zh", timezone="GMT+8")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
     private Date actStartTime;
     private Integer actHeat;
     private Integer participantsNumber;

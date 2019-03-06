@@ -330,11 +330,11 @@ public class ActivityServiceImpl implements ActivityService {
 
         //热门活动搜索按searchText=""进行查找 只有手动输入内容搜索才加入类型判断
         ActivityCategory activityCategory = null;
-        ActivityCategory finalActivityCategory = activityCategory;//必须为final
         if(!searchText.equals("")){
 
             activityCategory = activityCategoryRepository.findByCategoryNameContains(searchText);
         }
+        ActivityCategory finalActivityCategory = activityCategory;//必须为final
         Specification<ActivityInfo> specification;
         String  text = searchText;
         specification = new Specification<ActivityInfo>() {
@@ -355,17 +355,20 @@ public class ActivityServiceImpl implements ActivityService {
 
                 Predicate predicate5 =  cb.like(root.get("actTitle"), "%"+text+"%");
                 Predicate predicate6 =  cb.like(root.get("actDetailInfo"), "%"+text+"%");
+                Predicate predicate7 =  cb.like(root.get("actAddress"), "%"+text+"%");
+
                 p2List.add(predicate5);
                 p2List.add(predicate6);
+                p2List.add(predicate7);
                 Predicate predicateAnd[] = new Predicate[p1List.size()];
                 Predicate predicateAp = cb.and(p1List.toArray(predicateAnd));
                 Predicate predicateOp = null;
 
                 if(finalActivityCategory !=null)
                 {
-                    Predicate predicate7 =  cb.equal(root.get("categoryType"),
+                    Predicate predicate8 =  cb.equal(root.get("categoryType"),
                             finalActivityCategory.getCategoryType());
-                    p2List.add(predicate7);
+                    p2List.add(predicate8);
                     Predicate predicateOr[] = new Predicate[p2List.size()];
                     predicateOp = cb.or(p2List.toArray(predicateOr));
                 }else{
